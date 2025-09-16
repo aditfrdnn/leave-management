@@ -3,14 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Leaf, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { login } from "@/services/authService";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -20,21 +19,31 @@ export default function LoginPage() {
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/');
-    } catch (error: any) {
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const res = await login(email, password);
+
+    if (res.success) {
+      router.push("/");
+    } else {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message,
-      })
-    } finally {
-      setIsLoading(false);
+        description: res.message || "Invalid credentials",
+      });
     }
-  };
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      title: "Login Failed",
+      description: error.message,
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
