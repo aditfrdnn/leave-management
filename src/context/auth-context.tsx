@@ -5,6 +5,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 
+console.log('GARA GARA KAMU');
 interface AuthContextType {
   user: User | null;
   loading: boolean;

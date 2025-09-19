@@ -21,12 +21,15 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
+  
 
   try {
     const res = await login(email, password);
-
+    
     if (res.success) {
-      router.push("/");
+      console.log(res);
+       router.push("/test");
+      
     } else {
       toast({
         variant: "destructive",

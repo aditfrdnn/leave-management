@@ -1,54 +1,28 @@
-// src/services/authService.ts
+import Cookies from "js-cookie";
 
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://192.168.137.1:8000";
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST;
 
-interface LoginResponse {
-  success: boolean;
-  data?: {
-    id: number;
-    name: string;
-    email: string;
-    token: string;
-    department?: {
-      id: number;
-      name: string;
-      alias: string;
-    };
-  };
-  message?: string;
-}
+export async function login(email: string, password: string) {
+  const res = await fetch(`${API_HOST}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-export async function login(email: string, password: string): Promise<LoginResponse> {
-  try {
-    const response = await fetch(`${API_HOST}/api/auth/login`, {
-      method: "POST",
-      body: new URLSearchParams({
-        email,
-        password,
-      }),
-      headers: {
-        Accept: "application/json",
-      },
-    });
+  const data = await res.json();
 
-    const data: LoginResponse = await response.json();
-
-    if (data.success && data.data?.token) {
-      // simpan token ke localStorage
-      localStorage.setItem("token", data.data.token);
-    }
-    //tambahin direct ke home page
-
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message || "Login failed");
+  if (data.success) {
+    // simpan token di cookie agar bisa dibaca middleware
+    Cookies.set("token", data.data.token, { expires: 1 }); // expire 1 hari
   }
+
+  return data;
 }
 
-export function getToken(): string | null {
-  return localStorage.getItem("token");
+export function getToken() {
+  return Cookies.get("token");
 }
 
 export function logout() {
-  localStorage.removeItem("token");
+  Cookies.remove("token");
 }
