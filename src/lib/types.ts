@@ -1,28 +1,36 @@
-import type { CheckLeaveRequestOutput } from '@/ai/flows/automatic-reasonableness-check';
+import type { CheckLeaveRequestOutput } from "@/ai/flows/automatic-reasonableness-check";
 
-export type LeaveRequestStatus = 'Approved' | 'Issues Found' | 'Pending Review' | 'Rejected';
+export type LeaveRequestStatus =
+  | "Approved"
+  | "Issues Found"
+  | "Pending Review"
+  | "Rejected";
 
 export type LeaveRequest = {
   id: string;
-  startDate: Date;
-  endDate: Date;
+  subject: string;
+  start_date: Date;
+  end_date: Date;
   reason: string;
   status: LeaveRequestStatus;
   aiResponse: CheckLeaveRequestOutput | null;
   approver: string;
-  location: string;
-  ongoingTasks: string;
-  replacementPerson: string;
-  phoneNumber: string;
-  returnDate: Date;
+  location_during_leave: string;
+  ongoing_task: string;
+  temporary_replacement: string;
+  phone_number: string;
+  return_to_office: Date;
   userId: string;
   createdAt?: string; // Stored as ISO string
 };
 
-export type LeaveRequestDocument = Omit<LeaveRequest, 'id' | 'startDate' | 'endDate' | 'returnDate'> & {
-  startDate: string; // ISO Date
-  endDate: string; // ISO Date
-  returnDate: string; // ISO Date
+export type LeaveRequestDocument = Omit<
+  LeaveRequest,
+  "id" | "start_date" | "end_date" | "return_to_office"
+> & {
+  start_date: string; // ISO Date
+  end_date: string; // ISO Date
+  return_to_office: string; // ISO Date
   createdAt: object; // ServerValue.TIMESTAMP
 };
 

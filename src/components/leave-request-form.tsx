@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useActionState, startTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { format } from "date-fns";
 import {
   CalendarIcon,
@@ -28,7 +27,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,12 +41,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
 import {
-  createLeaveRequest,
-  getUsers,
-  getLeaveTypes,
-} from "@/services/leaveServices";
+  leaveRequestSchema,
+  LeaveRequestSchemaType,
+} from "@/validations/leave-validations";
+import {
+  INITIAL_LEAVE_REQUEST_FORM,
+  INITIAL_LEAVE_REQUEST_STATE,
+} from "@/constants/leave-constant";
+import { CreateLeaveRequest } from "@/app/leave-request/_components/action";
+import { toast } from "sonner";
+import instance from "@/lib/axios";
+import { TLeaveType } from "@/types/leave";
+import { getApprovers, getLeaveTypes } from "@/constants/endpoint-constant";
+import { TUser } from "@/types/user";
+import FormInput from "./common/form-input";
+
+interface PropTypes {
+  refetch: () => void;
+}
 
 function getNextWorkday(date: Date): Date {
   const next = new Date(date);
@@ -58,105 +74,126 @@ function getNextWorkday(date: Date): Date {
   return next;
 }
 
-const formSchema = z.object({
-  dates: z.array(z.date()).min(1, { message: "Please select at least one date." }),
-  reason: z
-    .string()
-    .min(10, { message: "Reason must be at least 10 characters." })
-    .max(200, { message: "Reason must not exceed 200 characters." }),
-  location: z.string().min(2, { message: "Location must be at least 2 characters." }),
-  ongoingTasks: z.string().min(10, { message: "Please list your ongoing tasks." }),
-  replacementPerson: z.string().min(2, { message: "Please name a replacement." }),
-  phoneNumber: z.string().min(10, { message: "Please provide a valid phone number." }),
-  approver: z.string({ required_error: "Please select an approver." }),
-  leaveType: z.string({ required_error: "Please select a leave type." }),
-});
-
-export function LeaveRequestForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [approvers, setApprovers] = useState<any[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
+export function LeaveRequestForm(props: PropTypes) {
+  const { refetch } = props;
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [leaveTypes, setLeaveTypes] = useState<TLeaveType[]>([]);
+  const [approvers, setApprovers] = useState<TUser[]>([]);
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      dates: [],
-      reason: "",
-      location: "",
-      ongoingTasks: "",
-      replacementPerson: "",
-      phoneNumber: "",
-      approver: "",
-      leaveType: "",
-    },
-  });
+  // Get Leave Types
+  const leaveTypesHandling = async () => {
+    try {
+      const endpoint = getLeaveTypes; // ganti sesuai endpoint aslinya
 
-  // Fetch dropdowns
+      const result = await instance.get(endpoint);
+
+      setLeaveTypes(result.data.data);
+      return result.data.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  // Get Leave Types
+
+  // Get Approvers
+  const approversHandling = async () => {
+    try {
+      const endpoint = getApprovers; // ganti sesuai endpoint aslinya
+
+      const result = await instance.get(endpoint);
+
+      setApprovers(result.data.data);
+      return result.data.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  // Get Approvers
+
   useEffect(() => {
-    getUsers()
-      .then((res) => setApprovers(res.data || []))
-      .catch((err) => console.error("Error fetching users:", err));
-
-    getLeaveTypes()
-      .then((res) => setLeaveTypes(res.data || []))
-      .catch((err) => console.error("Error fetching leave types:", err));
+    leaveTypesHandling();
+    approversHandling();
   }, []);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-
-    try {
-      const sortedDates = [...values.dates].sort((a, b) => a.getTime() - b.getTime());
-      const leaveDates = sortedDates.map((d) => format(d, "yyyy-MM-dd"));
-      const returnDate = format(
-        getNextWorkday(sortedDates[sortedDates.length - 1]),
-        "yyyy-MM-dd"
+  useEffect(() => {
+    if (selectedDates.length > 0) {
+      const sortedDates = selectedDates.sort(
+        (a, b) => a.getTime() - b.getTime()
       );
 
-      const payload = {
-        leave_type: values.leaveType,
-        subject: "AUTO-GENERATE", // sementara, bisa backend yg generate
-        leave_date: leaveDates,
-        approval_user: values.approver,
-        reason: values.reason,
-        location_during_leave: values.location,
-        return_to_office: returnDate,
-        ongoing_task: values.ongoingTasks,
-        temporary_replacement: values.replacementPerson,
-        phone_number: values.phoneNumber,
-      };
-
-      await createLeaveRequest(payload);
-
-      toast({
-        title: "Request Submitted",
-        description: "Your leave request has been sent for approval.",
-      });
-      form.reset();
-      setSelectedDates([]);
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description: error.message || "An error occurred",
-      });
-    } finally {
-      setIsLoading(false);
+      getNextWorkday(sortedDates![sortedDates!.length - 1]);
+      form.setValue(
+        "return_to_office",
+        format(
+          getNextWorkday(sortedDates![sortedDates!.length - 1]),
+          "dd-MM-yyyy"
+        )
+      );
+    } else {
+      form.setValue("return_to_office", "");
     }
-  }
+  }, [selectedDates]);
+
+  // Form Handling
+  const form = useForm<LeaveRequestSchemaType>({
+    resolver: zodResolver(leaveRequestSchema),
+    defaultValues: INITIAL_LEAVE_REQUEST_FORM,
+  });
+
+  const [createState, createAction, isPending] = useActionState(
+    CreateLeaveRequest,
+    INITIAL_LEAVE_REQUEST_STATE
+  );
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => formData.append(key, v));
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+
+    startTransition(() => {
+      createAction(formData);
+    });
+  });
+
+  useEffect(() => {
+    if (createState?.status === "error") {
+      toast.error(createState?.message || "Failed to create leave request", {
+        description: createState.errors?._form?.[0],
+      });
+    }
+
+    if (createState?.status === "success") {
+      toast.success(
+        createState?.message || "Leave request created successfully"
+      );
+      refetch();
+    }
+  }, [createState]);
+  // Form Handling
 
   return (
     <div className="space-y-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-6">
+          <FormInput
+            name="subject"
+            label="LVR No."
+            disabled={isPending}
+            placeholder="Enter LVR No."
+            form={form}
+          />
           {/* Multiple Dates */}
           <FormField
             control={form.control}
-            name="dates"
+            name="leave_date"
+            disabled={isPending}
             render={() => (
               <FormItem className="flex flex-col">
                 <FormLabel>Leave Dates</FormLabel>
@@ -174,11 +211,11 @@ export function LeaveRequestForm() {
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {selectedDates.length > 0 ? (
                           <>
-                            {format(selectedDates[0], "LLL dd, y")}
+                            {format(selectedDates[0], "dd-MM-yyyy")}
                             {selectedDates.length > 1 &&
                               ` - ${format(
                                 selectedDates[selectedDates.length - 1],
-                                "LLL dd, y"
+                                "dd-MM-yyyy"
                               )}`}
                           </>
                         ) : (
@@ -193,17 +230,29 @@ export function LeaveRequestForm() {
                       selected={selectedDates}
                       onSelect={(dates) => {
                         setSelectedDates(dates ?? []);
-                        form.setValue("dates", dates ?? []);
+
+                        // convert Date[] to string[] to setValue
+                        form.setValue(
+                          "leave_date",
+                          dates?.map((date) => format(date, "dd-MM-yyyy")) ?? []
+                        );
+
                         if (dates && dates.length > 0) setErrorMessage("");
                       }}
                       disabled={(date) => {
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
-                        return date < today || date.getDay() === 0 || date.getDay() === 6;
+                        return (
+                          date < today ||
+                          date.getDay() === 0 ||
+                          date.getDay() === 6
+                        );
                       }}
                     />
                     {errorMessage && (
-                      <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+                      <p className="text-red-500 text-sm mt-2">
+                        {errorMessage}
+                      </p>
                     )}
                   </PopoverContent>
                 </Popover>
@@ -211,15 +260,28 @@ export function LeaveRequestForm() {
               </FormItem>
             )}
           />
+          {/* Return to Office */}
+          <FormInput
+            name="return_to_office"
+            placeholder="Date automatically set"
+            form={form}
+            label="Return to Office"
+            type="text"
+            disabled
+          />
 
           {/* Leave Type */}
           <FormField
             control={form.control}
-            name="leaveType"
+            name="leave_type"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Leave Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select leave type" />
@@ -228,7 +290,7 @@ export function LeaveRequestForm() {
                   <SelectContent>
                     {leaveTypes.map((type: any) => (
                       <SelectItem key={type.id} value={String(type.id)}>
-                        {type.name}
+                        {type.text}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -241,14 +303,15 @@ export function LeaveRequestForm() {
           {/* Approver */}
           <FormField
             control={form.control}
-            name="approver"
+            name="approval_user"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center">
-                  <Users className="mr-2 h-4 w-4" />
-                  Send to
-                </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormLabel className="flex items-center">Send to</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select an approver" />
@@ -268,98 +331,66 @@ export function LeaveRequestForm() {
           />
 
           {/* Reason */}
-          <FormField
-            control={form.control}
+          <FormInput
             name="reason"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Reason for Leave
-                </FormLabel>
-                <FormControl>
-                  <Textarea placeholder="e.g., Family vacation to Bali" className="resize-none" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Reason for Leave"
+            placeholder="e.g., Family vacation to Bali"
+            type="textarea"
+            form={form}
+            disabled={isPending}
           />
 
           {/* Location */}
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  <MapPin className="mr-2 h-4 w-4" />
-                  Location During Leave
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Bali, Indonesia" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <FormInput
+            name="location_during_leave"
+            label="Location During Leave"
+            placeholder="e.g., Bali, Indonesia"
+            type="text"
+            form={form}
+            disabled={isPending}
           />
 
           {/* Ongoing Tasks */}
-          <FormField
-            control={form.control}
-            name="ongoingTasks"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  <Briefcase className="mr-2 h-4 w-4" />
-                  Ongoing Tasks
-                </FormLabel>
-                <FormControl>
-                  <Textarea placeholder="- Task 1&#10;- Task 2" className="resize-none" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <FormInput
+            name="ongoing_task"
+            label="Ongoing Tasks"
+            placeholder="e.g., Develop a software"
+            type="text"
+            form={form}
+            disabled={isPending}
           />
 
           {/* Replacement Person */}
-          <FormField
-            control={form.control}
-            name="replacementPerson"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  <User className="mr-2 h-4 w-4" />
-                  Temporary Replacement
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Budi" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <FormInput
+            name="temporary_replacement"
+            label=" Temporary Replacement"
+            placeholder="e.g., Budi"
+            type="text"
+            form={form}
+            disabled={isPending}
           />
 
           {/* Phone Number */}
-          <FormField
-            control={form.control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Phone Number
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., +62 812 3456 7890" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <FormInput
+            name="phone_number"
+            label=" Phone Number"
+            placeholder="e.g., +62 812 3456 7890"
+            type="text"
+            form={form}
+            disabled={isPending}
           />
 
           {/* Submit */}
-          <Button type="submit" disabled={isLoading} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+          >
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="mr-2 h-4 w-4" />
+            )}
             Submit Request
           </Button>
         </form>

@@ -1,22 +1,47 @@
-"use client"
+"use client";
 
-import { format } from "date-fns"
-import { CalendarPlus, ClipboardList, CheckCircle2, XCircle, Hourglass, Loader2, Ban } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { type LeaveRequest, type LeaveRequestStatus } from "@/lib/types"
-import { downloadIcsFile } from "@/lib/calendar"
-import { Skeleton } from "./ui/skeleton"
+import { format } from "date-fns";
+import {
+  CalendarPlus,
+  ClipboardList,
+  CheckCircle2,
+  XCircle,
+  Hourglass,
+  Ban,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { LeaveRequest, type LeaveRequestStatus } from "@/lib/types";
+import { downloadIcsFile } from "@/lib/calendar";
+import { Skeleton } from "./ui/skeleton";
+import { leaveRequest } from "@/constants/endpoint-constant";
+import instance from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
-type LeaveRequestsListProps = {
-  requests: LeaveRequest[];
+interface PropTypes {
+  data: LeaveRequest[];
   isLoading: boolean;
-};
+}
 
-export function LeaveRequestsList({ requests, isLoading }: LeaveRequestsListProps) {
+export function LeaveRequestsList(props: PropTypes) {
+  const { isLoading, data } = props;
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -33,34 +58,44 @@ export function LeaveRequestsList({ requests, isLoading }: LeaveRequestsListProp
         </div>
       );
     }
-  
-    if (requests.length === 0) {
+
+    if (data && data.length === 0) {
       return (
         <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-card p-12 text-center">
           <ClipboardList className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold font-headline">No Leave Requests Yet</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Submit a leave request to see your history here.</p>
+          <h3 className="mt-4 text-lg font-semibold font-headline">
+            No Leave Requests Yet
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Submit a leave request to see your history here.
+          </p>
         </div>
       );
     }
 
-    const statusConfig: Record<LeaveRequestStatus, { icon: React.ReactNode; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-      'Approved': {
+    const statusConfig: Record<
+      LeaveRequestStatus,
+      {
+        icon: React.ReactNode;
+        variant: "default" | "secondary" | "destructive" | "outline";
+      }
+    > = {
+      Approved: {
         icon: <CheckCircle2 className="mr-2" />,
         variant: "outline",
       },
-      'Issues Found': {
+      "Issues Found": {
         icon: <XCircle className="mr-2" />,
         variant: "destructive",
       },
-      'Pending Review': {
+      "Pending Review": {
         icon: <Hourglass className="mr-2" />,
         variant: "secondary",
       },
-      'Rejected': {
+      Rejected: {
         icon: <Ban className="mr-2" />,
         variant: "destructive",
-      }
+      },
     };
 
     return (
@@ -68,6 +103,7 @@ export function LeaveRequestsList({ requests, isLoading }: LeaveRequestsListProp
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>LVR No.</TableHead>
               <TableHead>Dates</TableHead>
               <TableHead className="hidden md:table-cell">Reason</TableHead>
               <TableHead>Status</TableHead>
@@ -75,28 +111,40 @@ export function LeaveRequestsList({ requests, isLoading }: LeaveRequestsListProp
             </TableRow>
           </TableHeader>
           <TableBody>
-            {requests.map((request) => (
+            {data?.map((request: LeaveRequest) => (
               <TableRow key={request.id}>
+                <TableCell className="font-medium">{request.subject}</TableCell>
                 <TableCell className="font-medium">
-                  {format(request.startDate, "MMM d")} - {format(request.endDate, "MMM d, yyyy")}
+                  {format(request?.start_date, "dd-MM-yyyy")} -{" "}
+                  {format(request?.end_date, "dd-MM-yyyy")}
                 </TableCell>
-                <TableCell className="hidden max-w-[250px] truncate md:table-cell" title={request.reason}>
+                <TableCell
+                  className="hidden max-w-[250px] truncate md:table-cell"
+                  title={request.reason}
+                >
                   {request.reason}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusConfig[request.status]?.variant || 'default'} className="w-fit items-center">
-                     {statusConfig[request.status]?.icon}
+                  <Badge
+                    variant={statusConfig[request.status]?.variant || "default"}
+                    className="w-fit items-center"
+                  >
+                    {statusConfig[request.status]?.icon}
                     <span>{request.status}</span>
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  {request.status === 'Approved' && (
+                  {request.status === "Approved" && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                         <Button variant="ghost" size="icon" onClick={() => downloadIcsFile(request)}>
-                           <CalendarPlus className="h-4 w-4" />
-                           <span className="sr-only">Add to Calendar</span>
-                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => downloadIcsFile(request)}
+                        >
+                          <CalendarPlus className="h-4 w-4" />
+                          <span className="sr-only">Add to Calendar</span>
+                        </Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Add to Calendar</p>
@@ -110,16 +158,20 @@ export function LeaveRequestsList({ requests, isLoading }: LeaveRequestsListProp
         </Table>
       </TooltipProvider>
     );
-  }
+  };
 
   return (
-    <Card className="shadow-lg">
+    <Card
+      className={cn("shadow-lg overflow-y-auto", {
+        "max-h-[400px]": data?.length > 0,
+      })}
+    >
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">My Leave History</CardTitle>
+        <CardTitle className="font-headline text-2xl">
+          My Leave History
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        {renderContent()}
-      </CardContent>
+      <CardContent>{renderContent()}</CardContent>
     </Card>
   );
 }
