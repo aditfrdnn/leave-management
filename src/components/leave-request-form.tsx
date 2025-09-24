@@ -307,7 +307,9 @@ export function LeaveRequestForm(props: PropTypes) {
             disabled={isPending}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center">Send to</FormLabel>
+                <FormLabel className="flex items-center">
+                  Select Approver (Lead/Supervisor)
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
