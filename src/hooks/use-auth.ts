@@ -3,6 +3,7 @@
 import instance from "@/lib/axios";
 import { TUser } from "@/types/user";
 import { useEffect, useState } from "react";
+import useCookies from "./use-cookies";
 
 export function useAuth() {
   const [user, setUser] = useState<TUser | null>(null);
@@ -11,11 +12,7 @@ export function useAuth() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await instance.get("/api/user");
-        if (!res.data) throw new Error("Unauthorized");
-
-        const data = await res.data;
-        setUser(data);
+        useCookies().then(({ authUser }) => setUser(authUser));
       } catch (error) {
         setUser(null);
       } finally {

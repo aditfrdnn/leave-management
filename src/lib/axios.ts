@@ -1,3 +1,4 @@
+import { logout } from "@/app/(logout)/action";
 import { environment } from "@/configs/envorinment";
 import useCookies from "@/hooks/use-cookies";
 import axios from "axios";
@@ -31,7 +32,16 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    if (error.response) {
+      if (error.response.status === 401) {
+        // ✅ redirect ke login
+        if (typeof window !== "undefined") {
+          await logout();
+          window.location.href = "/login";
+        }
+      }
+    }
     throw Error(error);
   }
 );
