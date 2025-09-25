@@ -15,6 +15,7 @@ export default function FormInput<T extends FieldValues>({
   label,
   placeholder,
   disabled,
+  readonly,
   type = "text",
 }: {
   form: UseFormReturn<T>;
@@ -22,6 +23,7 @@ export default function FormInput<T extends FieldValues>({
   label: string;
   placeholder?: string;
   disabled?: boolean;
+  readonly?: boolean;
   type?: string;
 }) {
   return (
@@ -38,6 +40,7 @@ export default function FormInput<T extends FieldValues>({
                 disabled={disabled || false}
                 className="resize-none rounded-lg"
                 autoComplete="off"
+                readOnly={readonly}
                 placeholder={placeholder}
               />
             ) : (
@@ -46,6 +49,7 @@ export default function FormInput<T extends FieldValues>({
                 {...field}
                 disabled={disabled || false}
                 autoFocus={false}
+                readOnly={readonly}
                 autoComplete="off"
                 placeholder={placeholder}
               />

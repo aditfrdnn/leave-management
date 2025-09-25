@@ -4,17 +4,7 @@ import { useState, useEffect, useActionState, startTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
-import {
-  CalendarIcon,
-  FileText,
-  Loader2,
-  Send,
-  MapPin,
-  Briefcase,
-  User,
-  Phone,
-  Users,
-} from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,13 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -79,8 +62,6 @@ export function LeaveRequestForm(props: PropTypes) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<TLeaveType[]>([]);
   const [approvers, setApprovers] = useState<TUser[]>([]);
-  const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   // Get Leave Types
   const leaveTypesHandling = async () => {
@@ -193,11 +174,80 @@ export function LeaveRequestForm(props: PropTypes) {
           <FormField
             control={form.control}
             name="leave_date"
-            disabled={isPending}
             render={() => (
               <FormItem className="flex flex-col">
-                <FormLabel>Leave Dates</FormLabel>
-                <Popover open={open} onOpenChange={setOpen}>
+                <FormLabel>
+                  Calendar{" "}
+                  <span className="font-normal italic">
+                    ( select one or more leave dates )
+                  </span>
+                </FormLabel>
+
+                <div className="flex items-start gap-4">
+                  <Calendar
+                    mode="multiple"
+                    className={cn("border border-input rounded-lg w-fit", {
+                      "border-destructive": form.formState.errors.leave_date,
+                    })}
+                    selected={selectedDates}
+                    onSelect={(dates) => {
+                      setSelectedDates(dates ?? []);
+
+                      // convert Date[] to string[] to setValue
+                      form.setValue(
+                        "leave_date",
+                        dates?.map((date) => format(date, "dd-MM-yyyy")) ?? []
+                      );
+
+                      if (dates && dates.length > 0)
+                        form.clearErrors("leave_date");
+                    }}
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      return (
+                        date < today ||
+                        date.getDay() === 0 ||
+                        date.getDay() === 6
+                      );
+                    }}
+                  />
+
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="text-sm font-semibold">Leave Dates :</p>
+                      {form.watch("leave_date").map((date, index) => (
+                        <p
+                          className="text-sm font-medium"
+                          key={`leave-date-${index}`}
+                        >
+                          {date}
+                        </p>
+                      ))}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">
+                        Return To Office :
+                      </p>
+                      <p className="text-sm font-medium">
+                        {form.watch("return_to_office")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Days Total :</p>
+
+                      {form.watch("leave_date").length > 0 && (
+                        <p className="text-sm font-medium">
+                          {form.watch("leave_date").length} Days
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {/* {errorMessage && (
+                  <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+                )} */}
+                {/* <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -225,60 +275,32 @@ export function LeaveRequestForm(props: PropTypes) {
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent>
-                    <Calendar
-                      mode="multiple"
-                      selected={selectedDates}
-                      onSelect={(dates) => {
-                        setSelectedDates(dates ?? []);
-
-                        // convert Date[] to string[] to setValue
-                        form.setValue(
-                          "leave_date",
-                          dates?.map((date) => format(date, "dd-MM-yyyy")) ?? []
-                        );
-
-                        if (dates && dates.length > 0) setErrorMessage("");
-                      }}
-                      disabled={(date) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return (
-                          date < today ||
-                          date.getDay() === 0 ||
-                          date.getDay() === 6
-                        );
-                      }}
-                    />
-                    {errorMessage && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errorMessage}
-                      </p>
-                    )}
+                    
                   </PopoverContent>
-                </Popover>
+                </Popover> */}
                 <FormMessage />
               </FormItem>
             )}
           />
           {/* Return to Office */}
-          <FormInput
+          {/* <FormInput
             name="return_to_office"
             placeholder="Date automatically set"
             form={form}
             label="Return to Office"
             type="text"
-            disabled
-          />
+            readonly
+          /> */}
 
           {/* Leave Type */}
           <FormField
             control={form.control}
             name="leave_type"
-            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Leave Type</FormLabel>
                 <Select
+                  disabled={isPending}
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
@@ -304,13 +326,13 @@ export function LeaveRequestForm(props: PropTypes) {
           <FormField
             control={form.control}
             name="approval_user"
-            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
                   Select Approver (Lead/Supervisor)
                 </FormLabel>
                 <Select
+                  disabled={isPending}
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >

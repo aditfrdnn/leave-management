@@ -1,6 +1,5 @@
 "use client";
 
-import instance from "@/lib/axios";
 import { TUser } from "@/types/user";
 import { useEffect, useState } from "react";
 import useCookies from "./use-cookies";

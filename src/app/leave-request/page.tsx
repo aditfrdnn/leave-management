@@ -173,9 +173,9 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
-          <div className="lg:col-span-2">
-            <Card className="shadow-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 lg:gap-4 items-start">
+          <div className="lg:col-span-3">
+            <Card className=" shadow-lg">
               <CardHeader>
                 <CardTitle className="font-headline text-2xl">
                   New Leave Request
