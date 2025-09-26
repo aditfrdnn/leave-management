@@ -57,6 +57,11 @@ function getNextWorkday(date: Date): Date {
   return next;
 }
 
+function parseDate(str: string) {
+  const [day, month, year] = str.split("-").map(Number);
+  return new Date(year, month - 1, day); // bulan dimulai dari 0
+}
+
 export function LeaveRequestForm(props: PropTypes) {
   const { refetch } = props;
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -216,14 +221,20 @@ export function LeaveRequestForm(props: PropTypes) {
                   <div className="flex flex-col gap-4">
                     <div>
                       <p className="text-sm font-semibold">Leave Dates :</p>
-                      {form.watch("leave_date").map((date, index) => (
-                        <p
-                          className="text-sm font-medium"
-                          key={`leave-date-${index}`}
-                        >
-                          {date}
-                        </p>
-                      ))}
+                      {form
+                        .watch("leave_date")
+                        .sort(
+                          (a, b) =>
+                            parseDate(a).getTime() - parseDate(b).getTime()
+                        )
+                        .map((date, index) => (
+                          <p
+                            className="text-sm font-medium"
+                            key={`leave-date-${index}`}
+                          >
+                            {date}
+                          </p>
+                        ))}
                     </div>
                     <div>
                       <p className="text-sm font-semibold">
