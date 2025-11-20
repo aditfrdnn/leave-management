@@ -20,18 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { LeaveRequest, type LeaveRequestStatus } from "@/lib/types";
-import { downloadIcsFile } from "@/lib/calendar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { LeaveRequest } from "@/lib/types";
 import { Skeleton } from "./ui/skeleton";
-import { leaveRequest } from "@/constants/endpoint-constant";
-import instance from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
 interface PropTypes {
@@ -45,14 +36,13 @@ export function LeaveRequestsList(props: PropTypes) {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="space-y-4">
+        <div className="w-full space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-4">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
-                <Skeleton className="h-4 w-[200px]" />
-              </div>
+            <div key={i} className="flex gap-4 p-4 border rounded-md">
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-6 w-1/4 hidden md:block" />
+              <Skeleton className="h-6 w-1/4" />
             </div>
           ))}
         </div>
@@ -73,29 +63,28 @@ export function LeaveRequestsList(props: PropTypes) {
       );
     }
 
-    const statusConfig: Record<
-      LeaveRequestStatus,
-      {
-        icon: React.ReactNode;
-        variant: "default" | "secondary" | "destructive" | "outline";
-      }
-    > = {
-      Approved: {
-        icon: <CheckCircle2 className="mr-2" />,
-        variant: "outline",
-      },
-      "Issues Found": {
-        icon: <XCircle className="mr-2" />,
-        variant: "destructive",
-      },
-      "Pending Review": {
-        icon: <Hourglass className="mr-2" />,
-        variant: "secondary",
-      },
-      Rejected: {
-        icon: <Ban className="mr-2" />,
-        variant: "destructive",
-      },
+    const getStatusConfig = (statusCode: number) => {
+      const statusMap: Record<
+        number,
+        {
+          label: string;
+          variant: "default" | "secondary" | "destructive" | "outline";
+        }
+      > = {
+        0: {
+          label: "Pending",
+          variant: "secondary",
+        },
+        1: {
+          label: "Approved",
+          variant: "default",
+        },
+        2: {
+          label: "Rejected",
+          variant: "destructive",
+        },
+      };
+      return statusMap[statusCode] || statusMap[0];
     };
 
     return (
@@ -107,7 +96,7 @@ export function LeaveRequestsList(props: PropTypes) {
               <TableHead>Dates</TableHead>
               <TableHead className="hidden md:table-cell">Reason</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {/* <TableHead className="text-right">Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -126,15 +115,16 @@ export function LeaveRequestsList(props: PropTypes) {
                 </TableCell>
                 <TableCell>
                   <Badge
-                    variant={statusConfig[request.status]?.variant || "default"}
-                    className="w-fit items-center"
+                    variant={
+                      getStatusConfig(request.status)?.variant || "default"
+                    }
+                    className="w-fit"
                   >
-                    {statusConfig[request.status]?.icon}
-                    <span>{request.status}</span>
+                    <span>{getStatusConfig(request.status)?.label}</span>
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  {request.status === "Approved" && (
+                {/* <TableCell className="text-right">
+                  {request.status === 1 && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -151,7 +141,7 @@ export function LeaveRequestsList(props: PropTypes) {
                       </TooltipContent>
                     </Tooltip>
                   )}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
@@ -163,7 +153,7 @@ export function LeaveRequestsList(props: PropTypes) {
   return (
     <Card
       className={cn("shadow-lg overflow-y-auto", {
-        "max-h-[400px]": data?.length > 0,
+        "max-h-[400px] w-full": data?.length > 0,
       })}
     >
       <CardHeader>

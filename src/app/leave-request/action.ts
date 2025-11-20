@@ -21,6 +21,7 @@ export async function CreateLeaveRequest(
   });
 
   if (parsed.error) {
+    console.log("Parsed Error", parsed.error);
     return {
       status: "error",
       errors: parsed.error.flatten().fieldErrors,
@@ -44,6 +45,7 @@ export async function CreateLeaveRequest(
       message: "Leave request created successfully.",
     };
   } catch (error) {
+    console.log("Catch Error", error);
     return {
       status: "error",
       errors: {

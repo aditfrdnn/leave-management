@@ -32,7 +32,7 @@ import {
   INITIAL_LEAVE_REQUEST_FORM,
   INITIAL_LEAVE_REQUEST_STATE,
 } from "@/constants/leave-constant";
-import { CreateLeaveRequest } from "@/app/leave-request/_components/action";
+import { CreateLeaveRequest } from "@/app/leave-request/action";
 import { toast } from "sonner";
 import instance from "@/lib/axios";
 import { TLeaveType } from "@/types/leave";
@@ -167,13 +167,42 @@ export function LeaveRequestForm(props: PropTypes) {
   return (
     <div className="space-y-6">
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="gap-4 grid grid-cols-2">
           <FormInput
             name="subject"
             label="LVR No."
             disabled={isPending}
             placeholder="Enter LVR No."
             form={form}
+          />
+          {/* Leave Type */}
+          <FormField
+            control={form.control}
+            name="leave_type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Leave Type</FormLabel>
+                <Select
+                  disabled={isPending}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select leave type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {leaveTypes.map((type: any) => (
+                      <SelectItem key={type.id} value={String(type.id)}>
+                        {type.text}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
           {/* Multiple Dates */}
           <FormField
@@ -303,97 +332,70 @@ export function LeaveRequestForm(props: PropTypes) {
             readonly
           /> */}
 
-          {/* Leave Type */}
-          <FormField
-            control={form.control}
-            name="leave_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Leave Type</FormLabel>
-                <Select
-                  disabled={isPending}
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select leave type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {leaveTypes.map((type: any) => (
-                      <SelectItem key={type.id} value={String(type.id)}>
-                        {type.text}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Approver */}
-          <FormField
-            control={form.control}
-            name="approval_user"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center">
-                  Select Approver (Lead/Supervisor)
-                </FormLabel>
-                <Select
-                  disabled={isPending}
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an approver" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {approvers.map((approver: any) => (
-                      <SelectItem key={approver.id} value={String(approver.id)}>
-                        {approver.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-col gap-4">
+            <FormField
+              control={form.control}
+              name="approval_user"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center">
+                    Select Approver (Lead/Supervisor)
+                  </FormLabel>
+                  <Select
+                    disabled={isPending}
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an approver" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {approvers.map((approver: any) => (
+                        <SelectItem
+                          key={approver.id}
+                          value={String(approver.id)}
+                        >
+                          {approver.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Reason */}
+            <FormInput
+              name="reason"
+              label="Reason for Leave"
+              placeholder="e.g., Family vacation to Bali"
+              type="textarea"
+              form={form}
+              disabled={isPending}
+            />
+            {/* Location */}
+            <FormInput
+              name="location_during_leave"
+              label="Location During Leave"
+              placeholder="e.g., Bali, Indonesia"
+              type="text"
+              form={form}
+              disabled={isPending}
+            />
 
-          {/* Reason */}
-          <FormInput
-            name="reason"
-            label="Reason for Leave"
-            placeholder="e.g., Family vacation to Bali"
-            type="textarea"
-            form={form}
-            disabled={isPending}
-          />
-
-          {/* Location */}
-          <FormInput
-            name="location_during_leave"
-            label="Location During Leave"
-            placeholder="e.g., Bali, Indonesia"
-            type="text"
-            form={form}
-            disabled={isPending}
-          />
-
-          {/* Ongoing Tasks */}
-          <FormInput
-            name="ongoing_task"
-            label="Ongoing Tasks"
-            placeholder="e.g., Develop a software"
-            type="text"
-            form={form}
-            disabled={isPending}
-          />
+            {/* Ongoing Tasks */}
+            <FormInput
+              name="ongoing_task"
+              label="Ongoing Tasks"
+              placeholder="e.g., Develop a software"
+              type="text"
+              form={form}
+              disabled={isPending}
+            />
+          </div>
 
           {/* Replacement Person */}
           <FormInput
@@ -416,18 +418,16 @@ export function LeaveRequestForm(props: PropTypes) {
           />
 
           {/* Submit */}
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-          >
-            {isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="mr-2 h-4 w-4" />
-            )}
-            Submit Request
-          </Button>
+          <div className="flex justify-end col-span-2 mt-4">
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="mr-2 h-4 w-4" />
+              )}
+              Submit Request
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

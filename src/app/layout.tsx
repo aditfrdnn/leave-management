@@ -5,7 +5,7 @@ import ReactQueryProvider from "@/providers/react-query-providers";
 // import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
-  title: "Leave",
+  title: "LVR System",
   description: "Employee leave request application",
 };
 

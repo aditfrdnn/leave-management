@@ -12,7 +12,7 @@ export type LeaveRequest = {
   start_date: Date;
   end_date: Date;
   reason: string;
-  status: LeaveRequestStatus;
+  status: number; // 0 = Pending, 1 = Approved, 2 = Rejected
   aiResponse: CheckLeaveRequestOutput | null;
   approver: string;
   location_during_leave: string;

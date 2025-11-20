@@ -23,6 +23,7 @@ import { Login } from "./actions";
 import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import FormInput from "@/components/common/form-input";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -64,10 +65,10 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="text-center">
-          <div className="flex justify-center items-center gap-3 mb-2">
-            <Leaf className="h-8 w-8 text-primary" />
+          <div className="flex justify-center items-center gap-2 mb-2">
+            <Image src="/lvr.png" alt="Logo" width={32} height={32} />
             <h1 className="text-3xl font-bold tracking-tight text-primary font-headline">
-              Leave
+              LVR System
             </h1>
           </div>
           <CardTitle className="text-2xl">Login</CardTitle>

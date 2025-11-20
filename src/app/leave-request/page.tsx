@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { Leaf, Bell, LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { LeaveRequestForm } from "@/components/leave-request-form";
 import { LeaveRequestsList } from "@/components/leave-requests-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,7 @@ import instance from "@/lib/axios";
 import { toast } from "sonner";
 import { logout } from "../(logout)/action";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
@@ -90,10 +91,10 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="bg-card border-b">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Leaf className="h-7 w-7 text-primary" />
+          <div className="flex items-center gap-2">
+            <Image src="/lvr.png" alt="Logo" width={32} height={32} />
             <h1 className="text-2xl font-bold tracking-tight text-primary font-headline">
-              Leave
+              LVR System
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -172,27 +173,20 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 lg:gap-4 items-start">
-          <div className="lg:col-span-3">
-            <Card className=" shadow-lg">
-              <CardHeader>
-                <CardTitle className="font-headline text-2xl">
-                  New Leave Request
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LeaveRequestForm refetch={refetchLeaveList} />
-              </CardContent>
-            </Card>
-          </div>
+      <main className="container mx-auto w-full p-4">
+        <div className=" flex flex-col gap-4 lg:gap-4 items-start">
+          <Card className="shadow-lg w-full">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl">
+                New Leave Request
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LeaveRequestForm refetch={refetchLeaveList} />
+            </CardContent>
+          </Card>
 
-          <div className="lg:col-span-3">
-            <LeaveRequestsList
-              data={leaveList}
-              isLoading={isLoadingLeaveList}
-            />
-          </div>
+          <LeaveRequestsList data={leaveList} isLoading={isLoadingLeaveList} />
         </div>
       </main>
     </div>

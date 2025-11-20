@@ -6,14 +6,22 @@ export default async function useCookies() {
   let token;
 
   const cookiesStore = await cookies();
-  const authUser = JSON.parse(cookiesStore.get("auth-user")?.value ?? "{}");
+  try {
+    const authUser = JSON.parse(cookiesStore.get("auth-user")?.value ?? "{}");
 
-  if (authUser !== undefined || authUser !== null) {
-    token = authUser?.token;
+    if (authUser && Object.keys(authUser).length > 0) {
+      token = authUser?.token;
+    }
+
+    return {
+      token,
+      authUser,
+    };
+  } catch (error) {
+    console.error("Failed to parse auth-user cookie:", error);
+    return {
+      token: undefined,
+      authUser: {},
+    };
   }
-
-  return {
-    token,
-    authUser,
-  };
 }
