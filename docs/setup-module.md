@@ -40,11 +40,12 @@ fields copied from the user), linked through `users.employee_id`; roles assigned
 | `users.manage` | setup | Manage user accounts | `/setup/users` |
 | `roles.manage` | setup | Manage roles & permissions | `/setup/roles`, `/setup/permissions` |
 
-| Seeded role | Permissions | Assigned by the backfill to |
+| Seeded role | Permissions | Assigned by the migrations to |
 | --- | --- | --- |
 | Administrator | all | nobody — `php artisan hr-lite:assign-role {email} Administrator` |
+| Lead/Project Manager | `leave.request`, `leave.approve` | users named in `approval_flows.approval_by` or `master_approval_flows.approval_by` |
+| Division Manager | `leave.request`, `leave.approve`, `leave.view_all` | the user whose email is `PDI_MANAGER_DIVISION_EMAIL` |
 | HR | `leave.request`, `leave.view_all`, `employees.manage`, `departments.manage` | nobody |
-| Approver | `leave.request`, `leave.approve` | users named in `approval_flows.approval_by` or `master_approval_flows.approval_by` |
 | Employee | `leave.request` | every other user |
 
 `User::resolvePermissions()` = the role's titles; a user without a role gets `["leave.request"]`; a user

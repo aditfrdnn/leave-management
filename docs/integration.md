@@ -103,7 +103,7 @@ Roles, the permission catalog, users, employees, departments and the dashboard a
 `docs/setup-module.md`. In short: each user has one role (`users.role_id`); `GET /api/me` and login return
 `permissions[]` (the role's titles, plus `leave.approve` for anyone named on an `approval_flows` row) and
 `role` / `employee`; routes are guarded by `permission:<title>` (403 `Anda tidak memiliki akses.`). Inactive
-accounts cannot log in (403). Seeded roles: Administrator, HR, Approver, Employee; grant the first admin with
+accounts cannot log in (403). Seeded roles: Administrator, Lead/Project Manager, Division Manager, HR, Employee; grant the first admin with
 `php artisan hr-lite:assign-role {email} Administrator`.
 
 ## 7. Where the frontend grows next (needs the API first)
