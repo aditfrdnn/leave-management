@@ -325,5 +325,71 @@
       "groupRequired": "Masukkan grup",
       "groupMax": "Grup maksimal 50 karakter"
     }
+  },
+  "leaveBalances": {
+    "page": {
+      "title": "Saldo Cuti",
+      "description": "Sisa cuti tahunan setiap karyawan. Isi angka sebenarnya sekali, setelah itu bergerak sendiri."
+    },
+    "howItWorks": "Isi sisa cuti tahunan setiap karyawan sekali saja. Setelah itu saldonya bergerak sendiri: bertambah 1 hari setiap tanggal 1, dan berkurang saat cuti tahunan disetujui.",
+    "searchPlaceholder": "Cari nama atau NIK",
+    "allDepartments": "Semua departemen",
+    "empty": "Belum ada karyawan aktif",
+    "emptySearch": "Tidak ada karyawan yang cocok",
+    "notSet": "Belum diatur",
+    "daysUnit": "hari",
+    "lastSet": "Diatur",
+    "lastAccrual": "+1 terakhir",
+    "columns": {
+      "employee": "Karyawan",
+      "department": "Departemen",
+      "balance": "Sisa cuti",
+      "usedThisYear": "Terpakai tahun ini",
+      "lastUpdates": "Pembaruan"
+    },
+    "actions": {
+      "set": "Atur saldo {name}",
+      "history": "Riwayat saldo {name}"
+    },
+    "dialog": {
+      "title": "Atur sisa cuti",
+      "current": "Saldo sekarang",
+      "newBalance": "Saldo baru",
+      "delta": "{value} hari",
+      "note": "Alasan",
+      "notePlaceholder": "mis. Saldo awal dari data HR, Okt 2026",
+      "hint": "Pakai ,5 untuk setengah hari (mis. 7,5). Perubahan dan alasannya tersimpan di riwayat.",
+      "saveNext": "Simpan & lanjut: {name}"
+    },
+    "history": {
+      "title": "Riwayat saldo",
+      "current": "sekarang {value} hari",
+      "empty": "Belum ada perubahan.",
+      "system": "sistem",
+      "after": "→ {value}",
+      "newer": "Lebih baru",
+      "older": "Lebih lama",
+      "types": {
+        "set": "Diatur HR",
+        "accrual": "Tambahan bulanan +1 ({period})",
+        "leave": "Cuti disetujui"
+      }
+    },
+    "toast": {
+      "saved": "Saldo tersimpan.",
+      "failed": "Saldo gagal disimpan"
+    },
+    "validation": {
+      "balanceRequired": "Isi saldonya",
+      "balanceRange": "Saldo harus antara -365 dan 365 hari",
+      "balanceStep": "Pakai hari penuh atau setengah hari (mis. 7,5)",
+      "noteRequired": "Tulis alasan singkat (minimal 3 karakter)",
+      "noteMax": "Alasan maksimal 255 karakter"
+    },
+    "errors": {
+      "loadList": "Gagal memuat saldo cuti",
+      "loadHistory": "Gagal memuat riwayat",
+      "save": "Gagal menyimpan saldo"
+    }
   }
 }

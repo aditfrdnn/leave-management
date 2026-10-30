@@ -115,3 +115,21 @@ export const permissionSchema = z.object({
 });
 
 export type PermissionSchemaType = z.infer<typeof permissionSchema>;
+
+/* --------------------------- Annual leave balance -------------------------- */
+
+export const leaveBalanceSchema = z.object({
+  employee_id: z.number().int().positive(),
+  balance: z
+    .number({ message: "setup.leaveBalances.validation.balanceRequired" })
+    .min(-365, "setup.leaveBalances.validation.balanceRange")
+    .max(365, "setup.leaveBalances.validation.balanceRange")
+    .refine((value) => Number.isInteger(value * 2), "setup.leaveBalances.validation.balanceStep"),
+  note: z
+    .string()
+    .trim()
+    .min(3, "setup.leaveBalances.validation.noteRequired")
+    .max(255, "setup.leaveBalances.validation.noteMax"),
+});
+
+export type LeaveBalanceSchemaType = z.infer<typeof leaveBalanceSchema>;

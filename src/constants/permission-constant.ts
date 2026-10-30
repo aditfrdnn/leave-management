@@ -8,6 +8,7 @@ export const PERMISSIONS_CONSTANT = {
   LEAVE_REQUEST: "leave.request",
   LEAVE_APPROVE: "leave.approve",
   LEAVE_VIEW_ALL: "leave.view_all",
+  LEAVE_MANAGE_BALANCE: "leave.manage_balance",
   EMPLOYEES_MANAGE: "employees.manage",
   DEPARTMENTS_MANAGE: "departments.manage",
   USERS_MANAGE: "users.manage",

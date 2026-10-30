@@ -7,6 +7,7 @@ import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated, TDropdownOption } from "@/types/api";
 import type { TApprover, TLeave, TLeaveListParams } from "@/types/leave";
+import type { TMyLeaveBalance } from "@/types/setup";
 import { leaveRequestSchema } from "@/validations/leave-validations";
 
 type LeaveActionState = ActionState<TLeave>;
@@ -22,6 +23,17 @@ export async function GetLeaveRequests(params: TLeaveListParams): Promise<TApiPa
     return await leaveService.getLeaveRequests(params);
   } catch (error) {
     throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadList")));
+  }
+}
+
+/** Shown next to the day count; a failure just hides the hint. */
+export async function GetMyLeaveBalance(): Promise<TMyLeaveBalance> {
+  try {
+    const response = await leaveService.getMyLeaveBalance();
+
+    return response.data ?? null;
+  } catch {
+    return null;
   }
 }
 

@@ -170,3 +170,83 @@ TDashboard = {
 | `/setup/master-data/employees`, `/setup/master-data/departments` | Setup | `employees.manage`, `departments.manage` |
 | `/setup/users` | Setup | `users.manage` |
 | `/setup/roles`, `/setup/permissions` | Setup | `roles.manage` |
+
+---
+
+## 10. Annual leave balance — `leave.manage_balance`
+
+Added 30 Oct 2026. HR sets each employee's real remaining annual leave once; from then on the
+balance moves by itself: **+1 day on the 1st of every month**, minus the counted days of every
+approved annual leave.
+
+### Data model
+
+`leave_balance_entries` (ledger, append-only):
+
+| Column | Notes |
+| --- | --- |
+| `id`, timestamps | |
+| `employee_id` | FK `employees`, cascade |
+| `leave_type_id` | FK `leave_types` — always the annual type (`config('leave.annual_leave_type_code')`) for now |
+| `type` | enum `set` (HR set the balance), `accrual` (monthly +1), `leave` (approved leave, negative) |
+| `amount` | decimal(6,2), signed; for `set` it is `new − previous` |
+| `balance_after` | decimal(6,2), the balance right after this entry |
+| `period` | `YYYY-MM` for `accrual` rows, else null; unique (`employee_id`, `leave_type_id`, `type`, `period`) so a month is never accrued twice |
+| `leave_request_id` | FK nullable, for `leave` rows; unique so a leave is never deducted twice |
+| `note` | nullable text (required for `set`) |
+| `created_by` | FK users nullable (null = system) |
+
+Current balance = `balance_after` of the latest entry (0 when there is none). Writes go through
+`App\Services\LeaveBalanceService` under a row lock on the employee so concurrent writes stay ordered.
+
+The old per-period `leave_balances` table is left untouched and no longer read. `leave_request_id` is
+`set null` on delete, so deleting a leave keeps its ledger row. `used_this_year` counts `leave` entries
+created in the current calendar year. A `set` with the same value is still written (amount 0) so HR's
+note is kept and `is_set` turns true.
+
+### Rules
+
+- **Monthly accrual:** `php artisan hr-lite:accrue-leave {--month=YYYY-MM}` (default: current month) adds
+  `config('leave.monthly_accrual', 1)` to every **active** employee. It is scheduled
+  `monthlyOn(1, '00:05')`, timezone Asia/Jakarta, with `withoutOverlapping()`. Running it twice for the
+  same month adds nothing the second time.
+- **Deduction:** when `LeaveDecisionService` approves a leave whose type is the annual type and whose
+  requester's user has an `employee_id`, it writes one `leave` entry of `−sum(counted portions)`. Web and
+  WhatsApp approvals share that path. The balance may go negative; nothing is blocked.
+- **Set:** HR sets the absolute value (−365 … 365, step 0.5) with a required note.
+
+### Endpoints
+
+| Method | Path | Body / query | Notes |
+| --- | --- | --- | --- |
+| GET | `/api/leave-balances` | `page, per_page, search` (name, employee_number), `department_id`, `status` (employee status, default `active`), `sort_by` (`name,employee_number,balance`), `sort_dir` | paginated `TLeaveBalanceItem` |
+| GET | `/api/leave-balances/{employee}/entries` | `page, per_page` | paginated `TLeaveBalanceEntry`, newest first |
+| PUT | `/api/leave-balances/{employee}` | `balance` (number), `note` (string, 3–255) | returns `TLeaveBalanceItem`; message `"Saldo cuti berhasil diperbarui."` |
+| GET | `/api/leave-balance/me` | | any signed-in user: `{ leave_type, balance, pending_days, monthly_accrual, last_accrual_period } \| null` (null when the user has no employee) |
+
+```ts
+TLeaveBalanceItem = {
+  employee: { id, employee_number, name, position, department: { id, name, alias } | null },
+  balance: number,
+  is_set: boolean,              // at least one `set` entry exists
+  last_set_at: string | null,
+  last_accrual_period: string | null,   // "2026-11"
+  used_this_year: number,       // sum of `leave` entries in the current year, positive
+}
+TLeaveBalanceEntry = {
+  id, type: "set" | "accrual" | "leave", amount, balance_after, period, note, created_at,
+  leave_request: { id, subject, start_date, end_date } | null,
+  created_by: { id, name } | null,
+}
+```
+
+### Dashboard change (§8)
+
+`me.annual_leave` becomes `{ leave_type, quota, used, remaining }` with `remaining` = current ledger
+balance, `used` = this year's `leave` entries (positive), `quota` = `remaining + used`. It is `null` when
+the user has no employee.
+
+### Permission
+
+New system permission `leave.manage_balance` (group `leave`, label "Manage leave balances"), granted to
+**Administrator** and **HR** by a migration. Frontend route `/setup/leave-balances` (Setup module).

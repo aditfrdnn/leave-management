@@ -15,7 +15,8 @@
     "departments": "Departments",
     "users": "Users",
     "roles": "Roles",
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "leaveBalances": "Leave Balances"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -27,6 +28,7 @@
     "departments": "Departments",
     "users": "Users",
     "roles": "Roles",
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "leave-balances": "Leave Balances"
   }
 }

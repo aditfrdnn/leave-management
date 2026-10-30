@@ -15,7 +15,8 @@
     "departments": "Departemen",
     "users": "Pengguna",
     "roles": "Role",
-    "permissions": "Hak Akses"
+    "permissions": "Hak Akses",
+    "leaveBalances": "Saldo Cuti"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -27,6 +28,7 @@
     "departments": "Departemen",
     "users": "Pengguna",
     "roles": "Role",
-    "permissions": "Hak Akses"
+    "permissions": "Hak Akses",
+    "leave-balances": "Saldo Cuti"
   }
 }

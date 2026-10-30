@@ -11,7 +11,7 @@
     "annual": {
       "label": "Annual leave left",
       "caption": "{used} of {quota} days used",
-      "none": "No annual leave type configured",
+      "none": "Ask HR to set up your leave balance",
       "progress": "Annual leave used"
     },
     "daysTaken": {

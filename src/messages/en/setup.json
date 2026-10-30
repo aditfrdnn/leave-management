@@ -325,5 +325,71 @@
       "groupRequired": "Enter a group",
       "groupMax": "The group can be at most 50 characters"
     }
+  },
+  "leaveBalances": {
+    "page": {
+      "title": "Leave Balances",
+      "description": "Each employee's remaining annual leave. Set the real figure once; it then moves by itself."
+    },
+    "howItWorks": "Set each employee's current remaining annual leave once. After that it moves by itself: +1 day on the 1st of every month, and approved annual leave is deducted.",
+    "searchPlaceholder": "Search name or NIK",
+    "allDepartments": "All departments",
+    "empty": "No active employees yet",
+    "emptySearch": "No employee matches the filter",
+    "notSet": "Not set",
+    "daysUnit": "days",
+    "lastSet": "Set",
+    "lastAccrual": "Last +1",
+    "columns": {
+      "employee": "Employee",
+      "department": "Department",
+      "balance": "Remaining",
+      "usedThisYear": "Used this year",
+      "lastUpdates": "Updates"
+    },
+    "actions": {
+      "set": "Set {name}'s balance",
+      "history": "History of {name}'s balance"
+    },
+    "dialog": {
+      "title": "Set remaining leave",
+      "current": "Current balance",
+      "newBalance": "New balance",
+      "delta": "{value} days",
+      "note": "Reason",
+      "notePlaceholder": "e.g. Opening balance from HR records, Oct 2026",
+      "hint": "Use halves for half days (e.g. 7.5). The change and reason are kept in the history.",
+      "saveNext": "Save & next: {name}"
+    },
+    "history": {
+      "title": "Balance history",
+      "current": "now {value} days",
+      "empty": "No changes yet.",
+      "system": "system",
+      "after": "→ {value}",
+      "newer": "Newer",
+      "older": "Older",
+      "types": {
+        "set": "Set by HR",
+        "accrual": "Monthly +1 ({period})",
+        "leave": "Approved leave"
+      }
+    },
+    "toast": {
+      "saved": "Balance saved.",
+      "failed": "Could not save the balance"
+    },
+    "validation": {
+      "balanceRequired": "Enter the balance",
+      "balanceRange": "Balance must be between -365 and 365 days",
+      "balanceStep": "Use whole or half days (e.g. 7.5)",
+      "noteRequired": "Write a short reason (at least 3 characters)",
+      "noteMax": "Reason must not exceed 255 characters"
+    },
+    "errors": {
+      "loadList": "Failed to load leave balances",
+      "loadHistory": "Failed to load the history",
+      "save": "Failed to save the balance"
+    }
   }
 }

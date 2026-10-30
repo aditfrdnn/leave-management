@@ -71,6 +71,8 @@ export default function LeaveRequestTable() {
 
   const afterCancel = () => {
     queryClient.invalidateQueries({ queryKey: LEAVE_REQUESTS_QUERY_KEY });
+    queryClient.invalidateQueries({ queryKey: ["leave", "my-balance"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     if (cancelTarget) queryClient.invalidateQueries({ queryKey: LEAVE_DETAIL_QUERY_KEY(cancelTarget.id) });
   };
 

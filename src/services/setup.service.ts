@@ -5,6 +5,9 @@ import {
   employee,
   employeeOptions,
   employees,
+  leaveBalance,
+  leaveBalanceEntries,
+  leaveBalances,
   permission,
   permissionGroups,
   permissions,
@@ -38,6 +41,10 @@ import type {
   TUserItem,
   TUserListParams,
   TUserPayload,
+  TLeaveBalanceEntry,
+  TLeaveBalanceItem,
+  TLeaveBalanceListParams,
+  TLeaveBalancePayload,
 } from "@/types/setup";
 import { toQueryParams } from "./to-query-params";
 
@@ -103,6 +110,28 @@ export const setupService = {
 
   async deleteEmployee(id: number | string) {
     const { data } = await instance.delete<TApiResponse<null>>(employee(id));
+
+    return data;
+  },
+
+  /* --------------------------- Annual leave balance -------------------------- */
+
+  async getLeaveBalances(params: TLeaveBalanceListParams) {
+    const { data } = await instance.get<TApiPaginated<TLeaveBalanceItem>>(leaveBalances, { params: toQueryParams(params) });
+
+    return data;
+  },
+
+  async getLeaveBalanceEntries(employeeId: number | string, params: { page?: number; per_page?: number }) {
+    const { data } = await instance.get<TApiPaginated<TLeaveBalanceEntry>>(leaveBalanceEntries(employeeId), {
+      params: toQueryParams(params),
+    });
+
+    return data;
+  },
+
+  async setLeaveBalance(employeeId: number | string, payload: TLeaveBalancePayload) {
+    const { data } = await instance.put<TApiResponse<TLeaveBalanceItem>>(leaveBalance(employeeId), payload);
 
     return data;
   },

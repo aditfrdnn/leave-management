@@ -35,6 +35,11 @@
     "toast": {
       "created": "Pengajuan cuti terkirim.",
       "failed": "Gagal mengirim pengajuan cuti"
+    },
+    "balance": {
+      "label": "Sisa cuti tahunan",
+      "pending": "{count} hari masih menunggu persetujuan",
+      "exceeds": "Hari yang dipilih melebihi sisa cuti tahunan Anda ({count} hari setelah pengajuan yang masih menunggu). Pengajuan tetap bisa dikirim; HR dan approver akan melihatnya."
     }
   },
   "history": {

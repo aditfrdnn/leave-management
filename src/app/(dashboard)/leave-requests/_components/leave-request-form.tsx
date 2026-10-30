@@ -23,7 +23,7 @@ import { isActionState } from "@/lib/action-state";
 import { cn } from "@/lib/utils/utils";
 import { leaveRequestSchema, type LeaveRequestSchemaType } from "@/validations/leave-validations";
 import { SentIcon } from "@hugeicons/core-free-icons";
-import { CreateLeaveRequest, GetApprovers, GetLeaveTypes } from "../action";
+import { CreateLeaveRequest, GetApprovers, GetLeaveTypes, GetMyLeaveBalance } from "../action";
 import { LEAVE_REQUESTS_QUERY_KEY } from "./leave-request-table";
 
 /** The first working day after the last leave date (weekends skipped). */
@@ -49,6 +49,9 @@ function buildFormData(values: LeaveRequestSchemaType) {
   return formData;
 }
 
+/** Shared with the dashboard and history so a decision refreshes the number everywhere. */
+export const MY_LEAVE_BALANCE_QUERY_KEY = ["leave", "my-balance"] as const;
+
 export default function LeaveRequestForm() {
   const t = useTranslations("leave");
   const translateMessage = useTranslateMessage();
@@ -68,6 +71,18 @@ export default function LeaveRequestForm() {
     queryKey: ["leave", "leave-types"],
     queryFn: GetLeaveTypes,
   });
+
+  const { data: myBalance } = useQuery({
+    queryKey: MY_LEAVE_BALANCE_QUERY_KEY,
+    queryFn: GetMyLeaveBalance,
+  });
+
+  const selectedLeaveType = useWatch({ control: form.control, name: "leave_type" });
+  // The balance only applies to the annual leave type; the API names it, the dropdown lists names.
+  const isAnnualSelected =
+    !!myBalance && (leaveTypes ?? []).some((item) => String(item.id) === selectedLeaveType && item.text === myBalance.leave_type);
+  const availableDays = myBalance ? myBalance.balance - myBalance.pending_days : 0;
+  const exceedsBalance = isAnnualSelected && leaveDates.length > availableDays;
 
   const { data: approvers, isLoading: isApproversLoading } = useQuery({
     queryKey: ["leave", "approvers"],
@@ -111,6 +126,8 @@ export default function LeaveRequestForm() {
       form.reset(INITIAL_LEAVE_REQUEST_FORM);
       setSelectedDates([]);
       queryClient.invalidateQueries({ queryKey: LEAVE_REQUESTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: MY_LEAVE_BALANCE_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
     onError: (error: unknown) => {
       if (!isActionState(error)) {
@@ -192,7 +209,25 @@ export default function LeaveRequestForm() {
                           <dt className="font-medium">{t("form.fields.daysTotal")}</dt>
                           <dd className="type-metric">{t("form.fields.days", { count: leaveDates.length })}</dd>
                         </div>
+                        {myBalance && (
+                          <div>
+                            <dt className="font-medium">{t("form.balance.label")}</dt>
+                            <dd className="text-muted-foreground">
+                              <span className={cn("font-semibold text-foreground tabular-nums", availableDays < 0 && "text-destructive")}>
+                                {t("form.fields.days", { count: myBalance.balance })}
+                              </span>
+                              {myBalance.pending_days > 0 && (
+                                <span className="block text-xs">{t("form.balance.pending", { count: myBalance.pending_days })}</span>
+                              )}
+                            </dd>
+                          </div>
+                        )}
                       </dl>
+                      {exceedsBalance && (
+                        <p role="status" className="rounded-md bg-yellow/12 px-2.5 py-1.5 text-xs text-yellow-strong">
+                          {t("form.balance.exceeds", { count: Math.max(availableDays, 0) })}
+                        </p>
+                      )}
                     </div>
                     <FormMessage className="-mt-1 text-xs italic" />
                   </FormItem>

@@ -199,3 +199,63 @@ export type TPermissionPayload = {
   label: string;
   group_name: string;
 };
+
+/* --------------------------- Annual leave balance -------------------------- */
+
+/** `GET /api/leave-balances` row (docs/setup-module.md §10). */
+export type TLeaveBalanceItem = {
+  employee: {
+    id: number;
+    employee_number: string;
+    name: string;
+    position: string | null;
+    department: { id: number; name: string; alias: string } | null;
+  };
+  balance: number;
+  /** HR has set this employee's balance at least once. */
+  is_set: boolean;
+  last_set_at: string | null;
+  /** `YYYY-MM` of the latest monthly accrual. */
+  last_accrual_period: string | null;
+  used_this_year: number;
+};
+
+export type TLeaveBalanceSortKey = "name" | "employee_number" | "balance";
+
+export type TLeaveBalanceListParams = {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  department_id?: string;
+  status?: TActiveStatus;
+  sort_by?: TLeaveBalanceSortKey;
+  sort_dir?: TSortDirection;
+};
+
+export type TLeaveBalanceEntryType = "set" | "accrual" | "leave";
+
+export type TLeaveBalanceEntry = {
+  id: number;
+  type: TLeaveBalanceEntryType;
+  amount: number;
+  balance_after: number;
+  period: string | null;
+  note: string | null;
+  created_at: string;
+  leave_request: { id: number; subject: string; start_date: string; end_date: string } | null;
+  created_by: { id: number; name: string } | null;
+};
+
+export type TLeaveBalancePayload = {
+  balance: number;
+  note: string;
+};
+
+/** `GET /api/leave-balance/me`; null when the signed-in user has no employee record. */
+export type TMyLeaveBalance = {
+  leave_type: string;
+  balance: number;
+  pending_days: number;
+  monthly_accrual: number;
+  last_accrual_period: string | null;
+} | null;

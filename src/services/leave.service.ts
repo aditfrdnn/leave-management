@@ -7,6 +7,7 @@ import {
   leaveRequestCancel,
   leaveRequests,
   leaveTypes,
+  myLeaveBalance,
 } from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
 import type { TApiPaginated, TApiResponse, TDropdownOption } from "@/types/api";
@@ -20,9 +21,17 @@ import type {
   TLeaveDetail,
   TLeaveRequestPayload,
 } from "@/types/leave";
+import type { TMyLeaveBalance } from "@/types/setup";
 import { toQueryParams } from "./to-query-params";
 
 export const leaveService = {
+  /** The signed-in user's annual leave balance (docs/setup-module.md §10); null without an employee record. */
+  async getMyLeaveBalance() {
+    const { data } = await instance.get<TApiResponse<TMyLeaveBalance>>(myLeaveBalance);
+
+    return data;
+  },
+
   /** The signed-in user's requests; the API returns the whole list (no paging yet). */
   async getLeaveRequests(params: TLeaveListParams) {
     const { data } = await instance.get<TApiPaginated<TLeave>>(leaveRequests, { params: toQueryParams(params) });

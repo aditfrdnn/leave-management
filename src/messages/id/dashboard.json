@@ -11,7 +11,7 @@
     "annual": {
       "label": "Sisa cuti tahunan",
       "caption": "{used} dari {quota} hari terpakai",
-      "none": "Jenis cuti tahunan belum diatur",
+      "none": "Minta HR mengatur saldo cuti Anda",
       "progress": "Cuti tahunan terpakai"
     },
     "daysTaken": {

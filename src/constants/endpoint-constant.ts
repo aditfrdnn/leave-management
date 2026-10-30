@@ -28,6 +28,12 @@ const employeeOptions = "/api/dropdown/employees";
 // Dashboard
 const dashboard = "/api/dashboard";
 
+// Annual leave balance (docs/setup-module.md §10)
+const leaveBalances = "/api/leave-balances";
+const leaveBalance = (employeeId: number | string) => `${leaveBalances}/${employeeId}`;
+const leaveBalanceEntries = (employeeId: number | string) => `${leaveBalances}/${employeeId}/entries`;
+const myLeaveBalance = "/api/leave-balance/me";
+
 // Setup (docs/setup-module.md)
 const users = "/api/users";
 const user = (id: number | string) => `${users}/${id}`;
@@ -58,6 +64,10 @@ export {
   roleOptions,
   employeeOptions,
   dashboard,
+  leaveBalances,
+  leaveBalance,
+  leaveBalanceEntries,
+  myLeaveBalance,
   users,
   user,
   employees,

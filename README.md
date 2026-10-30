@@ -55,6 +55,7 @@ Local admin login: see "Login sebagai admin di lokal" in the leave-service READM
 | `/leave-requests` | New leave request form + the signed-in user's history (paged, sortable, detail sheet, cancel) |
 | `/approvals` | Approver inbox: pending / decided requests, approve or reject with a note (`leave.approve`) |
 | `/setup/master-data/employees`, `/setup/master-data/departments` | Employee and department master data (`employees.manage`, `departments.manage`) |
+| `/setup/leave-balances` | Each employee's remaining annual leave: set it once, history of every change (`leave.manage_balance`) |
 | `/setup/users` | Login accounts: role, linked employee, active/inactive (`users.manage`) |
 | `/setup/roles`, `/setup/permissions` | Roles and the permission catalog (`roles.manage`) |
 
