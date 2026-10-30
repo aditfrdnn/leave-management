@@ -23,7 +23,7 @@ import { isActionState } from "@/lib/action-state";
 import { cn } from "@/lib/utils/utils";
 import { leaveRequestSchema, type LeaveRequestSchemaType } from "@/validations/leave-validations";
 import { SentIcon } from "@hugeicons/core-free-icons";
-import { CreateLeaveRequest, GetApprovers, GetHolidayCalendar, GetLeaveTypes, GetMyLeaveBalance } from "../action";
+import { CreateLeaveRequest, GetApprovers, GetHolidayCalendar, GetMyLeaveBalance } from "../action";
 import { LEAVE_REQUESTS_QUERY_KEY } from "./leave-request-table";
 
 const dayKey = (date: Date) => format(date, "yyyy-MM-dd");
@@ -76,11 +76,6 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
   const leaveDates = useWatch({ control: form.control, name: "leave_date" }) ?? [];
   const returnToOffice = useWatch({ control: form.control, name: "return_to_office" });
 
-  const { data: leaveTypes, isLoading: isLeaveTypesLoading } = useQuery({
-    queryKey: ["leave", "leave-types"],
-    queryFn: GetLeaveTypes,
-  });
-
   const today = useMemo(() => {
     const value = new Date();
     value.setHours(0, 0, 0, 0);
@@ -113,22 +108,15 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
     queryFn: GetMyLeaveBalance,
   });
 
-  const selectedLeaveType = useWatch({ control: form.control, name: "leave_type" });
-  // The balance only applies to the annual leave type; the API names it, the dropdown lists names.
-  const isAnnualSelected =
-    !!myBalance && (leaveTypes ?? []).some((item) => String(item.id) === selectedLeaveType && item.text === myBalance.leave_type);
+  // Every request is annual leave (the API fills in the type), so the balance always applies.
   const availableDays = myBalance ? myBalance.balance - myBalance.pending_days : 0;
-  const exceedsBalance = isAnnualSelected && leaveDates.length > availableDays;
+  const exceedsBalance = !!myBalance && leaveDates.length > availableDays;
 
   const { data: approvers, isLoading: isApproversLoading } = useQuery({
     queryKey: ["leave", "approvers"],
     queryFn: GetApprovers,
   });
 
-  const leaveTypeItems = useMemo(
-    () => (leaveTypes ?? []).map((item) => ({ value: String(item.id), label: item.text })),
-    [leaveTypes],
-  );
   const approverItems = useMemo(
     () => (approvers ?? []).map((item) => ({ value: String(item.id), label: item.name })),
     [approvers],
@@ -198,15 +186,13 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
             <fieldset disabled={isPending} className="flex flex-col gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormInput form={form} name="subject" label={t("form.fields.subject")} placeholder={t("form.fields.subjectPlaceholder")} isRequired />
-                <FormSelect
-                  form={form}
-                  name="leave_type"
-                  label={t("form.fields.leaveType")}
-                  placeholder={isLeaveTypesLoading ? "…" : t("form.fields.leaveTypePlaceholder")}
-                  items={leaveTypeItems}
-                  disabled={isPending || isLeaveTypesLoading}
-                  isRequired
-                />
+                {/* Read-only: annual leave is the only type in use; the API assigns it. */}
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium">{t("form.fields.leaveType")}</span>
+                  <p className="flex h-9 items-center rounded-md border border-dashed px-3 text-sm text-muted-foreground">
+                    {t("form.fields.annualLeave")}
+                  </p>
+                </div>
               </div>
 
               <FormField

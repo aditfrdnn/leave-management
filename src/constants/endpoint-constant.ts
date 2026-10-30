@@ -18,7 +18,6 @@ const leaveApprove = (id: number | string) => `${leaveRequests}/${id}/approve`;
 const leaveReject = (id: number | string) => `${leaveRequests}/${id}/reject`;
 
 // Dropdowns
-const leaveTypes = "/api/dropdown/leave-types";
 const approvers = "/api/dropdown/users";
 const departmentOptions = "/api/dropdown/departments";
 const roleOptions = "/api/dropdown/roles";
@@ -64,7 +63,6 @@ export {
   leaveRequestCancel,
   leaveApprove,
   leaveReject,
-  leaveTypes,
   approvers,
   departmentOptions,
   roleOptions,

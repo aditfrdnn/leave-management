@@ -5,7 +5,6 @@ import { getTranslations } from "next-intl/server";
 import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
-import type { TApiPaginated, TDropdownOption } from "@/types/api";
 import type { THolidayDay, TApprover, TLeave, TLeaveListParams, TLeaveListResponse } from "@/types/leave";
 import type { TMyLeaveBalance } from "@/types/setup";
 import { leaveRequestSchema } from "@/validations/leave-validations";
@@ -48,16 +47,6 @@ export async function GetMyLeaveBalance(): Promise<TMyLeaveBalance> {
   }
 }
 
-export async function GetLeaveTypes(): Promise<TDropdownOption[]> {
-  try {
-    const response = await leaveService.getLeaveTypes();
-
-    return response.data ?? [];
-  } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadLeaveTypes")));
-  }
-}
-
 export async function GetApprovers(): Promise<TApprover[]> {
   try {
     const response = await leaveService.getApprovers();
@@ -77,7 +66,6 @@ export async function CreateLeaveRequest(prevState: LeaveActionState, formData: 
 
   const parsed = leaveRequestSchema.safeParse({
     subject: getText(formData, "subject"),
-    leave_type: getText(formData, "leave_type"),
     leave_date: formData.getAll("leave_date").filter((value): value is string => typeof value === "string"),
     approval_user: getText(formData, "approval_user"),
     reason: getText(formData, "reason"),

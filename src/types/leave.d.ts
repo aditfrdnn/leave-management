@@ -52,7 +52,8 @@ export type TApprover = {
 /** Body of `POST /api/leave-request`. Dates are `dd-MM-yyyy`. */
 export type TLeaveRequestPayload = {
   subject: string;
-  leave_type: string;
+  /** Omitted by the form: the API uses the annual leave type. */
+  leave_type?: string;
   leave_date: string[];
   approval_user: string;
   reason: string;

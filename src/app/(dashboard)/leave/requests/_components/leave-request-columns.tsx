@@ -70,12 +70,6 @@ export const leaveRequestColumns = ({
     ),
   },
   {
-    id: "leave_type",
-    accessorFn: (row) => row.leave_type?.name ?? "",
-    header: t("history.columns.leaveType"),
-    cell: ({ row }) => <p className="whitespace-nowrap">{row.original.leave_type?.name ?? "-"}</p>,
-  },
-  {
     accessorKey: "duration",
     header: t("history.columns.duration"),
     meta: { sortKey: "duration" },

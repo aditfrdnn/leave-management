@@ -6,7 +6,6 @@ import {
   leaveRequestCancel,
   leaveRequests,
   holidayCalendar,
-  leaveTypes,
   myLeaveBalance,
 } from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
@@ -81,11 +80,6 @@ export const leaveService = {
 
   /* ------------------------------- Dropdowns ------------------------------- */
 
-  async getLeaveTypes() {
-    const { data } = await instance.get<TApiResponse<TDropdownOption[]>>(leaveTypes);
-
-    return data;
-  },
 
   async getApprovers() {
     const { data } = await instance.get<TApiResponse<TApprover[]>>(approvers);

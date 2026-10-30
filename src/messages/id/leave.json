@@ -11,7 +11,6 @@
       "subject": "No. LVR",
       "subjectPlaceholder": "Masukkan No. LVR",
       "leaveType": "Jenis Cuti",
-      "leaveTypePlaceholder": "Pilih jenis cuti",
       "leaveDate": "Tanggal Cuti",
       "leaveDateHint": "Pilih satu atau beberapa hari kerja",
       "selectedDates": "Tanggal Cuti",
@@ -30,7 +29,8 @@
       "replacement": "Pengganti Sementara",
       "replacementPlaceholder": "mis. Budi",
       "phone": "Nomor Telepon",
-      "phonePlaceholder": "mis. +62 812 3456 7890"
+      "phonePlaceholder": "mis. +62 812 3456 7890",
+      "annualLeave": "Cuti tahunan"
     },
     "toast": {
       "created": "Pengajuan cuti terkirim.",
@@ -102,7 +102,6 @@
   },
   "validation": {
     "subjectRequired": "Masukkan nomor LVR",
-    "leaveTypeRequired": "Pilih jenis cuti",
     "leaveDateRequired": "Pilih minimal satu tanggal",
     "approverRequired": "Pilih approver",
     "reasonMin": "Alasan minimal 10 karakter",
@@ -115,7 +114,6 @@
   },
   "errors": {
     "loadList": "Gagal memuat pengajuan cuti",
-    "loadLeaveTypes": "Gagal memuat jenis cuti",
     "loadApprovers": "Gagal memuat daftar approver",
     "create": "Gagal mengirim pengajuan cuti",
     "formDataEmpty": "Data form kosong",

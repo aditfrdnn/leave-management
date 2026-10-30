@@ -2,7 +2,6 @@ import type { LeaveRequestSchemaType } from "@/validations/leave-validations";
 
 export const INITIAL_LEAVE_REQUEST_FORM: LeaveRequestSchemaType = {
   subject: "",
-  leave_type: "",
   leave_date: [],
   approval_user: "",
   reason: "",

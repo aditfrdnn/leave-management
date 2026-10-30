@@ -11,7 +11,6 @@
       "subject": "LVR No.",
       "subjectPlaceholder": "Enter LVR No.",
       "leaveType": "Leave Type",
-      "leaveTypePlaceholder": "Select leave type",
       "leaveDate": "Leave Dates",
       "leaveDateHint": "Pick one or more working days",
       "selectedDates": "Leave Dates",
@@ -30,7 +29,8 @@
       "replacement": "Temporary Replacement",
       "replacementPlaceholder": "e.g., Budi",
       "phone": "Phone Number",
-      "phonePlaceholder": "e.g., +62 812 3456 7890"
+      "phonePlaceholder": "e.g., +62 812 3456 7890",
+      "annualLeave": "Annual leave"
     },
     "toast": {
       "created": "Leave request submitted.",
@@ -102,7 +102,6 @@
   },
   "validation": {
     "subjectRequired": "Please enter a LVR number",
-    "leaveTypeRequired": "Please select a leave type",
     "leaveDateRequired": "Please select at least one date",
     "approverRequired": "Please select an approver",
     "reasonMin": "Reason must be at least 10 characters",
@@ -115,7 +114,6 @@
   },
   "errors": {
     "loadList": "Failed to load your leave requests",
-    "loadLeaveTypes": "Failed to load leave types",
     "loadApprovers": "Failed to load approvers",
     "create": "Failed to submit the leave request",
     "formDataEmpty": "Form data is empty",
