@@ -133,3 +133,15 @@ export const leaveBalanceSchema = z.object({
 });
 
 export type LeaveBalanceSchemaType = z.infer<typeof leaveBalanceSchema>;
+
+/* -------------------------------- Holidays --------------------------------- */
+
+export const holidaySchema = z.object({
+  id: optionalId,
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "setup.holidays.validation.dateRequired"),
+  name: z.string().trim().min(1, "setup.holidays.validation.nameRequired").max(100, "setup.holidays.validation.nameMax"),
+  description: z.string().trim().max(500, "setup.holidays.validation.descriptionMax"),
+  is_mass_leave: z.boolean(),
+});
+
+export type HolidaySchemaType = z.infer<typeof holidaySchema>;

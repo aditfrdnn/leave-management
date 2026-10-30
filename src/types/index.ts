@@ -6,3 +6,4 @@ export * from "./menu";
 export * from "./table";
 export * from "./dashboard";
 export * from "./setup";
+export * from "./profile";

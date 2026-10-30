@@ -45,10 +45,11 @@ Outside `src/`: `docs/`, `scripts/check-messages.mjs`, `.husky/pre-commit`, `.gi
 | Route | Group | Page composition | Data |
 | --- | --- | --- | --- |
 | `/` | — | `redirect("/dashboard")` | — |
-| `/dashboard` | `(dashboard)` | `DashboardView`: `MySummary` (stat tiles), `UpcomingLeaves`, `ApproverCard` (when `approver` ≠ null), `OrganizationSummary` (stat tiles, monthly bar chart, out-today list, by-type and by-department bars; when `organization` ≠ null) | `GetDashboard(year)` |
+| `/dashboard` | `(dashboard)` | `ProfileView`: identity card, employment, contact, account, direct reports | `GetMyProfile` → `GET /api/me/profile` |
+| `/leave/dashboard` | `(dashboard)/leave` | `DashboardView`: `MySummary`, `UpcomingLeaves`, `ApproverCard` (when `approver` ≠ null), `OrganizationSummary` (when `organization` ≠ null) | `GetDashboard(year)` |
 | `/sign-in` | `(auth)` | `SignInForm` | `SignIn` action → `authService.signIn` |
-| `/leave-requests` | `(dashboard)` | `PageHeader` → `LeaveRequestForm` (2/5) + `LeaveRequestTable` (3/5, server-paged `DataTable`, `LeaveDetailSheet`, `CancelLeaveDialog`) | `GetLeaveTypes`, `GetApprovers`, `CreateLeaveRequest`, `GetLeaveRequests`; shared `GetLeaveRequest`, `CancelLeaveRequest` |
-| `/approvals` | `(dashboard)` | `PageHeader` → `PermissionGate(leave.approve)` → `ApprovalTable` (status tabs + search + `DataTable`, `LeaveDetailSheet`, `ApprovalDecisionDialog`) | `GetApprovals`, `DecideLeaveRequest`, shared `GetLeaveRequest` |
+| `/leave/requests` | `(dashboard)/leave` | `PageHeader` → `LeaveRequestTable` (server-paged `DataTable`, "new request" button → `LeaveRequestFormDialog`, `LeaveDetailSheet`, `CancelLeaveDialog`; `?new=1` opens the dialog) | `GetLeaveTypes`, `GetApprovers`, `CreateLeaveRequest`, `GetLeaveRequests`; shared `GetLeaveRequest`, `CancelLeaveRequest` |
+| `/leave/approvals` | `(dashboard)/leave` | `PageHeader` → `PermissionGate(leave.approve)` → `ApprovalTable` (status tabs + search + `DataTable`, `LeaveDetailSheet`, `ApprovalDecisionDialog`) | `GetApprovals`, `DecideLeaveRequest`, shared `GetLeaveRequest` |
 | `/setup/leave-balances` | `(dashboard)` | `PermissionGate(leave.manage_balance)` → `LeaveBalanceTable` (search, department filter, sort by balance) + `SetBalanceDialog` ("save & next" walks the unset rows) + `BalanceHistorySheet` | `GetLeaveBalances`, `SetLeaveBalance`, `GetLeaveBalanceEntries`; the leave form reads `GetMyLeaveBalance` |
 | `/setup/master-data/employees`, `/setup/master-data/departments`, `/setup/users`, `/setup/roles`, `/setup/permissions` | `(dashboard)` | `PageHeader` → `PermissionGate(<menu permission>)` → `<x>-table` (search, filters, server-paged `DataTable`) + `<x>-form-dialog` (create/update) + `DeleteDialog`; roles add a detail sheet | `src/app/(dashboard)/setup/**/action.ts` → `setupService`; contract in `docs/setup-module.md` |
 
@@ -85,7 +86,7 @@ Logout:           NavUser → SignOut(currentUrl) → DELETE /api/auth/logout (4
 
 ```
 LeaveRequestTable ── useQuery(["leave","requests"], GetLeaveRequests) ──▶ action.ts ──▶ leaveService.getLeaveRequests ──▶ GET /api/leave-request
-LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶ action.ts ──▶ leaveService.getLeaveTypes / getApprovers
+LeaveRequestFormDialog ── useQuery(["leave","leave-types"|"approvers"]) ──▶ action.ts ──▶ leaveService.getLeaveTypes / getApprovers
                   ── useMutation(values => CreateLeaveRequest(state, formData)) ──▶ action.ts ──▶ leaveService.createLeaveRequest ──▶ POST /api/leave-request
 ```
 
@@ -113,7 +114,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 | --- | --- | --- |
 | `stores/auth.store.ts` (Zustand) | `user` (refreshed from the API's `/api/me` on every full load), `isAuthenticated`, `isInitialized` | `SignInForm`, `NavUser`, `AuthProvider` |
 | React Query cache | leave requests, leave types, approvers | the feature components' `useQuery` |
-| `useState` in `LeaveRequestForm` | the selected `Date[]` mirrored into the RHF `leave_date` field | the calendar |
+| `useState` in `LeaveRequestFormDialog` | the selected `Date[]` mirrored into the RHF `leave_date` field | the calendar |
 | `useModuleLastPaths` (`localStorage`) | last visited path per module | `AppSidebar` |
 | `NEXT_LOCALE` cookie | UI language | `LanguageSwitcher` |
 
@@ -134,7 +135,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 | `nav-user.tsx`, `avatar-user.tsx` | Header user menu with logout |
 | `mode-toggle.tsx`, `language-switcher.tsx`, `flag-icon.tsx` | Theme and language controls in the header |
 
-Feature-only components live in `app/(dashboard)/leave-requests/_components/` (`leave-request-form.tsx`, `leave-request-table.tsx`, `leave-request-columns.tsx`) and `app/(dashboard)/approvals/_components/` (`approval-table.tsx`, `approval-columns.tsx`, `approval-decision-dialog.tsx`). Pieces both pages share sit one level up in `app/(dashboard)/_components/` (`leave-status-badge.tsx`, `leave-detail-sheet.tsx`, `cancel-leave-dialog.tsx`) with their actions in `app/(dashboard)/action.ts`.
+Each module owns a folder under `app/(dashboard)/`: `dashboard/` (Home), `leave/` and `setup/`. Inside `leave/`, every page keeps its own `_components/` (`requests/_components/leave-request-{table,columns,form-dialog}.tsx`, `approvals/_components/approval-*.tsx`, `dashboard/_components/*`), and what several leave pages share sits in `leave/_components/` (`leave-status-badge.tsx`, `leave-detail-sheet.tsx`, `cancel-leave-dialog.tsx`) with its actions in `leave/action.ts`. A new module gets its own folder and path prefix the same way. The leave calendar blocks weekends and the holidays from `GET /api/holidays/calendar`, and "return to office" skips both.
 
 ---
 

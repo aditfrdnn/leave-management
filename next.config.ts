@@ -7,7 +7,12 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   /** The old "LVR System" signed in at /login; keep bookmarks and old e-mail links working. */
   async redirects() {
-    return [{ source: "/login", destination: "/sign-in", permanent: false }];
+    return [
+      { source: "/login", destination: "/sign-in", permanent: false },
+      // Leave pages moved under the module prefix (/leave/*); old links, bookmarks and e-mails keep working.
+      { source: "/leave-requests", destination: "/leave/requests", permanent: false },
+      { source: "/approvals", destination: "/leave/approvals", permanent: false },
+    ];
   },
 };
 

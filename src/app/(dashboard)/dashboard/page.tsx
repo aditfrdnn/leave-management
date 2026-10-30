@@ -1,5 +1,6 @@
-import DashboardView from "./_components/dashboard-view";
+import ProfileView from "./_components/profile-view";
 
-export default function DashboardPage() {
-  return <DashboardView />;
+/** Home: who the signed-in person is in the company. Module dashboards live in their modules. */
+export default function HomePage() {
+  return <ProfileView />;
 }

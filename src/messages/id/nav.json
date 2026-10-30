@@ -9,14 +9,16 @@
   },
   "menus": {
     "mainDashboard": "Dashboard",
-    "myLeaveRequests": "Pengajuan Cuti Saya",
+    "myLeaveRequests": "Cuti Saya",
     "approvals": "Persetujuan",
     "employees": "Karyawan",
     "departments": "Departemen",
     "users": "Pengguna",
     "roles": "Role",
     "permissions": "Hak Akses",
-    "leaveBalances": "Saldo Cuti"
+    "leaveBalances": "Saldo Cuti",
+    "leaveDashboard": "Dashboard",
+    "holidays": "Hari Libur"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -29,6 +31,9 @@
     "users": "Pengguna",
     "roles": "Role",
     "permissions": "Hak Akses",
-    "leave-balances": "Saldo Cuti"
+    "leave-balances": "Saldo Cuti",
+    "leave": "Cuti",
+    "requests": "Cuti Saya",
+    "holidays": "Hari Libur"
   }
 }

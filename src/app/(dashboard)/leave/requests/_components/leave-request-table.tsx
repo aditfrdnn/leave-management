@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -15,11 +16,12 @@ import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
 import type { TLeaveSortKey } from "@/types/leave";
 import type { TTableFacet } from "@/types/table";
-import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import CancelLeaveDialog from "../../_components/cancel-leave-dialog";
 import LeaveDetailSheet, { LEAVE_DETAIL_QUERY_KEY } from "../../_components/leave-detail-sheet";
 import { GetLeaveRequests } from "../action";
 import { leaveRequestColumns } from "./leave-request-columns";
+import LeaveRequestFormDialog from "./leave-request-form-dialog";
 
 export const LEAVE_REQUESTS_QUERY_KEY = ["leave", "requests"] as const;
 
@@ -38,6 +40,18 @@ export default function LeaveRequestTable() {
   const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
   const [detailId, setDetailId] = useState<number | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // "New request" links elsewhere (dashboard) arrive as ?new=1 and open the dialog; closing it drops the flag.
+  const openedFromLink = searchParams.get("new") === "1";
+  const formOpen = isFormOpen || openedFromLink;
+  const onFormOpenChange = (open: boolean) => {
+    setIsFormOpen(open);
+    if (!open && openedFromLink) router.replace(pathname, { scroll: false });
+  };
   const [cancelTarget, setCancelTarget] = useState<{ id: number; subject: string } | null>(null);
 
   const params = {
@@ -87,7 +101,8 @@ export default function LeaveRequestTable() {
         <p className="text-xs text-muted-foreground">
           {pagination ? t("history.count", { count: pagination.total }) : ""}
         </p>
-        <div className="relative w-full sm:max-w-72">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+        <div className="relative w-full sm:w-72">
           <HugeiconsIcon icon={Search01Icon} className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-9"
@@ -98,6 +113,11 @@ export default function LeaveRequestTable() {
               debounce(() => onSearchChange(value), DELAY);
             }}
           />
+        </div>
+          <Button size="sm" className="self-start sm:self-auto" onClick={() => setIsFormOpen(true)}>
+            <HugeiconsIcon icon={Add01Icon} className="size-4" />
+            {t("form.newRequest")}
+          </Button>
         </div>
       </div>
 
@@ -132,6 +152,8 @@ export default function LeaveRequestTable() {
             ) : null
           }
         />
+
+        <LeaveRequestFormDialog open={formOpen} onOpenChange={onFormOpenChange} />
 
         {cancelTarget && (
           <CancelLeaveDialog

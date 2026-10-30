@@ -21,7 +21,7 @@ export default function UpcomingLeaves({ items }: { items: TLeave[] }) {
         <CardDescription>{t("description")}</CardDescription>
         <CardAction>
           <Button asChild variant="ghost" size="sm">
-            <Link href="/leave-requests">{t("viewAll")}</Link>
+            <Link href="/leave/requests">{t("viewAll")}</Link>
           </Button>
         </CardAction>
       </CardHeader>

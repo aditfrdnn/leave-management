@@ -391,5 +391,55 @@
       "loadHistory": "Failed to load the history",
       "save": "Failed to save the balance"
     }
+  },
+  "holidays": {
+    "page": {
+      "title": "Holidays",
+      "description": "Public holidays and company cuti bersama. These days cannot be taken as leave and are skipped when counting the return-to-office day."
+    },
+    "searchPlaceholder": "Search holiday name",
+    "createLabel": "Add holiday",
+    "empty": "No holidays recorded for {year} yet",
+    "emptySearch": "No holiday matches the filter",
+    "filters": {
+      "year": "Year",
+      "allTypes": "All types"
+    },
+    "types": {
+      "public": "Public holiday",
+      "mass_leave": "Cuti bersama"
+    },
+    "fields": {
+      "date": "Date",
+      "name": "Name",
+      "description": "Notes",
+      "type": "Type"
+    },
+    "form": {
+      "createTitle": "Add holiday",
+      "updateTitle": "Edit holiday",
+      "description": "The date becomes a day off in the leave calendar for everyone.",
+      "namePlaceholder": "e.g. Independence Day",
+      "descriptionPlaceholder": "Optional, e.g. the decree it comes from",
+      "isMassLeave": "Cuti bersama (company collective leave)",
+      "massLeaveHint": "Leave it off for a public holiday."
+    },
+    "toast": {
+      "created": "Holiday added.",
+      "updated": "Holiday updated.",
+      "saveFailed": "Could not save the holiday"
+    },
+    "validation": {
+      "dateRequired": "Pick a date",
+      "nameRequired": "Name is required",
+      "nameMax": "Name must not exceed 100 characters",
+      "descriptionMax": "Notes must not exceed 500 characters"
+    },
+    "errors": {
+      "loadList": "Failed to load holidays",
+      "create": "Failed to add the holiday",
+      "update": "Failed to update the holiday",
+      "delete": "Failed to delete the holiday"
+    }
   }
 }

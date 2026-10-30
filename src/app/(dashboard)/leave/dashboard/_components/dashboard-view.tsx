@@ -10,7 +10,6 @@ import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth } from "@/hooks/use-auth";
 import { Add01Icon } from "@hugeicons/core-free-icons";
 import { GetDashboard } from "../action";
 import ApproverCard from "./approver-card";
@@ -29,7 +28,6 @@ const YEARS = [CURRENT_YEAR, CURRENT_YEAR - 1, CURRENT_YEAR - 2];
  */
 export default function DashboardView() {
   const t = useTranslations("dashboard");
-  const { user } = useAuth();
   const [year, setYear] = useState(CURRENT_YEAR);
 
   const { data, isLoading, isError, error } = useQuery({
@@ -38,12 +36,11 @@ export default function DashboardView() {
     placeholderData: keepPreviousData,
   });
 
-  const firstName = user?.name?.split(" ")[0] ?? "";
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <PageHeader title={t("page.greeting", { name: firstName })} description={t("page.description")} />
+        <PageHeader title={t("page.title")} description={t("page.description")} />
         <div className="flex shrink-0 items-center gap-2">
           <Select value={String(year)} onValueChange={(value) => setYear(Number(value))}>
             <SelectTrigger size="sm" className="w-28" aria-label={t("page.year")}>
@@ -58,7 +55,7 @@ export default function DashboardView() {
             </SelectContent>
           </Select>
           <Button asChild size="sm">
-            <Link href="/leave-requests">
+            <Link href="/leave/requests?new=1">
               <HugeiconsIcon icon={Add01Icon} className="size-4" />
               {t("page.newRequest")}
             </Link>

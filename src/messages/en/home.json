@@ -1,0 +1,47 @@
+{
+  "page": {
+    "title": "Home",
+    "greeting": "Welcome back",
+    "noPosition": "No position recorded yet"
+  },
+  "noEmployee": "Your account is not linked to an employee record yet. Ask HR to link it in Setup → Users.",
+  "employment": {
+    "title": "Employment",
+    "employeeNumber": "Employee no. (NIK)",
+    "position": "Position",
+    "department": "Department",
+    "supervisor": "Supervisor",
+    "type": "Employment type",
+    "joinDate": "Joined",
+    "types": {
+      "permanent": "Permanent",
+      "contract": "Contract",
+      "probation": "Probation",
+      "intern": "Intern"
+    },
+    "tenure": "{years, plural, one {# year} other {# years}} {months, plural, one {# month} other {# months}}",
+    "tenureYears": "{years, plural, one {# year} other {# years}}",
+    "tenureMonths": "{months, plural, =0 {less than a month} one {# month} other {# months}}"
+  },
+  "contact": {
+    "title": "Contact",
+    "email": "Work e-mail",
+    "phone": "Phone"
+  },
+  "account": {
+    "title": "Account",
+    "login": "Sign-in e-mail",
+    "status": "Status",
+    "since": "Registered",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "team": {
+    "title": "Reports to you ({count})"
+  },
+  "errors": {
+    "load": "Failed to load your profile"
+  }
+}

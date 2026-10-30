@@ -34,6 +34,14 @@ const leaveBalance = (employeeId: number | string) => `${leaveBalances}/${employ
 const leaveBalanceEntries = (employeeId: number | string) => `${leaveBalances}/${employeeId}/entries`;
 const myLeaveBalance = "/api/leave-balance/me";
 
+// Holidays (docs/setup-module.md §12)
+const holidays = "/api/holidays";
+const holiday = (id: number | string) => `${holidays}/${id}`;
+const holidayCalendar = `${holidays}/calendar`;
+
+// Profile (§11)
+const myProfile = "/api/me/profile";
+
 // Setup (docs/setup-module.md)
 const users = "/api/users";
 const user = (id: number | string) => `${users}/${id}`;
@@ -68,6 +76,10 @@ export {
   leaveBalance,
   leaveBalanceEntries,
   myLeaveBalance,
+  holidays,
+  holiday,
+  holidayCalendar,
+  myProfile,
   users,
   user,
   employees,

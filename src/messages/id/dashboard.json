@@ -1,7 +1,6 @@
 {
   "page": {
-    "title": "Dashboard",
-    "greeting": "Halo, {name}",
+    "title": "Dashboard Cuti",
     "description": "Ringkasan cuti Anda dan hal yang perlu Anda tindak lanjuti.",
     "year": "Tahun",
     "newRequest": "Ajukan cuti"

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format, parse } from "date-fns";
+import { addDays, format, parse } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ import FormSelect from "@/components/common/form-select";
 import LoadingButton from "@/components/common/loading-button";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { INITIAL_LEAVE_REQUEST_FORM, LEAVE_DATE_FORMAT } from "@/constants/leave-constant";
@@ -23,17 +23,21 @@ import { isActionState } from "@/lib/action-state";
 import { cn } from "@/lib/utils/utils";
 import { leaveRequestSchema, type LeaveRequestSchemaType } from "@/validations/leave-validations";
 import { SentIcon } from "@hugeicons/core-free-icons";
-import { CreateLeaveRequest, GetApprovers, GetLeaveTypes, GetMyLeaveBalance } from "../action";
+import { CreateLeaveRequest, GetApprovers, GetHolidayCalendar, GetLeaveTypes, GetMyLeaveBalance } from "../action";
 import { LEAVE_REQUESTS_QUERY_KEY } from "./leave-request-table";
 
-/** The first working day after the last leave date (weekends skipped). */
-function getNextWorkday(date: Date): Date {
-  const next = new Date(date);
-  next.setDate(next.getDate() + 1);
-  if (next.getDay() === 6) next.setDate(next.getDate() + 2);
-  if (next.getDay() === 0) next.setDate(next.getDate() + 1);
+const dayKey = (date: Date) => format(date, "yyyy-MM-dd");
+const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
+
+/** The first working day after the last leave date: weekends and holidays skipped. */
+function getNextWorkday(date: Date, holidayKeys: Set<string>): Date {
+  let next = addDays(date, 1);
+  while (isWeekend(next) || holidayKeys.has(dayKey(next))) next = addDays(next, 1);
   return next;
 }
+
+/** The calendar looks a year ahead; holidays outside that window are not offered anyway. */
+const HOLIDAY_WINDOW_DAYS = 400;
 
 const toApi = (date: Date) => format(date, LEAVE_DATE_FORMAT);
 const fromApi = (value: string) => parse(value, LEAVE_DATE_FORMAT, new Date());
@@ -52,12 +56,14 @@ function buildFormData(values: LeaveRequestSchemaType) {
 /** Shared with the dashboard and history so a decision refreshes the number everywhere. */
 export const MY_LEAVE_BALANCE_QUERY_KEY = ["leave", "my-balance"] as const;
 
-export default function LeaveRequestForm() {
+/** The leave request form in a dialog, opened from "My Leave". A closed dialog keeps the draft. */
+export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const t = useTranslations("leave");
   const translateMessage = useTranslateMessage();
   const dateLocale = useDateLocale();
   const queryClient = useQueryClient();
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [month, setMonth] = useState(() => new Date());
 
   const form = useForm<LeaveRequestSchemaType>({
     resolver: zodResolver(leaveRequestSchema),
@@ -71,6 +77,26 @@ export default function LeaveRequestForm() {
     queryKey: ["leave", "leave-types"],
     queryFn: GetLeaveTypes,
   });
+
+  const today = useMemo(() => {
+    const value = new Date();
+    value.setHours(0, 0, 0, 0);
+    return value;
+  }, []);
+
+  const { data: holidays } = useQuery({
+    queryKey: ["leave", "holiday-calendar", dayKey(today)],
+    queryFn: () => GetHolidayCalendar(dayKey(today), dayKey(addDays(today, HOLIDAY_WINDOW_DAYS))),
+    enabled: open,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const holidayKeys = useMemo(() => new Set((holidays ?? []).map((day) => day.date)), [holidays]);
+  const holidayDates = useMemo(() => (holidays ?? []).map((day) => parse(day.date, "yyyy-MM-dd", new Date())), [holidays]);
+  const monthHolidays = useMemo(
+    () => (holidays ?? []).filter((day) => day.date.startsWith(format(month, "yyyy-MM"))),
+    [holidays, month],
+  );
 
   const { data: myBalance } = useQuery({
     queryKey: MY_LEAVE_BALANCE_QUERY_KEY,
@@ -108,7 +134,7 @@ export default function LeaveRequestForm() {
 
     setSelectedDates(next);
     form.setValue("leave_date", next.map(toApi), { shouldDirty: true, shouldValidate: form.formState.isSubmitted });
-    form.setValue("return_to_office", next.length ? toApi(getNextWorkday(next[next.length - 1])) : "", {
+    form.setValue("return_to_office", next.length ? toApi(getNextWorkday(next[next.length - 1], holidayKeys)) : "", {
       shouldValidate: form.formState.isSubmitted,
     });
   };
@@ -125,6 +151,7 @@ export default function LeaveRequestForm() {
       toast.success(translateMessage(state.message) || t("form.toast.created"));
       form.reset(INITIAL_LEAVE_REQUEST_FORM);
       setSelectedDates([]);
+      onOpenChange(false);
       queryClient.invalidateQueries({ queryKey: LEAVE_REQUESTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: MY_LEAVE_BALANCE_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
@@ -149,16 +176,13 @@ export default function LeaveRequestForm() {
 
   const onSubmit = form.handleSubmit((values) => mutate(values));
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("form.title")}</CardTitle>
-        <CardDescription>{t("form.description")}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Dialog open={open} onOpenChange={isPending ? () => {} : onOpenChange}>
+      <DialogContent className="max-h-[92svh] max-w-full overflow-y-auto sm:max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>{t("form.title")}</DialogTitle>
+          <DialogDescription>{t("form.description")}</DialogDescription>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <fieldset disabled={isPending} className="flex flex-col gap-4">
@@ -192,7 +216,11 @@ export default function LeaveRequestForm() {
                         className={cn("w-fit rounded-lg border", form.formState.errors.leave_date && "border-destructive")}
                         selected={selectedDates}
                         onSelect={onDatesChange}
-                        disabled={(date) => date < today || date.getDay() === 0 || date.getDay() === 6}
+                        month={month}
+                        onMonthChange={setMonth}
+                        disabled={(date) => date < today || isWeekend(date) || holidayKeys.has(dayKey(date))}
+                        modifiers={{ holiday: holidayDates }}
+                        modifiersClassNames={{ holiday: "[&_button]:text-destructive [&_button]:line-through" }}
                       />
                       <dl className="flex min-w-40 flex-1 flex-col gap-3 text-sm">
                         <div>
@@ -209,6 +237,22 @@ export default function LeaveRequestForm() {
                           <dt className="font-medium">{t("form.fields.daysTotal")}</dt>
                           <dd className="type-metric">{t("form.fields.days", { count: leaveDates.length })}</dd>
                         </div>
+                        {monthHolidays.length > 0 && (
+                          <div>
+                            <dt className="font-medium">{t("form.holidays.title")}</dt>
+                            <dd>
+                              <ul className="flex flex-col gap-0.5 text-muted-foreground">
+                                {monthHolidays.map((day) => (
+                                  <li key={day.date}>
+                                    <span className="text-destructive tabular-nums">{format(parse(day.date, "yyyy-MM-dd", new Date()), "d MMM", { locale: dateLocale })}</span>{" "}
+                                    {day.name}
+                                    {day.is_mass_leave && <span className="text-xs"> · {t("form.holidays.massLeave")}</span>}
+                                  </li>
+                                ))}
+                              </ul>
+                            </dd>
+                          </div>
+                        )}
                         {myBalance && (
                           <div>
                             <dt className="font-medium">{t("form.balance.label")}</dt>
@@ -252,7 +296,10 @@ export default function LeaveRequestForm() {
               </div>
             </fieldset>
 
-            <div className="flex justify-end">
+            <DialogFooter className="flex-row items-center justify-end gap-2">
+              <Button type="button" variant="outline" disabled={isPending} onClick={() => onOpenChange(false)}>
+                {t("form.close")}
+              </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? <LoadingButton /> : (
                   <>
@@ -261,10 +308,10 @@ export default function LeaveRequestForm() {
                   </>
                 )}
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

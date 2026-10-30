@@ -101,3 +101,12 @@ export type TApprovalListParams = {
 export type TApprovalDecisionPayload = {
   notes?: string | null;
 };
+
+/** `GET /api/holidays/calendar` row: a day off that cannot be taken as leave. */
+export type THolidayDay = {
+  /** `YYYY-MM-DD` */
+  date: string;
+  name: string;
+  /** Company "cuti bersama" rather than a public holiday. */
+  is_mass_leave: boolean;
+};

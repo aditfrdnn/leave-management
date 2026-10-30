@@ -5,6 +5,8 @@ import {
   employee,
   employeeOptions,
   employees,
+  holiday,
+  holidays,
   leaveBalance,
   leaveBalanceEntries,
   leaveBalances,
@@ -41,6 +43,9 @@ import type {
   TUserItem,
   TUserListParams,
   TUserPayload,
+  THolidayItem,
+  THolidayListParams,
+  THolidayPayload,
   TLeaveBalanceEntry,
   TLeaveBalanceItem,
   TLeaveBalanceListParams,
@@ -132,6 +137,32 @@ export const setupService = {
 
   async setLeaveBalance(employeeId: number | string, payload: TLeaveBalancePayload) {
     const { data } = await instance.put<TApiResponse<TLeaveBalanceItem>>(leaveBalance(employeeId), payload);
+
+    return data;
+  },
+
+  /* -------------------------------- Holidays --------------------------------- */
+
+  async getHolidays(params: THolidayListParams) {
+    const { data } = await instance.get<TApiPaginated<THolidayItem>>(holidays, { params: toQueryParams(params) });
+
+    return data;
+  },
+
+  async createHoliday(payload: THolidayPayload) {
+    const { data } = await instance.post<TApiResponse<THolidayItem>>(holidays, payload);
+
+    return data;
+  },
+
+  async updateHoliday(id: number | string, payload: THolidayPayload) {
+    const { data } = await instance.put<TApiResponse<THolidayItem>>(holiday(id), payload);
+
+    return data;
+  },
+
+  async deleteHoliday(id: number | string) {
+    const { data } = await instance.delete<TApiResponse<null>>(holiday(id));
 
     return data;
   },

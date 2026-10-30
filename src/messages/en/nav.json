@@ -5,18 +5,20 @@
   "modules": {
     "home": "Home",
     "leave": "Leave",
-    "setup": "Setup"
+    "setup": "Settings"
   },
   "menus": {
     "mainDashboard": "Dashboard",
-    "myLeaveRequests": "My Leave Requests",
+    "myLeaveRequests": "My Leave",
     "approvals": "Approvals",
     "employees": "Employees",
     "departments": "Departments",
     "users": "Users",
     "roles": "Roles",
     "permissions": "Permissions",
-    "leaveBalances": "Leave Balances"
+    "leaveBalances": "Leave Balances",
+    "leaveDashboard": "Dashboard",
+    "holidays": "Holidays"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -29,6 +31,9 @@
     "users": "Users",
     "roles": "Roles",
     "permissions": "Permissions",
-    "leave-balances": "Leave Balances"
+    "leave-balances": "Leave Balances",
+    "leave": "Leave",
+    "requests": "My Leave",
+    "holidays": "Holidays"
   }
 }

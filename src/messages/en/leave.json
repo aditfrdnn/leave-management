@@ -40,7 +40,13 @@
       "label": "Annual leave left",
       "pending": "{count, plural, one {# day} other {# days}} still waiting for approval",
       "exceeds": "You picked more days than your annual leave left ({count} after pending requests). You can still submit; HR and your approver will see it."
-    }
+    },
+    "holidays": {
+      "title": "Holidays this month",
+      "massLeave": "cuti bersama"
+    },
+    "close": "Close",
+    "newRequest": "New leave request"
   },
   "history": {
     "title": "My Leave History",

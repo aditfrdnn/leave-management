@@ -1,7 +1,6 @@
 {
   "page": {
-    "title": "Dashboard",
-    "greeting": "Hello, {name}",
+    "title": "Leave dashboard",
     "description": "Your leave at a glance, and what needs your attention.",
     "year": "Year",
     "newRequest": "New request"

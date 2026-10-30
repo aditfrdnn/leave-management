@@ -32,8 +32,8 @@ fields copied from the user), linked through `users.employee_id`; roles assigned
 
 | Title | Group | Label (en) | Grants |
 | --- | --- | --- | --- |
-| `leave.request` | leave | Submit leave requests | `/leave-requests` |
-| `leave.approve` | leave | Approve leave requests | `/approvals` |
+| `leave.request` | leave | Submit leave requests | `/leave/requests` |
+| `leave.approve` | leave | Approve leave requests | `/leave/approvals` |
 | `leave.view_all` | leave | View all leave data | Organisation section of the dashboard |
 | `employees.manage` | setup | Manage employees | `/setup/master-data/employees` |
 | `departments.manage` | setup | Manage departments | `/setup/master-data/departments` |
@@ -163,10 +163,24 @@ TDashboard = {
 
 ## 9. Frontend routes
 
+Each module owns a path prefix, so the next module can sit beside Leave without clashes.
+
 | Route | Module | Permission |
 | --- | --- | --- |
+| `/dashboard` (`/` redirects here) | Home — the signed-in employee's profile (§11) | any |
+| `/leave/dashboard` | Leave — the leave dashboard (§8) | any |
+| `/leave/requests` | Leave — my history + "new request" dialog | `leave.request` |
+| `/leave/approvals` | Leave — approver inbox | `leave.approve` |
+| `/setup/master-data/employees`, `/setup/master-data/departments`, `/setup/master-data/holidays` | Setup | `employees.manage`, `departments.manage`, `holidays.manage` |
+| `/setup/leave-balances` | Setup | `leave.manage_balance` |
+| `/setup/users` | Setup | `users.manage` |
+| `/setup/roles`, `/setup/permissions` | Setup | `roles.manage` |
+
+Old paths redirect (`next.config.ts`): `/leave-requests` → `/leave/requests`, `/approvals` → `/leave/approvals`,
+`/login` → `/sign-in`. The approval email links to `FRONTEND_URL/leave/approvals`.
+
+--- | --- | --- |
 | `/dashboard` (`/` redirects here) | Home | any |
-| `/leave-requests`, `/approvals` | Leave | `leave.request`, `leave.approve` |
 | `/setup/master-data/employees`, `/setup/master-data/departments` | Setup | `employees.manage`, `departments.manage` |
 | `/setup/users` | Setup | `users.manage` |
 | `/setup/roles`, `/setup/permissions` | Setup | `roles.manage` |
@@ -250,3 +264,44 @@ the user has no employee.
 
 New system permission `leave.manage_balance` (group `leave`, label "Manage leave balances"), granted to
 **Administrator** and **HR** by a migration. Frontend route `/setup/leave-balances` (Setup module).
+
+---
+
+## 11. My profile — every signed-in user
+
+`GET /api/me/profile` → the Home dashboard.
+
+```ts
+TMyProfile = {
+  user: { id, name, email, status, created_at, role: { id, title } | null },
+  employee: null | {
+    id, employee_number, name, email, phone_number, position, join_date /* Y-m-d */, employment_type, status,
+    department: { id, name, alias } | null,
+    supervisor: { id, name, employee_number, position } | null,
+    subordinates: { id, name, position }[],      // employees whose supervisor is this employee, max 20, by name
+  },
+}
+```
+
+## 12. Holidays — `holidays.manage`
+
+Existing table `holidays` (`date`, `name`, `description`, `is_mass_leave`, `is_weekend`, unique `date+name`).
+A **holiday** is a public holiday (`is_mass_leave = false`) or a company *cuti bersama* (`is_mass_leave = true`).
+Both are days off: they cannot be picked as leave dates and are skipped when computing "return to office".
+(Whether cuti bersama reduces the annual balance is not decided yet; nothing is deducted.)
+
+| Method | Path | Body / query | Notes |
+| --- | --- | --- | --- |
+| GET | `/api/holidays` | `page, per_page, year` (default current), `search` (name), `type` (`public`, `mass_leave`), `sort_by` (`date,name`), `sort_dir` (default `date asc`) | paginated `THolidayItem` |
+| POST / PUT | `/api/holidays[/{id}]` | `date` (Y-m-d, unique among holidays), `name` (1–100), `description?` (≤500), `is_mass_leave` (bool) | 422 `date` "Tanggal ini sudah terdaftar sebagai hari libur." |
+| DELETE | `/api/holidays/{id}` | | |
+| GET | `/api/holidays/calendar?from=Y-m-d&to=Y-m-d` | any signed-in user; range ≤ 400 days | `{ date, name, is_mass_leave }[]` sorted by date — for the leave calendar |
+
+```ts
+THolidayItem = { id, date, name, description, is_mass_leave, created_at }
+```
+
+New system permission `holidays.manage` (group `setup`, label "Manage holidays"), granted to Administrator and HR.
+
+**Leave request validation:** `StoreLeaveRequestRequest` rejects any `leave_date.*` on a holiday:
+`"Tanggal cuti 17 Agt 2026 adalah hari libur (Hari Kemerdekaan)."` (key `leave_date.N`).

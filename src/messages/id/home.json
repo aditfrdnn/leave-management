@@ -1,0 +1,47 @@
+{
+  "page": {
+    "title": "Beranda",
+    "greeting": "Selamat datang kembali",
+    "noPosition": "Jabatan belum dicatat"
+  },
+  "noEmployee": "Akun Anda belum terhubung ke data karyawan. Minta HR menautkannya di Pengaturan → Pengguna.",
+  "employment": {
+    "title": "Kepegawaian",
+    "employeeNumber": "No. karyawan (NIK)",
+    "position": "Jabatan",
+    "department": "Departemen",
+    "supervisor": "Atasan langsung",
+    "type": "Status kepegawaian",
+    "joinDate": "Tanggal masuk",
+    "types": {
+      "permanent": "Tetap",
+      "contract": "Kontrak",
+      "probation": "Masa percobaan",
+      "intern": "Magang"
+    },
+    "tenure": "{years} tahun {months} bulan",
+    "tenureYears": "{years} tahun",
+    "tenureMonths": "{months, plural, =0 {kurang dari sebulan} other {# bulan}}"
+  },
+  "contact": {
+    "title": "Kontak",
+    "email": "E-mail kantor",
+    "phone": "Telepon"
+  },
+  "account": {
+    "title": "Akun",
+    "login": "E-mail login",
+    "status": "Status",
+    "since": "Terdaftar sejak",
+    "statuses": {
+      "active": "Aktif",
+      "inactive": "Nonaktif"
+    }
+  },
+  "team": {
+    "title": "Melapor ke Anda ({count})"
+  },
+  "errors": {
+    "load": "Gagal memuat profil Anda"
+  }
+}

@@ -40,7 +40,13 @@
       "label": "Sisa cuti tahunan",
       "pending": "{count} hari masih menunggu persetujuan",
       "exceeds": "Hari yang dipilih melebihi sisa cuti tahunan Anda ({count} hari setelah pengajuan yang masih menunggu). Pengajuan tetap bisa dikirim; HR dan approver akan melihatnya."
-    }
+    },
+    "holidays": {
+      "title": "Hari libur bulan ini",
+      "massLeave": "cuti bersama"
+    },
+    "close": "Tutup",
+    "newRequest": "Ajukan cuti"
   },
   "history": {
     "title": "Riwayat Cuti Saya",

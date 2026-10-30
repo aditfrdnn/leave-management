@@ -6,7 +6,7 @@ import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated, TDropdownOption } from "@/types/api";
-import type { TApprover, TLeave, TLeaveListParams } from "@/types/leave";
+import type { THolidayDay, TApprover, TLeave, TLeaveListParams } from "@/types/leave";
 import type { TMyLeaveBalance } from "@/types/setup";
 import { leaveRequestSchema } from "@/validations/leave-validations";
 
@@ -23,6 +23,17 @@ export async function GetLeaveRequests(params: TLeaveListParams): Promise<TApiPa
     return await leaveService.getLeaveRequests(params);
   } catch (error) {
     throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadList")));
+  }
+}
+
+/** Days off in a range, so the calendar can block them; a failure leaves only weekends blocked. */
+export async function GetHolidayCalendar(from: string, to: string): Promise<THolidayDay[]> {
+  try {
+    const response = await leaveService.getHolidayCalendar({ from, to });
+
+    return response.data ?? [];
+  } catch {
+    return [];
   }
 }
 

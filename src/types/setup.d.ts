@@ -259,3 +259,36 @@ export type TMyLeaveBalance = {
   monthly_accrual: number;
   last_accrual_period: string | null;
 } | null;
+
+/* -------------------------------- Holidays --------------------------------- */
+
+/** `GET /api/holidays` row (docs/setup-module.md §12). */
+export type THolidayItem = {
+  id: number;
+  /** `YYYY-MM-DD` */
+  date: string;
+  name: string;
+  description: string | null;
+  /** Company "cuti bersama" rather than a public holiday. */
+  is_mass_leave: boolean;
+  created_at: string;
+};
+
+export type THolidayType = "public" | "mass_leave";
+
+export type THolidayListParams = {
+  page?: number;
+  per_page?: number;
+  year?: number;
+  search?: string;
+  type?: THolidayType;
+  sort_by?: "date" | "name";
+  sort_dir?: TSortDirection;
+};
+
+export type THolidayPayload = {
+  date: string;
+  name: string;
+  description: string | null;
+  is_mass_leave: boolean;
+};

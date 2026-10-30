@@ -6,12 +6,14 @@ import {
   leaveRequest,
   leaveRequestCancel,
   leaveRequests,
+  holidayCalendar,
   leaveTypes,
   myLeaveBalance,
 } from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
 import type { TApiPaginated, TApiResponse, TDropdownOption } from "@/types/api";
 import type {
+  THolidayDay,
   TApprovalDecisionPayload,
   TApprovalItem,
   TApprovalListParams,
@@ -25,6 +27,12 @@ import type { TMyLeaveBalance } from "@/types/setup";
 import { toQueryParams } from "./to-query-params";
 
 export const leaveService = {
+  async getHolidayCalendar(params: { from: string; to: string }) {
+    const { data } = await instance.get<TApiResponse<THolidayDay[]>>(holidayCalendar, { params });
+
+    return data;
+  },
+
   /** The signed-in user's annual leave balance (docs/setup-module.md §10); null without an employee record. */
   async getMyLeaveBalance() {
     const { data } = await instance.get<TApiResponse<TMyLeaveBalance>>(myLeaveBalance);

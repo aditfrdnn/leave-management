@@ -391,5 +391,55 @@
       "loadHistory": "Gagal memuat riwayat",
       "save": "Gagal menyimpan saldo"
     }
+  },
+  "holidays": {
+    "page": {
+      "title": "Hari Libur",
+      "description": "Libur nasional dan cuti bersama perusahaan. Tanggal ini tidak bisa diambil sebagai cuti dan dilewati saat menghitung hari kembali bekerja."
+    },
+    "searchPlaceholder": "Cari nama hari libur",
+    "createLabel": "Tambah hari libur",
+    "empty": "Belum ada hari libur untuk tahun {year}",
+    "emptySearch": "Tidak ada hari libur yang cocok",
+    "filters": {
+      "year": "Tahun",
+      "allTypes": "Semua jenis"
+    },
+    "types": {
+      "public": "Libur nasional",
+      "mass_leave": "Cuti bersama"
+    },
+    "fields": {
+      "date": "Tanggal",
+      "name": "Nama",
+      "description": "Keterangan",
+      "type": "Jenis"
+    },
+    "form": {
+      "createTitle": "Tambah hari libur",
+      "updateTitle": "Ubah hari libur",
+      "description": "Tanggal ini menjadi hari libur di kalender cuti untuk semua karyawan.",
+      "namePlaceholder": "mis. Hari Kemerdekaan RI",
+      "descriptionPlaceholder": "Opsional, mis. dasar SKB-nya",
+      "isMassLeave": "Cuti bersama",
+      "massLeaveHint": "Biarkan nonaktif untuk libur nasional."
+    },
+    "toast": {
+      "created": "Hari libur ditambahkan.",
+      "updated": "Hari libur diperbarui.",
+      "saveFailed": "Hari libur gagal disimpan"
+    },
+    "validation": {
+      "dateRequired": "Pilih tanggalnya",
+      "nameRequired": "Nama wajib diisi",
+      "nameMax": "Nama maksimal 100 karakter",
+      "descriptionMax": "Keterangan maksimal 500 karakter"
+    },
+    "errors": {
+      "loadList": "Gagal memuat hari libur",
+      "create": "Gagal menambah hari libur",
+      "update": "Gagal mengubah hari libur",
+      "delete": "Gagal menghapus hari libur"
+    }
   }
 }

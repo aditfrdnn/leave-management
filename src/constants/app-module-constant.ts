@@ -20,11 +20,12 @@ export const appModules: TAppModule[] = [
     id: "leave",
     titleKey: "leave",
     icon: "calendar-icon",
-    href: "/leave-requests",
-    basePaths: ["/leave-requests", "/approvals"],
+    href: "/leave/dashboard",
+    basePaths: ["/leave"],
     menus: [
-      { titleKey: "myLeaveRequests", href: "/leave-requests", disabled: false },
-      { titleKey: "approvals", href: "/approvals", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_APPROVE },
+      { titleKey: "leaveDashboard", href: "/leave/dashboard", disabled: false },
+      { titleKey: "myLeaveRequests", href: "/leave/requests", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_REQUEST },
+      { titleKey: "approvals", href: "/leave/approvals", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_APPROVE },
     ],
   },
   {
@@ -36,6 +37,7 @@ export const appModules: TAppModule[] = [
     menus: [
       { titleKey: "employees", href: "/setup/master-data/employees", disabled: false, permission: PERMISSIONS_CONSTANT.EMPLOYEES_MANAGE },
       { titleKey: "departments", href: "/setup/master-data/departments", disabled: false, permission: PERMISSIONS_CONSTANT.DEPARTMENTS_MANAGE },
+      { titleKey: "holidays", href: "/setup/master-data/holidays", disabled: false, permission: PERMISSIONS_CONSTANT.HOLIDAYS_MANAGE },
       { titleKey: "leaveBalances", href: "/setup/leave-balances", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_MANAGE_BALANCE },
       { titleKey: "users", href: "/setup/users", disabled: false, permission: PERMISSIONS_CONSTANT.USERS_MANAGE },
       { titleKey: "roles", href: "/setup/roles", disabled: false, permission: PERMISSIONS_CONSTANT.ROLES_MANAGE },

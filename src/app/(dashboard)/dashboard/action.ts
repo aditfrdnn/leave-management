@@ -3,16 +3,15 @@
 import { getTranslations } from "next-intl/server";
 
 import { toApiErrorMessage } from "@/lib/api-error";
-import { dashboardService } from "@/services";
-import type { TDashboard } from "@/types/dashboard";
+import { profileService } from "@/services";
+import type { TMyProfile } from "@/types/profile";
 
-/** Every section the signed-in user may see; the API leaves the others null. */
-export async function GetDashboard(year: number): Promise<TDashboard> {
+export async function GetMyProfile(): Promise<TMyProfile> {
   try {
-    const response = await dashboardService.getDashboard(year);
+    const response = await profileService.getMyProfile();
 
     return response.data;
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("dashboard"))("errors.load")));
+    throw new Error(toApiErrorMessage(error, (await getTranslations("home"))("errors.load")));
   }
 }

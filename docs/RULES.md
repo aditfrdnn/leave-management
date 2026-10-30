@@ -8,7 +8,7 @@
 
 **HR Lite** is a Next.js frontend (thin client + BFF) in front of the leave API (a Laravel service reached over HTTP). An employee signs in, submits a leave request — dates, leave type, approver, reason, location, hand-over, replacement, phone — and follows the status of every request they sent.
 
-Three modules, one shell (`src/app/(dashboard)`): **Home** (`/dashboard`), **Leave** (`/leave-requests`, `/approvals`) and **Setup** (`/setup/**`, contract in `docs/setup-module.md`). Notifications join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
+Three modules, one shell (`src/app/(dashboard)`): **Home** (`/dashboard`), **Leave** (`/leave/dashboard`, `/leave/requests`, `/leave/approvals`) and **Setup** (`/setup/**`, contract in `docs/setup-module.md`). Each module owns one path prefix and one folder; the next module joins the same shell the same way. Notifications join when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
 
 ---
 
@@ -106,7 +106,7 @@ Dependencies flow one way, top to bottom:
 
 **Shared UI (`components/ui/`)** — shadcn/Radix primitives only. No business logic, no data fetching, no app copy.
 
-**Feature UI (`_components/`)** — one feature's presentation and wiring. A CRUD feature is three files: `<x>-table.tsx` (Card + search + create button + `DataTable` + dialogs), `<x>-columns.tsx` (a `ColumnDef` factory that takes the translator and callbacks) and `<x>-form-dialog.tsx` (one dialog for create and update). `src/app/(dashboard)/leave-requests` is the reference implementation here; for a full CRUD (dialog + delete) copy `next-pdi`'s `src/app/(dashboard)/setup/roles`.
+**Feature UI (`_components/`)** — one feature's presentation and wiring. A CRUD feature is three files: `<x>-table.tsx` (Card + search + create button + `DataTable` + dialogs), `<x>-columns.tsx` (a `ColumnDef` factory that takes the translator and callbacks) and `<x>-form-dialog.tsx` (one dialog for create and update). `src/app/(dashboard)/setup/master-data/holidays` is the reference implementation here; for a full CRUD (dialog + delete) copy `next-pdi`'s `src/app/(dashboard)/setup/roles`.
 
 **Layout** — one per route segment that needs a distinct shell: root, `(auth)`, `(dashboard)`. `(dashboard)/template.tsx` wraps every page in `PageGate` (one loader, then one reveal).
 
@@ -174,7 +174,7 @@ Do not change this flow; extend features on top of it.
 
 - `useForm<SchemaType>({ resolver: zodResolver(schema), defaultValues, values })` — `values` makes one dialog serve create and update.
 - Fields are the `common/Form*` wrappers (`FormInput`, `FormSelect`, `FormCombobox`, `FormCalendar`, `FormSwitch`, `FormMultiSelect`); each wires label, required marker and `<FormMessage/>`. Never wire a raw `ui/` primitive to `FormField` by hand when a wrapper exists.
-- Submit: `useMutation({ mutationFn: (values) => action({ status: "idle" }, buildFormData(values)) })`; throw the returned state when `status === "error"`, map `errors.<field>` to `form.setError`, toast `errors._form[0]`. Reference: `leave-requests/_components/leave-request-form.tsx`. Login and `DeleteDialog` use `useActionState` directly.
+- Submit: `useMutation({ mutationFn: (values) => action({ status: "idle" }, buildFormData(values)) })`; throw the returned state when `status === "error"`, map `errors.<field>` to `form.setError`, toast `errors._form[0]`. Reference: `leave/requests/_components/leave-request-form-dialog.tsx`. Login and `DeleteDialog` use `useActionState` directly.
 - Server Actions receive `FormData`, not JSON. Arrays are appended per item (`formData.append("leave_date", date)` and `formData.getAll("leave_date")`).
 - **Validate twice, by design**: the same Zod schema drives `zodResolver` and the action's `safeParse`. Zod messages are message keys (`"leave.validation.subjectRequired"`), translated by `FormMessage` / `useTranslateMessage`.
 - Loading: disable the whole `<fieldset>` and swap the submit label for `LoadingButton` while pending. Close the dialog only on success.
@@ -205,7 +205,7 @@ Do not change this flow; extend features on top of it.
 
 | Category              | Convention                                                                              | Example                                            |
 | --------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Files & folders       | kebab-case, always                                                                      | `leave-request-form.tsx`, `use-list-params.ts`     |
+| Files & folders       | kebab-case, always                                                                      | `leave-request-form-dialog.tsx`, `use-list-params.ts`     |
 | Components            | PascalCase identifier; file is the kebab-case of the name                               | `LeaveRequestTable` in `leave-request-table.tsx`   |
 | Hooks                 | `use-<name>.ts`, `useCamelCase` export                                                  | `use-list-params.ts` → `useListParams`             |
 | Types (domain)        | `type`, `T`-prefixed, one file per domain                                               | `TLeave`, `TApprover`, `TApiResponse`              |

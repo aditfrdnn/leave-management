@@ -11,6 +11,7 @@ export const PERMISSIONS_CONSTANT = {
   LEAVE_MANAGE_BALANCE: "leave.manage_balance",
   EMPLOYEES_MANAGE: "employees.manage",
   DEPARTMENTS_MANAGE: "departments.manage",
+  HOLIDAYS_MANAGE: "holidays.manage",
   USERS_MANAGE: "users.manage",
   ROLES_MANAGE: "roles.manage",
 } as const;
