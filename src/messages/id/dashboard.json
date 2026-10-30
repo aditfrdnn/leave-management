@@ -1,6 +1,6 @@
 {
   "page": {
-    "title": "Dashboard Cuti",
+    "title": "Beranda Cuti",
     "description": "Ringkasan cuti Anda dan hal yang perlu Anda tindak lanjuti.",
     "year": "Tahun",
     "newRequest": "Ajukan cuti"
@@ -75,6 +75,6 @@
     "empty": "Belum ada cuti yang disetujui tahun ini."
   },
   "errors": {
-    "load": "Gagal memuat dashboard"
+    "load": "Gagal memuat beranda cuti"
   }
 }

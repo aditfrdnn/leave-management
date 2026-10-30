@@ -49,7 +49,8 @@ export default function LeaveRequestTable() {
   const queryClient = useQueryClient();
   const { page, setPage, perPage, onLimitChange, search, onSearchChange, table, resetPage } = useListParams();
   const { user } = useAuth();
-  const { allowed: canApprove } = usePermission(PERMISSIONS_CONSTANT.LEAVE_APPROVE);
+  // Until /api/me answers we do not know whether to show approver tabs; wait instead of flashing "mine".
+  const { allowed: canApprove, loading: isPermissionLoading } = usePermission(PERMISSIONS_CONSTANT.LEAVE_APPROVE);
 
   const [detailId, setDetailId] = useState<number | null>(null);
   const searchParams = useSearchParams();
@@ -85,6 +86,7 @@ export default function LeaveRequestTable() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...LEAVE_REQUESTS_QUERY_KEY, params],
     queryFn: () => GetLeaveRequests(params),
+    enabled: !isPermissionLoading,
     placeholderData: keepPreviousData,
   });
 
@@ -176,7 +178,7 @@ export default function LeaveRequestTable() {
         <DataTable
           columns={columns}
           data={data?.data ?? []}
-          isLoading={isLoading}
+          isLoading={isLoading || isPermissionLoading}
           noResultMessage={
             search || params.status ? t("history.emptySearch") : scope === "approvals" ? t("history.emptyApprovals") : t("history.empty")
           }

@@ -399,9 +399,8 @@ function DataTableContent<TData, TValue>({
         <div className="flex flex-col lg:flex-row items-center justify-between gap-2 px-2 mt-4">
           <div className="flex w-fit items-center gap-3">
             <div className="flex w-fit items-center gap-3">
-              <p className="text-sm w-fit" style={{ width: "70px" }}>
-                {t("perPage")}{" "}
-              </p>
+              {/* No fixed width: "Per halaman :" must stay on one line in every locale. */}
+              <p className="shrink-0 whitespace-nowrap text-sm">{t("perPage")}</p>
               {ShowItemContent}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

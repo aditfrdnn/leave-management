@@ -17,11 +17,11 @@
     "roles": "Role",
     "permissions": "Hak Akses",
     "leaveBalances": "Saldo Cuti",
-    "leaveDashboard": "Dashboard",
+    "leaveDashboard": "Beranda",
     "holidays": "Hari Libur"
   },
   "segments": {
-    "dashboard": "Dashboard",
+    "dashboard": "Beranda",
     "leave-requests": "Pengajuan Cuti",
     "approvals": "Persetujuan",
     "setup": "Pengaturan",
