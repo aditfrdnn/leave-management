@@ -9,6 +9,7 @@ import enLeave from "@/messages/en/leave.json";
 import enSetup from "@/messages/en/setup.json";
 import enDashboard from "@/messages/en/dashboard.json";
 import enHome from "@/messages/en/home.json";
+import enAppraisal from "@/messages/en/appraisal.json";
 import idCommon from "@/messages/id/common.json";
 import idNav from "@/messages/id/nav.json";
 import idAuth from "@/messages/id/auth.json";
@@ -16,6 +17,7 @@ import idLeave from "@/messages/id/leave.json";
 import idSetup from "@/messages/id/setup.json";
 import idDashboard from "@/messages/id/dashboard.json";
 import idHome from "@/messages/id/home.json";
+import idAppraisal from "@/messages/id/appraisal.json";
 
 import type { Locale } from "./config";
 
@@ -27,6 +29,7 @@ const en = {
   setup: enSetup,
   dashboard: enDashboard,
   home: enHome,
+  appraisal: enAppraisal,
 };
 
 export type Messages = typeof en;
@@ -40,6 +43,7 @@ const id: DeepPartial<Messages> = {
   setup: idSetup,
   dashboard: idDashboard,
   home: idHome,
+  appraisal: idAppraisal,
 };
 
 type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K] };

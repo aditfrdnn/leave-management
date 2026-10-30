@@ -40,6 +40,23 @@ const holidayCalendar = `${holidays}/calendar`;
 // Profile (§11)
 const myProfile = "/api/me/profile";
 
+// Appraisal (docs/appraisal-module.md)
+const appraisalTemplates = "/api/appraisal-templates";
+const appraisalTemplate = (id: number | string) => `${appraisalTemplates}/${id}`;
+const appraisalTemplateDuplicate = (id: number | string) => `${appraisalTemplates}/${id}/duplicate`;
+const appraisalPeriods = "/api/appraisal-periods";
+const appraisalPeriod = (id: number | string) => `${appraisalPeriods}/${id}`;
+const appraisalPeriodClose = (id: number | string) => `${appraisalPeriods}/${id}/close`;
+const appraisalPeriodReopen = (id: number | string) => `${appraisalPeriods}/${id}/reopen`;
+const appraisals = "/api/appraisals";
+const appraisal = (id: number | string) => `${appraisals}/${id}`;
+const appraisalAnswers = (id: number | string) => `${appraisals}/${id}/answers`;
+const appraisalAction = (id: number | string, action: "submit" | "return" | "assess" | "acknowledge") => `${appraisals}/${id}/${action}`;
+/** The leave API's PDF endpoint, called by the same-origin route handler `app/api/appraisals/[id]/pdf`. */
+const appraisalPdfBackend = (id: number | string) => `${appraisals}/${id}/pdf`;
+/** Same-origin route handler (token cookie → Bearer); what the browser downloads. */
+const appraisalPdf = (id: number | string) => `/api/appraisals/${id}/pdf`;
+
 // Setup (docs/setup-module.md)
 const users = "/api/users";
 const user = (id: number | string) => `${users}/${id}`;
@@ -76,6 +93,19 @@ export {
   holiday,
   holidayCalendar,
   myProfile,
+  appraisalTemplates,
+  appraisalTemplate,
+  appraisalTemplateDuplicate,
+  appraisalPeriods,
+  appraisalPeriod,
+  appraisalPeriodClose,
+  appraisalPeriodReopen,
+  appraisals,
+  appraisal,
+  appraisalAnswers,
+  appraisalAction,
+  appraisalPdfBackend,
+  appraisalPdf,
   users,
   user,
   employees,

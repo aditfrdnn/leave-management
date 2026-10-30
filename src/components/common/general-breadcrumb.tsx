@@ -84,7 +84,10 @@ function GeneralBreadcrumbContent({
                         .join("/")}`
                     const isLast = index === segments.length - 1
                     const isDynamic = dynamicSegmentValues.has(segment)
-                    const label = labelMap[segment] || (isDynamic ? segment : segmentLabel(segment))
+                    // A record id ("/appraisal/7") reads as its parent's detail label ("segments.appraisal_id") when one exists.
+                    const detailKey = `segments.${segments[index - 1]}_id` as Parameters<typeof t>[0]
+                    const label = labelMap[segment]
+                        || (isDynamic ? (index > 0 && t.has(detailKey) ? t(detailKey) : segment) : segmentLabel(segment))
 
                     return (
                         <Fragment key={`${href}-${segment}`}>

@@ -48,11 +48,13 @@ Catat rollout yang sedang live **sebelum** membuat yang baru, untuk rollback.
 
 - [ ] `https://lvr.pdi-ptcs.com/` membuka halaman login HR Lite (logo H biru).
 - [ ] `https://lvr.pdi-ptcs.com/login` diarahkan ke `/sign-in` (bookmark lama tetap jalan).
-- [ ] Login sebagai Administrator → Dashboard tampil, termasuk bagian **Organisasi**.
+- [ ] Login sebagai Administrator → Beranda menampilkan profil; **Cuti → Beranda** menampilkan bagian **Organisasi**.
 - [ ] Menu **Setup → Users** tampil; atur role user lain (mis. HR) bila perlu.
-- [ ] Login sebagai karyawan biasa → hanya modul Home dan Leave yang tampil.
-- [ ] Ajukan satu cuti uji → muncul di riwayat dan di **Approvals** milik approver-nya → setujui → status berubah.
+- [ ] Login sebagai karyawan biasa → hanya modul Beranda, Cuti dan Appraisal (Appraisal Saya) yang tampil.
+- [ ] Ajukan satu cuti uji → muncul di **Cuti Saya**; approver-nya melihatnya di tab **Perlu persetujuan saya** → setujui → status berubah.
 - [ ] Batalkan / hapus data uji itu setelahnya.
+- [ ] **Appraisal:** HR/Lead/Division Manager membuka periode di **Appraisal → Periode**; karyawan uji mengisi, atasan menilai, karyawan mengonfirmasi, HR mengunduh PDF di **Appraisal → Laporan**.
+- [ ] **Pengaturan → Template Appraisal** menampilkan F-HR-10 Rev.2 (aktif).
 
 Kalau setelah login muncul sesi lama yang aneh, logout lalu login lagi (cookie lama dari LVR System).
 

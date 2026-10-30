@@ -5,7 +5,8 @@
   "modules": {
     "home": "Home",
     "leave": "Leave",
-    "setup": "Settings"
+    "setup": "Settings",
+    "appraisal": "Appraisal"
   },
   "menus": {
     "mainDashboard": "Home",
@@ -18,7 +19,12 @@
     "permissions": "Permissions",
     "leaveBalances": "Leave Balances",
     "leaveDashboard": "Dashboard",
-    "holidays": "Holidays"
+    "holidays": "Holidays",
+    "myAppraisals": "My Appraisal",
+    "teamAppraisals": "Team Appraisals",
+    "appraisalReports": "Reports",
+    "appraisalPeriods": "Periods",
+    "appraisalTemplates": "Appraisal Template"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -34,6 +40,14 @@
     "leave-balances": "Leave Balances",
     "leave": "Leave",
     "requests": "My Leave",
-    "holidays": "Holidays"
+    "holidays": "Holidays",
+    "appraisal": "Appraisal",
+    "my": "My Appraisal",
+    "team": "Team Appraisals",
+    "reports": "Reports",
+    "periods": "Periods",
+    "appraisal-templates": "Appraisal Template",
+    "appraisal_id": "Form",
+    "appraisal-templates_id": "Editor"
   }
 }

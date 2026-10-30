@@ -1,0 +1,281 @@
+{
+  "page": {
+    "my": {
+      "title": "My appraisals",
+      "description": "Fill in your self-assessment for each period and follow it until you confirm the result."
+    },
+    "team": {
+      "title": "Team appraisals",
+      "description": "Appraisals of the people you assess: give final ratings, set targets, return or complete."
+    },
+    "reports": {
+      "title": "Appraisal reports",
+      "description": "Every appraisal of a period, with its PDF."
+    },
+    "periods": {
+      "title": "Appraisal periods",
+      "description": "Open a period so employees can start their appraisal; close it when the round is over."
+    },
+    "form": {
+      "title": "Performance appraisal",
+      "description": "Employee development appraisal form."
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "assessed": "Assessed",
+    "acknowledged": "Acknowledged"
+  },
+  "periodStatus": {
+    "open": "Open",
+    "closed": "Closed"
+  },
+  "format": {
+    "range": "{start} to {end}"
+  },
+  "columns": {
+    "no": "No.",
+    "employee": "Employee",
+    "period": "Period",
+    "assessor": "Assessor",
+    "status": "Status",
+    "lastActivity": "Last activity",
+    "actions": "Actions"
+  },
+  "list": {
+    "searchPlaceholder": "Search employee name or number",
+    "periodLabel": "Period",
+    "periodPlaceholder": "Choose a period",
+    "allPeriods": "All periods",
+    "statusLabel": "Status",
+    "allStatuses": "All statuses",
+    "emptySearch": "No appraisals match these filters.",
+    "view": "View",
+    "viewFor": "View the appraisal of {name}",
+    "downloadPdf": "Download PDF",
+    "downloadPdfFor": "Download the PDF of {name}"
+  },
+  "my": {
+    "startTitle": "Ready to fill in",
+    "reviewRange": "Review period: {range}",
+    "dueDate": "Due {date}",
+    "noDueDate": "No due date",
+    "start": "Start filling in",
+    "started": "Your appraisal is ready to fill in.",
+    "startFailed": "Could not start the appraisal",
+    "listTitle": "Appraisal history",
+    "listDescription": "One appraisal per period. Open one to continue, read the result or download the PDF.",
+    "empty": "You have no appraisals yet."
+  },
+  "team": {
+    "tabs": {
+      "label": "Filter by status",
+      "submitted": "Needs assessment",
+      "all": "All",
+      "draft": "Draft",
+      "assessed": "Assessed",
+      "acknowledged": "Acknowledged"
+    },
+    "awaitingCount": "{count, plural, one {# appraisal waits} other {# appraisals wait}} for your assessment",
+    "emptyAwaiting": "Nothing waits for your assessment.",
+    "empty": "No appraisals of your team yet."
+  },
+  "reports": {
+    "total": "Total",
+    "empty": "No appraisals in this period yet.",
+    "noPeriods": "No appraisal period exists yet."
+  },
+  "periods": {
+    "createLabel": "New period",
+    "searchPlaceholder": "Search period name",
+    "allStatuses": "All statuses",
+    "empty": "No appraisal periods yet.",
+    "emptySearch": "No periods match these filters.",
+    "noDueDate": "No due date",
+    "countsBreakdown": "{draft} draft · {submitted} submitted · {assessed} assessed · {acknowledged} acknowledged",
+    "fields": {
+      "name": "Name",
+      "ranges": "Periods",
+      "review": "Review",
+      "target": "Target",
+      "reviewPeriod": "Review period",
+      "targetPeriod": "Target period",
+      "start": "Start",
+      "end": "End",
+      "dueDate": "Due date",
+      "template": "Form template",
+      "appraisals": "Appraisals",
+      "status": "Status"
+    },
+    "form": {
+      "createTitle": "New appraisal period",
+      "updateTitle": "Edit appraisal period",
+      "description": "The review period is the year being assessed; the target period is the year the new KPI targets cover.",
+      "namePlaceholder": "e.g. August 2025 to July 2026",
+      "templatePlaceholder": "Choose an active template",
+      "templateLocked": "The template cannot change once the period has appraisals.",
+      "templatesFailed": "Templates could not be loaded. You may lack access to the template list.",
+      "clearDueDate": "Remove due date"
+    },
+    "actions": {
+      "close": "Close period",
+      "reopen": "Reopen period",
+      "editItem": "Edit {name}",
+      "closeItem": "Close {name}",
+      "reopenItem": "Reopen {name}",
+      "deleteItem": "Delete {name}"
+    },
+    "statusDialog": {
+      "closeTitle": "Close this period?",
+      "closeQuestion": "Closing <b>{name}</b> stops new appraisals and all editing. Acknowledged appraisals stay as they are.",
+      "reopenTitle": "Reopen this period?",
+      "reopenQuestion": "Reopening <b>{name}</b> lets employees and assessors continue their appraisals."
+    },
+    "toast": {
+      "created": "Period created.",
+      "updated": "Period updated.",
+      "saveFailed": "Could not save the period",
+      "closed": "Period closed.",
+      "reopened": "Period reopened.",
+      "statusFailed": "Could not change the period status"
+    },
+    "validation": {
+      "nameRequired": "Enter a name.",
+      "nameMax": "Use at most 100 characters.",
+      "dateRequired": "Choose a date.",
+      "dateInvalid": "Choose a valid date.",
+      "templateRequired": "Choose a template.",
+      "reviewEndBeforeStart": "The review period cannot end before it starts.",
+      "targetEndBeforeStart": "The target period cannot end before it starts.",
+      "targetBeforeReview": "The target period starts after the review period."
+    },
+    "errors": {
+      "loadTemplates": "Could not load the templates.",
+      "create": "Could not create the period.",
+      "update": "Could not update the period.",
+      "close": "Could not close the period.",
+      "reopen": "Could not reopen the period.",
+      "delete": "Could not delete the period."
+    }
+  },
+  "form": {
+    "back": "Back",
+    "subtitle": "{name} · {period}",
+    "returnedTitle": "Returned by your assessor",
+    "unsaved": "You have unsaved changes.",
+    "saved": "All changes are saved.",
+    "leaveConfirm": "You have unsaved changes. Leave without saving?",
+    "readOnly": {
+      "periodClosed": "This period is closed, so the appraisal can no longer be edited.",
+      "viewer": "You are viewing this appraisal; it cannot be edited here.",
+      "completed": "This appraisal is complete and acknowledged.",
+      "awaitingAcknowledge": "Your assessor has completed the assessment. Review the result, then confirm it.",
+      "assessed": "The assessment is complete and waits for the employee's confirmation.",
+      "awaitingAssessment": "Sent to your assessor. You can edit again only if it is returned to you.",
+      "awaitingSubmission": "The employee has not sent this appraisal yet."
+    },
+    "header": {
+      "employee": "Employee",
+      "employeeNumber": "Employee number",
+      "position": "Position",
+      "department": "Department",
+      "assessor": "Assessor",
+      "assessorPosition": "Assessor position",
+      "reviewPeriod": "Review period",
+      "targetPeriod": "Target period",
+      "dueDate": "Due date"
+    },
+    "rating": {
+      "self": "Self assessment",
+      "final": "Assessor rating",
+      "notRated": "Not rated yet",
+      "finalHidden": "Shown once your assessor completes the assessment.",
+      "leadersOnly": "Leaders only",
+      "showScale": "Show scale descriptions",
+      "hideScale": "Hide scale descriptions"
+    },
+    "kpi": {
+      "row": "KPI {index}",
+      "objective": "Objective",
+      "kpi": "KPI",
+      "target": "Target",
+      "weight": "Weight",
+      "addRow": "Add KPI",
+      "removeRow": "Remove KPI {index}",
+      "rowsHint": "{min} to {max} rows",
+      "totalWeight": "Total weight",
+      "weightWarning": "Weights must add up to 100%.",
+      "score": "Weight × final rating: {weight}% × {final} = {score}",
+      "empty": "No KPI rows yet."
+    },
+    "text": {
+      "placeholder": "Write here…",
+      "pending": "Your assessor fills this in.",
+      "filledBy": {
+        "employee": "Filled in by the employee",
+        "assessor": "Filled in by the assessor",
+        "both": "Filled in by the employee and the assessor"
+      }
+    },
+    "actions": {
+      "save": "Save draft",
+      "submit": "Send to assessor",
+      "return": "Return",
+      "assess": "Complete assessment",
+      "acknowledge": "Confirm result",
+      "pdf": "Download PDF"
+    },
+    "confirm": {
+      "submit": {
+        "title": "Send to your assessor?",
+        "description": "Your answers are saved first. After sending you cannot edit them unless your assessor returns the appraisal."
+      },
+      "assess": {
+        "title": "Complete the assessment?",
+        "description": "Your answers are saved first. The employee then sees the final ratings and confirms the result."
+      },
+      "acknowledge": {
+        "title": "Confirm the result?",
+        "description": "This replaces your signature on the form and completes the appraisal."
+      }
+    },
+    "returnDialog": {
+      "title": "Return for changes",
+      "description": "The appraisal goes back to draft and the employee sees your note.",
+      "note": "Note for the employee",
+      "notePlaceholder": "What should be changed?"
+    },
+    "toast": {
+      "saved": "Draft saved.",
+      "saveFailed": "Could not save the draft",
+      "submitDone": "Sent to your assessor.",
+      "submitFailed": "Could not send the appraisal",
+      "assessDone": "Assessment completed.",
+      "assessFailed": "Could not complete the assessment",
+      "acknowledgeDone": "Result confirmed.",
+      "acknowledgeFailed": "Could not confirm the result",
+      "returned": "Appraisal returned to the employee.",
+      "returnFailed": "Could not return the appraisal",
+      "fixErrors": "{count, plural, one {# answer needs} other {# answers need}} attention."
+    },
+    "validation": {
+      "noteRequired": "Write a note for the employee.",
+      "noteMax": "Use at most 1000 characters."
+    }
+  },
+  "errors": {
+    "loadList": "Could not load the appraisals.",
+    "loadPeriods": "Could not load the appraisal periods.",
+    "loadDetail": "Could not load the appraisal.",
+    "save": "Could not save the answers.",
+    "submit": "Could not send the appraisal.",
+    "assess": "Could not complete the assessment.",
+    "acknowledge": "Could not confirm the result.",
+    "return": "Could not return the appraisal.",
+    "start": "Could not start the appraisal.",
+    "formDataEmpty": "Nothing was sent.",
+    "missingId": "The appraisal could not be identified.",
+    "invalidAnswers": "Some answers have an invalid format."
+  }
+}

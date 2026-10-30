@@ -441,5 +441,204 @@
       "update": "Failed to update the holiday",
       "delete": "Failed to delete the holiday"
     }
+  },
+  "appraisalTemplates": {
+    "page": {
+      "title": "Appraisal templates",
+      "description": "The appraisal form employees and assessors fill in: sections, items, rating scales and review fields."
+    },
+    "editor": {
+      "title": "Edit appraisal template",
+      "description": "Change sections, items, scale labels and review fields. Periods use the template as it was when they were opened.",
+      "save": "Save template",
+      "unsaved": "Unsaved changes",
+      "leaveConfirm": "You have unsaved changes. Leave this page and discard them?",
+      "lockedBanner": "{count, plural, one {This template is already used by # period.} other {This template is already used by # periods.}} Create a new revision to change it.",
+      "createRevision": "Create new revision",
+      "placeholderHint": "Write <code>{review}</code> or <code>{target}</code> to show the period's review or target range, e.g. \"August 2025 to July 2026\".",
+      "keyHint": "Lower-case letters, digits and _. Filled from the title when left empty; keep it stable once the template is in use.",
+      "tabs": {
+        "editor": "Editor",
+        "preview": "Preview"
+      },
+      "header": {
+        "title": "Template details",
+        "activeHint": "Only active templates can be picked when opening a new period."
+      },
+      "scale": {
+        "title": "Scale labels",
+        "hint": "Five levels, from the lowest (1) to the highest (5).",
+        "level": "Level {value}"
+      },
+      "reorder": {
+        "up": "Move {name} up",
+        "down": "Move {name} down",
+        "remove": "Remove {name}"
+      },
+      "sections": {
+        "title": "Sections ({count})",
+        "hint": "Shown in this order",
+        "number": "Section {number}",
+        "untitled": "Section {number} (untitled)",
+        "add": "Add section",
+        "pickKind": "Section type",
+        "fields": {
+          "title": "Title",
+          "key": "Section key",
+          "instructions": "Instructions",
+          "minRows": "Minimum rows",
+          "maxRows": "Maximum rows"
+        }
+      },
+      "kinds": {
+        "rating": {
+          "label": "Rating",
+          "description": "Items rated on the 5-level scale, by the employee and the assessor."
+        },
+        "kpi_review": {
+          "label": "KPI review",
+          "description": "KPI rows of the past period, each rated on the scale.",
+          "rowsHint": "How many KPI rows the employee must fill in for the review period."
+        },
+        "kpi_target": {
+          "label": "KPI targets",
+          "description": "KPI rows proposed for the next period, without a rating.",
+          "rowsHint": "How many target rows the assessor must confirm for the next period."
+        },
+        "text": {
+          "label": "Written review",
+          "description": "Free-text fields, such as strengths and training needs."
+        }
+      },
+      "items": {
+        "title": "Items ({count})",
+        "add": "Add item",
+        "untitled": "Item {number} (untitled)",
+        "hasErrors": "This item has errors",
+        "pointsHint": "One point per line.",
+        "levelLabel": "{value}. {label}",
+        "audience": {
+          "all": "Everyone",
+          "leaders": "Leaders only"
+        },
+        "fields": {
+          "title": "Title",
+          "code": "Code",
+          "audience": "Applies to",
+          "key": "Item key",
+          "points": "Points",
+          "levels": "Level descriptions"
+        }
+      },
+      "fields": {
+        "title": "Fields ({count})",
+        "number": "Field {number}",
+        "label": "Label",
+        "key": "Field key",
+        "filledByLabel": "Filled in by",
+        "filledBy": {
+          "employee": "Employee",
+          "assessor": "Assessor",
+          "both": "Both"
+        },
+        "add": "Add field"
+      }
+    },
+    "preview": {
+      "sampleReview": "August 2025 to July 2026",
+      "sampleTarget": "August 2026 to July 2027",
+      "sampleNote": "Period placeholders are shown with sample dates.",
+      "empty": "This template has no sections yet.",
+      "item": "Item",
+      "kpiReview": "The employee fills in {min} to {max} KPI rows (objective, KPI, target, weight) and rates each one; the assessor gives the final rating.",
+      "kpiTarget": "{min} to {max} target rows (objective, KPI, target, weight) for the next period; weights add up to 100."
+    },
+    "fields": {
+      "code": "Code",
+      "name": "Name",
+      "revision": "Revision",
+      "formTitle": "Form title",
+      "isActive": "Active"
+    },
+    "columns": {
+      "usage": "Usage",
+      "usedBy": "{count, plural, one {Used by # period} other {Used by # periods}}",
+      "unused": "Not used yet",
+      "updatedAt": "Updated"
+    },
+    "actions": {
+      "duplicateItem": "Duplicate {name} as a new revision"
+    },
+    "searchPlaceholder": "Search code or name",
+    "createLabel": "New template",
+    "empty": "No appraisal templates yet.",
+    "emptySearch": "No template matches your search.",
+    "toast": {
+      "created": "Draft template created.",
+      "createFailed": "Couldn't create the template.",
+      "duplicated": "New revision created.",
+      "duplicateFailed": "Couldn't duplicate the template.",
+      "saved": "Template saved.",
+      "saveFailed": "Couldn't save the template.",
+      "invalid": "Some fields need attention. They are marked in red."
+    },
+    "errors": {
+      "loadList": "Couldn't load the appraisal templates.",
+      "load": "Couldn't load this appraisal template.",
+      "invalid": "Some fields need attention.",
+      "create": "Couldn't create the template.",
+      "update": "Couldn't save the template.",
+      "duplicate": "Couldn't duplicate the template.",
+      "delete": "Couldn't delete the template."
+    },
+    "defaults": {
+      "code": "DRAFT",
+      "name": "New appraisal template",
+      "revision": "Rev.1",
+      "formTitle": "EMPLOYEE PERFORMANCE APPRAISAL FORM",
+      "sectionTitle": "Section I",
+      "itemCode": "ITEM",
+      "itemTitle": "New item",
+      "scale": {
+        "1": "Poor Performance",
+        "2": "Below Expectation",
+        "3": "Meet Expectation",
+        "4": "Exceed Expectation",
+        "5": "Excellence"
+      }
+    },
+    "validation": {
+      "keyRequired": "Enter a key.",
+      "keyMax": "A key can be at most 50 characters.",
+      "keyFormat": "Start with a letter; use only lower-case letters, digits and _.",
+      "keyDuplicate": "This key is already used here.",
+      "titleRequired": "Enter a title.",
+      "titleMax": "A title can be at most 255 characters.",
+      "instructionsMax": "Instructions can be at most 5000 characters.",
+      "rowsNumber": "Enter a whole number.",
+      "rowsMin": "Must be at least 1.",
+      "rowsMax": "Must be at most 50.",
+      "rowsOrder": "The maximum must not be less than the minimum.",
+      "scaleLabelRequired": "Enter a label.",
+      "scaleLabelMax": "A label can be at most 100 characters.",
+      "scaleLength": "The scale must have exactly 5 levels.",
+      "scaleValues": "Scale levels must be numbered 1 to 5.",
+      "codeRequired": "Enter a code.",
+      "codeMax": "A code can be at most 50 characters.",
+      "itemCodeMax": "A code can be at most 20 characters.",
+      "nameRequired": "Enter a name.",
+      "nameMax": "A name can be at most 255 characters.",
+      "revisionRequired": "Enter a revision.",
+      "revisionMax": "A revision can be at most 20 characters.",
+      "formTitleRequired": "Enter the form title.",
+      "pointMax": "A point can be at most 1000 characters.",
+      "levelMax": "A description can be at most 2000 characters.",
+      "levelsLength": "Each item needs one description per scale level.",
+      "labelRequired": "Enter a label.",
+      "labelMax": "A label can be at most 255 characters.",
+      "itemsMin": "Add at least one item.",
+      "fieldsMin": "Add at least one field.",
+      "sectionsMin": "Add at least one section."
+    }
   }
 }

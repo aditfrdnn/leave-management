@@ -5,7 +5,8 @@
   "modules": {
     "home": "Beranda",
     "leave": "Cuti",
-    "setup": "Pengaturan"
+    "setup": "Pengaturan",
+    "appraisal": "Appraisal"
   },
   "menus": {
     "mainDashboard": "Beranda",
@@ -18,7 +19,12 @@
     "permissions": "Hak Akses",
     "leaveBalances": "Saldo Cuti",
     "leaveDashboard": "Beranda",
-    "holidays": "Hari Libur"
+    "holidays": "Hari Libur",
+    "myAppraisals": "Appraisal Saya",
+    "teamAppraisals": "Penilaian Tim",
+    "appraisalReports": "Laporan",
+    "appraisalPeriods": "Periode",
+    "appraisalTemplates": "Template Appraisal"
   },
   "segments": {
     "dashboard": "Beranda",
@@ -34,6 +40,14 @@
     "leave-balances": "Saldo Cuti",
     "leave": "Cuti",
     "requests": "Cuti Saya",
-    "holidays": "Hari Libur"
+    "holidays": "Hari Libur",
+    "appraisal": "Appraisal",
+    "my": "Appraisal Saya",
+    "team": "Penilaian Tim",
+    "reports": "Laporan",
+    "periods": "Periode",
+    "appraisal-templates": "Template Appraisal",
+    "appraisal_id": "Formulir",
+    "appraisal-templates_id": "Editor"
   }
 }

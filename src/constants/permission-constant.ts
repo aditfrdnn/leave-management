@@ -14,6 +14,11 @@ export const PERMISSIONS_CONSTANT = {
   HOLIDAYS_MANAGE: "holidays.manage",
   USERS_MANAGE: "users.manage",
   ROLES_MANAGE: "roles.manage",
+  APPRAISAL_FILL: "appraisal.fill",
+  APPRAISAL_ASSESS: "appraisal.assess",
+  APPRAISAL_MANAGE_PERIODS: "appraisal.manage_periods",
+  APPRAISAL_VIEW_ALL: "appraisal.view_all",
+  APPRAISAL_MANAGE_TEMPLATES: "appraisal.manage_templates",
 } as const;
 
 export const DEFAULT_PERMISSIONS: TPermissions = Object.values(PERMISSIONS_CONSTANT).reduce(

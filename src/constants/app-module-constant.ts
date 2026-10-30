@@ -28,6 +28,19 @@ export const appModules: TAppModule[] = [
     ],
   },
   {
+    id: "appraisal",
+    titleKey: "appraisal",
+    icon: "appraisal-icon",
+    href: "/appraisal/my",
+    basePaths: ["/appraisal"],
+    menus: [
+      { titleKey: "myAppraisals", href: "/appraisal/my", disabled: false, permission: PERMISSIONS_CONSTANT.APPRAISAL_FILL },
+      { titleKey: "teamAppraisals", href: "/appraisal/team", disabled: false, permission: PERMISSIONS_CONSTANT.APPRAISAL_ASSESS },
+      { titleKey: "appraisalReports", href: "/appraisal/reports", disabled: false, permission: PERMISSIONS_CONSTANT.APPRAISAL_VIEW_ALL },
+      { titleKey: "appraisalPeriods", href: "/appraisal/periods", disabled: false, permission: PERMISSIONS_CONSTANT.APPRAISAL_MANAGE_PERIODS },
+    ],
+  },
+  {
     id: "setup",
     titleKey: "setup",
     icon: "user-cog-icon",
@@ -38,6 +51,7 @@ export const appModules: TAppModule[] = [
       { titleKey: "departments", href: "/setup/master-data/departments", disabled: false, permission: PERMISSIONS_CONSTANT.DEPARTMENTS_MANAGE },
       { titleKey: "holidays", href: "/setup/master-data/holidays", disabled: false, permission: PERMISSIONS_CONSTANT.HOLIDAYS_MANAGE },
       { titleKey: "leaveBalances", href: "/setup/leave-balances", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_MANAGE_BALANCE },
+      { titleKey: "appraisalTemplates", href: "/setup/appraisal-templates", disabled: false, permission: PERMISSIONS_CONSTANT.APPRAISAL_MANAGE_TEMPLATES },
       { titleKey: "users", href: "/setup/users", disabled: false, permission: PERMISSIONS_CONSTANT.USERS_MANAGE },
       { titleKey: "roles", href: "/setup/roles", disabled: false, permission: PERMISSIONS_CONSTANT.ROLES_MANAGE },
       { titleKey: "permissions", href: "/setup/permissions", disabled: false, permission: PERMISSIONS_CONSTANT.ROLES_MANAGE },

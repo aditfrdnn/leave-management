@@ -441,5 +441,204 @@
       "update": "Gagal mengubah hari libur",
       "delete": "Gagal menghapus hari libur"
     }
+  },
+  "appraisalTemplates": {
+    "page": {
+      "title": "Template penilaian",
+      "description": "Formulir penilaian yang diisi karyawan dan atasan: bagian, butir, skala nilai, dan kolom tinjauan."
+    },
+    "editor": {
+      "title": "Ubah template penilaian",
+      "description": "Ubah bagian, butir, label skala, dan kolom tinjauan. Periode memakai template sebagaimana adanya saat periode dibuka.",
+      "save": "Simpan template",
+      "unsaved": "Ada perubahan yang belum disimpan",
+      "leaveConfirm": "Ada perubahan yang belum disimpan. Tinggalkan halaman ini dan buang perubahannya?",
+      "lockedBanner": "Template sudah dipakai {count} periode. Buat revisi baru untuk mengubahnya.",
+      "createRevision": "Buat revisi baru",
+      "placeholderHint": "Tulis <code>{review}</code> atau <code>{target}</code> untuk menampilkan rentang periode penilaian atau periode target, misalnya \"Agustus 2025 s/d Juli 2026\".",
+      "keyHint": "Huruf kecil, angka, dan _. Diisi otomatis dari judul bila kosong; jangan diubah lagi setelah template dipakai.",
+      "tabs": {
+        "editor": "Editor",
+        "preview": "Pratinjau"
+      },
+      "header": {
+        "title": "Detail template",
+        "activeHint": "Hanya template aktif yang bisa dipilih saat membuka periode baru."
+      },
+      "scale": {
+        "title": "Label skala",
+        "hint": "Lima tingkat, dari yang terendah (1) sampai tertinggi (5).",
+        "level": "Tingkat {value}"
+      },
+      "reorder": {
+        "up": "Naikkan {name}",
+        "down": "Turunkan {name}",
+        "remove": "Hapus {name}"
+      },
+      "sections": {
+        "title": "Bagian ({count})",
+        "hint": "Tampil sesuai urutan ini",
+        "number": "Bagian {number}",
+        "untitled": "Bagian {number} (tanpa judul)",
+        "add": "Tambah bagian",
+        "pickKind": "Jenis bagian",
+        "fields": {
+          "title": "Judul",
+          "key": "Kunci bagian",
+          "instructions": "Petunjuk",
+          "minRows": "Jumlah baris minimum",
+          "maxRows": "Jumlah baris maksimum"
+        }
+      },
+      "kinds": {
+        "rating": {
+          "label": "Penilaian",
+          "description": "Butir yang dinilai dengan skala 5 tingkat oleh karyawan dan atasan."
+        },
+        "kpi_review": {
+          "label": "Tinjauan KPI",
+          "description": "Baris KPI periode lalu, masing-masing dinilai dengan skala.",
+          "rowsHint": "Jumlah baris KPI yang wajib diisi karyawan untuk periode penilaian."
+        },
+        "kpi_target": {
+          "label": "Target KPI",
+          "description": "Baris KPI yang diusulkan untuk periode berikutnya, tanpa penilaian.",
+          "rowsHint": "Jumlah baris target yang wajib dikonfirmasi atasan untuk periode berikutnya."
+        },
+        "text": {
+          "label": "Tinjauan tertulis",
+          "description": "Kolom isian bebas, misalnya kekuatan dan kebutuhan pelatihan."
+        }
+      },
+      "items": {
+        "title": "Butir ({count})",
+        "add": "Tambah butir",
+        "untitled": "Butir {number} (tanpa judul)",
+        "hasErrors": "Butir ini masih ada kesalahan",
+        "pointsHint": "Satu poin per baris.",
+        "levelLabel": "{value}. {label}",
+        "audience": {
+          "all": "Semua",
+          "leaders": "Khusus leader"
+        },
+        "fields": {
+          "title": "Judul",
+          "code": "Kode",
+          "audience": "Berlaku untuk",
+          "key": "Kunci butir",
+          "points": "Poin",
+          "levels": "Deskripsi tiap tingkat"
+        }
+      },
+      "fields": {
+        "title": "Kolom ({count})",
+        "number": "Kolom {number}",
+        "label": "Label",
+        "key": "Kunci kolom",
+        "filledByLabel": "Diisi oleh",
+        "filledBy": {
+          "employee": "Karyawan",
+          "assessor": "Atasan",
+          "both": "Keduanya"
+        },
+        "add": "Tambah kolom"
+      }
+    },
+    "preview": {
+      "sampleReview": "Agustus 2025 s/d Juli 2026",
+      "sampleTarget": "Agustus 2026 s/d Juli 2027",
+      "sampleNote": "Penanda periode ditampilkan dengan tanggal contoh.",
+      "empty": "Template ini belum punya bagian.",
+      "item": "Butir",
+      "kpiReview": "Karyawan mengisi {min} sampai {max} baris KPI (sasaran, KPI, target, bobot) dan menilai masing-masing; atasan memberi nilai akhir.",
+      "kpiTarget": "{min} sampai {max} baris target (sasaran, KPI, target, bobot) untuk periode berikutnya; total bobot 100."
+    },
+    "fields": {
+      "code": "Kode",
+      "name": "Nama",
+      "revision": "Revisi",
+      "formTitle": "Judul formulir",
+      "isActive": "Aktif"
+    },
+    "columns": {
+      "usage": "Pemakaian",
+      "usedBy": "Dipakai {count} periode",
+      "unused": "Belum dipakai",
+      "updatedAt": "Diperbarui"
+    },
+    "actions": {
+      "duplicateItem": "Salin {name} sebagai revisi baru"
+    },
+    "searchPlaceholder": "Cari kode atau nama",
+    "createLabel": "Template baru",
+    "empty": "Belum ada template penilaian.",
+    "emptySearch": "Tidak ada template yang cocok dengan pencarian.",
+    "toast": {
+      "created": "Draf template dibuat.",
+      "createFailed": "Template tidak dapat dibuat.",
+      "duplicated": "Revisi baru dibuat.",
+      "duplicateFailed": "Template tidak dapat disalin.",
+      "saved": "Template disimpan.",
+      "saveFailed": "Template tidak dapat disimpan.",
+      "invalid": "Beberapa isian perlu diperbaiki. Isian tersebut ditandai merah."
+    },
+    "errors": {
+      "loadList": "Daftar template penilaian tidak dapat dimuat.",
+      "load": "Template penilaian ini tidak dapat dimuat.",
+      "invalid": "Beberapa isian perlu diperbaiki.",
+      "create": "Template tidak dapat dibuat.",
+      "update": "Template tidak dapat disimpan.",
+      "duplicate": "Template tidak dapat disalin.",
+      "delete": "Template tidak dapat dihapus."
+    },
+    "defaults": {
+      "code": "DRAF",
+      "name": "Template penilaian baru",
+      "revision": "Rev.1",
+      "formTitle": "FORMULIR PENILAIAN PERKEMBANGAN KARYAWAN",
+      "sectionTitle": "Bagian I",
+      "itemCode": "BUTIR",
+      "itemTitle": "Butir baru",
+      "scale": {
+        "1": "Poor Performance",
+        "2": "Below Expectation",
+        "3": "Meet Expectation",
+        "4": "Exceed Expectation",
+        "5": "Excellence"
+      }
+    },
+    "validation": {
+      "keyRequired": "Isi kunci.",
+      "keyMax": "Kunci maksimal 50 karakter.",
+      "keyFormat": "Awali dengan huruf; gunakan hanya huruf kecil, angka, dan _.",
+      "keyDuplicate": "Kunci ini sudah dipakai di sini.",
+      "titleRequired": "Isi judul.",
+      "titleMax": "Judul maksimal 255 karakter.",
+      "instructionsMax": "Petunjuk maksimal 5000 karakter.",
+      "rowsNumber": "Isi bilangan bulat.",
+      "rowsMin": "Minimal 1.",
+      "rowsMax": "Maksimal 50.",
+      "rowsOrder": "Nilai maksimum tidak boleh lebih kecil dari minimum.",
+      "scaleLabelRequired": "Isi label.",
+      "scaleLabelMax": "Label maksimal 100 karakter.",
+      "scaleLength": "Skala harus tepat 5 tingkat.",
+      "scaleValues": "Tingkat skala harus bernomor 1 sampai 5.",
+      "codeRequired": "Isi kode.",
+      "codeMax": "Kode maksimal 50 karakter.",
+      "itemCodeMax": "Kode maksimal 20 karakter.",
+      "nameRequired": "Isi nama.",
+      "nameMax": "Nama maksimal 255 karakter.",
+      "revisionRequired": "Isi revisi.",
+      "revisionMax": "Revisi maksimal 20 karakter.",
+      "formTitleRequired": "Isi judul formulir.",
+      "pointMax": "Satu poin maksimal 1000 karakter.",
+      "levelMax": "Deskripsi maksimal 2000 karakter.",
+      "levelsLength": "Setiap butir perlu satu deskripsi untuk tiap tingkat skala.",
+      "labelRequired": "Isi label.",
+      "labelMax": "Label maksimal 255 karakter.",
+      "itemsMin": "Tambahkan minimal satu butir.",
+      "fieldsMin": "Tambahkan minimal satu kolom.",
+      "sectionsMin": "Tambahkan minimal satu bagian."
+    }
   }
 }
