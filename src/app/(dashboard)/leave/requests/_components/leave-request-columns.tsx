@@ -6,7 +6,7 @@ import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { getLeaveStatusConfig } from "@/lib/status-config";
 import { dateFormatter } from "@/lib/utils/utils";
 import type { TLeave } from "@/types/leave";
-import { ViewIcon } from "@hugeicons/core-free-icons";
+import { Cancel01Icon, CheckmarkCircle02Icon, ViewIcon } from "@hugeicons/core-free-icons";
 import LeaveStatusBadge from "../../_components/leave-status-badge";
 
 /** `useTranslations("leave")`, passed in because column factories cannot call hooks. */
@@ -17,13 +17,18 @@ export const leaveRequestColumns = ({
   locale,
   current_page,
   per_page,
+  showRequester,
   onClickDetail,
+  onClickDecide,
 }: {
   t: TLeaveTranslator;
   locale: string;
   current_page: number;
   per_page: number;
+  /** Rows of other people are listed (approver scopes), so name who asked. */
+  showRequester: boolean;
   onClickDetail: (item: TLeave) => void;
+  onClickDecide: (item: TLeave, decision: "approve" | "reject") => void;
 }): ColumnDef<TLeave>[] => [
   {
     id: "no",
@@ -31,6 +36,21 @@ export const leaveRequestColumns = ({
     header: t("history.columns.no"),
     cell: ({ row }) => <p>{(current_page - 1) * per_page + row.index + 1}.</p>,
   },
+  ...(showRequester
+    ? [
+        {
+          id: "requester",
+          accessorFn: (row: TLeave) => row.user?.name ?? "",
+          header: t("history.columns.requester"),
+          cell: ({ row }: { row: { original: TLeave } }) => (
+            <div className="flex flex-col">
+              <span className="font-medium whitespace-nowrap">{row.original.is_mine ? t("history.you") : (row.original.user?.name ?? "-")}</span>
+              <span className="text-xs text-muted-foreground">{row.original.user?.department?.alias ?? ""}</span>
+            </div>
+          ),
+        } satisfies ColumnDef<TLeave>,
+      ]
+    : []),
   {
     accessorKey: "subject",
     header: t("history.columns.subject"),
@@ -92,12 +112,27 @@ export const leaveRequestColumns = ({
     id: "actions",
     enableHiding: false,
     header: () => <span className="sr-only">{t("history.columns.actions")}</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <Button type="button" variant="ghost" size="icon-sm" aria-label={t("history.view")} onClick={() => onClickDetail(row.original)}>
-          <HugeiconsIcon icon={ViewIcon} className="size-4 text-muted-foreground" />
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) => {
+      // My decision is due: the request is still pending and my approval step has not been taken.
+      const awaitingMe = Number(row.original.status) === 0 && row.original.my_approval?.approval_action === 0;
+
+      return (
+        <div className="flex items-center justify-end gap-1">
+          <Button type="button" variant="ghost" size="icon-sm" aria-label={t("history.view")} onClick={() => onClickDetail(row.original)}>
+            <HugeiconsIcon icon={ViewIcon} className="size-4 text-muted-foreground" />
+          </Button>
+          {awaitingMe && (
+            <>
+              <Button type="button" variant="ghost" size="icon-sm" aria-label={t("history.approve")} onClick={() => onClickDecide(row.original, "approve")}>
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-green-strong" />
+              </Button>
+              <Button type="button" variant="ghost" size="icon-sm" aria-label={t("history.reject")} onClick={() => onClickDecide(row.original, "reject")}>
+                <HugeiconsIcon icon={Cancel01Icon} className="size-4 text-destructive" />
+              </Button>
+            </>
+          )}
+        </div>
+      );
+    },
   },
 ];

@@ -169,15 +169,16 @@ Each module owns a path prefix, so the next module can sit beside Leave without 
 | --- | --- | --- |
 | `/dashboard` (`/` redirects here) | Home — the signed-in employee's profile (§11) | any |
 | `/leave/dashboard` | Leave — the leave dashboard (§8) | any |
-| `/leave/requests` | Leave — my history + "new request" dialog | `leave.request` |
-| `/leave/approvals` | Leave — approver inbox | `leave.approve` |
+| `/leave/requests` | Leave — my history, requests waiting for my decision, "new request" dialog | `leave.request` |
 | `/setup/master-data/employees`, `/setup/master-data/departments`, `/setup/master-data/holidays` | Setup | `employees.manage`, `departments.manage`, `holidays.manage` |
 | `/setup/leave-balances` | Setup | `leave.manage_balance` |
 | `/setup/users` | Setup | `users.manage` |
 | `/setup/roles`, `/setup/permissions` | Setup | `roles.manage` |
 
-Old paths redirect (`next.config.ts`): `/leave-requests` → `/leave/requests`, `/approvals` → `/leave/approvals`,
-`/login` → `/sign-in`. The approval email links to `FRONTEND_URL/leave/approvals`.
+Old paths redirect (`next.config.ts`): `/leave-requests` → `/leave/requests`, `/approvals` and `/leave/approvals` →
+`/leave/requests?scope=approvals`, `/login` → `/sign-in`. The approval email links to
+`FRONTEND_URL/leave/requests?scope=approvals`. There is no separate approvals page: approvers decide from
+"My Leave" (§13).
 
 --- | --- | --- |
 | `/dashboard` (`/` redirects here) | Home | any |
@@ -287,8 +288,12 @@ TMyProfile = {
 
 Existing table `holidays` (`date`, `name`, `description`, `is_mass_leave`, `is_weekend`, unique `date+name`).
 A **holiday** is a public holiday (`is_mass_leave = false`) or a company *cuti bersama* (`is_mass_leave = true`).
-Both are days off: they cannot be picked as leave dates and are skipped when computing "return to office".
-(Whether cuti bersama reduces the annual balance is not decided yet; nothing is deducted.)
+
+- **Public holiday:** a day off for everyone. It cannot be picked as a leave date and is skipped when
+  computing "return to office".
+- **Cuti bersama:** recommended, not mandatory. It is a normal working day for anyone who does not take it,
+  so it **can** be picked as a leave date (the calendar marks it), counts as annual leave and is deducted
+  from the balance on approval like any other day. It is **not** skipped when computing "return to office".
 
 | Method | Path | Body / query | Notes |
 | --- | --- | --- | --- |
@@ -303,5 +308,31 @@ THolidayItem = { id, date, name, description, is_mass_leave, created_at }
 
 New system permission `holidays.manage` (group `setup`, label "Manage holidays"), granted to Administrator and HR.
 
-**Leave request validation:** `StoreLeaveRequestRequest` rejects any `leave_date.*` on a holiday:
+**Leave request validation:** `StoreLeaveRequestRequest` rejects any `leave_date.*` on a **public** holiday (cuti bersama is allowed):
 `"Tanggal cuti 17 Agt 2026 adalah hari libur (Hari Kemerdekaan)."` (key `leave_date.N`).
+
+---
+
+## 13. One leave table for requesters and approvers
+
+`GET /api/leave-request` (the history, §7) takes a `scope`:
+
+| `scope` | Rows |
+| --- | --- |
+| `mine` (default) | requests the signed-in user submitted |
+| `approvals` | requests where the signed-in user is on `approval_flows.approval_by` |
+| `all` | both, without duplicates |
+
+`approvals` and `all` need `leave.approve` (otherwise 403). Every row adds:
+
+```ts
+is_mine: boolean,                                   // the signed-in user submitted it
+my_approval: { id, approval_level, approval_action, notes, approved_at } | null,  // my approval row, if any
+```
+
+`search` also matches the requester's name when `scope` is not `mine`. `status`, `sort_by`, `sort_dir`, `page`,
+`per_page` work as before. `meta.awaiting_my_decision` (int) is always present: pending requests (leave status 0)
+whose `my_approval.approval_action` is 0 — it feeds the tab badge.
+
+Decisions keep using `PATCH /api/leave-request/{id}/approve|reject`. `GET /api/leave-request/approvals` stays for
+compatibility but the frontend no longer calls it.

@@ -53,8 +53,7 @@ Local admin login: see "Login sebagai admin di lokal" in the leave-service READM
 | `/sign-in` | Login (public) |
 | `/dashboard` | Home: the signed-in employee's profile |
 | `/leave/dashboard` | Personal leave summary, approver queue, organisation statistics and charts (`leave.view_all`) |
-| `/leave/requests` | My leave history (paged, sortable, detail sheet, cancel) and the new-request dialog with holidays blocked |
-| `/leave/approvals` | Approver inbox: pending / decided requests, approve or reject with a note (`leave.approve`) |
+| `/leave/requests` | My leave history and, for approvers, requests awaiting their decision (scope tabs, approve/reject, cancel, detail sheet), plus the new-request dialog (public holidays blocked, cuti bersama selectable) |
 | `/setup/master-data/employees`, `/setup/master-data/departments` | Employee and department master data (`employees.manage`, `departments.manage`) |
 | `/setup/master-data/holidays` | Public holidays and cuti bersama, blocked in the leave calendar (`holidays.manage`) |
 | `/setup/leave-balances` | Each employee's remaining annual leave: set it once, history of every change (`leave.manage_balance`) |

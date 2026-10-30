@@ -1,6 +1,5 @@
 import {
   approvers,
-  leaveApprovals,
   leaveApprove,
   leaveReject,
   leaveRequest,
@@ -15,9 +14,8 @@ import type { TApiPaginated, TApiResponse, TDropdownOption } from "@/types/api";
 import type {
   THolidayDay,
   TApprovalDecisionPayload,
-  TApprovalItem,
-  TApprovalListParams,
   TLeaveListParams,
+  TLeaveListResponse,
   TApprover,
   TLeave,
   TLeaveDetail,
@@ -42,7 +40,7 @@ export const leaveService = {
 
   /** The signed-in user's requests; the API returns the whole list (no paging yet). */
   async getLeaveRequests(params: TLeaveListParams) {
-    const { data } = await instance.get<TApiPaginated<TLeave>>(leaveRequests, { params: toQueryParams(params) });
+    const { data } = await instance.get<TLeaveListResponse>(leaveRequests, { params: toQueryParams(params) });
 
     return data;
   },
@@ -68,11 +66,6 @@ export const leaveService = {
 
   /* ------------------------------- Approvals ------------------------------- */
 
-  async getApprovals(params: TApprovalListParams) {
-    const { data } = await instance.get<TApiPaginated<TApprovalItem>>(leaveApprovals, { params: toQueryParams(params) });
-
-    return data;
-  },
 
   async approveLeaveRequest(id: number | string, payload: TApprovalDecisionPayload) {
     const { data } = await instance.patch<TApiResponse<TLeave>>(leaveApprove(id), payload);

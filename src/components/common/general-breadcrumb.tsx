@@ -52,8 +52,11 @@ function GeneralBreadcrumbContent({
         .map((segment) => decodeURIComponent(segment))
     // The module crumb already names a module root that has no page of its own ("document-builder").
     const rootPath = `/${segments[0] ?? ""}`
-    const firstVisible = activeModule.basePaths.includes(rootPath)
-        && !activeModule.menus.some((menu) => menu.href === rootPath) ? 1 : 0
+    // A module whose single page sits at its root ("/dashboard" for Home) is named by the module crumb alone.
+    const isModuleHome = segments.length === 1 && pathname === activeModule.href
+    const firstVisible = isModuleHome
+        ? segments.length
+        : activeModule.basePaths.includes(rootPath) && !activeModule.menus.some((menu) => menu.href === rootPath) ? 1 : 0
     const segmentLabel = (segment: string) => {
         const key = `segments.${segment}` as Parameters<typeof t>[0]
         return t.has(key) ? t(key) : toTitleCase(segment)

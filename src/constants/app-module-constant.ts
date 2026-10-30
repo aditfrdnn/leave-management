@@ -25,7 +25,6 @@ export const appModules: TAppModule[] = [
     menus: [
       { titleKey: "leaveDashboard", href: "/leave/dashboard", disabled: false },
       { titleKey: "myLeaveRequests", href: "/leave/requests", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_REQUEST },
-      { titleKey: "approvals", href: "/leave/approvals", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_APPROVE },
     ],
   },
   {

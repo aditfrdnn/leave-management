@@ -11,7 +11,9 @@ const nextConfig: NextConfig = {
       { source: "/login", destination: "/sign-in", permanent: false },
       // Leave pages moved under the module prefix (/leave/*); old links, bookmarks and e-mails keep working.
       { source: "/leave-requests", destination: "/leave/requests", permanent: false },
-      { source: "/approvals", destination: "/leave/approvals", permanent: false },
+      // Approvals live in "My Leave" now (docs/setup-module.md §13).
+      { source: "/approvals", destination: "/leave/requests?scope=approvals", permanent: false },
+      { source: "/leave/approvals", destination: "/leave/requests?scope=approvals", permanent: false },
     ];
   },
 };

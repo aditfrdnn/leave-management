@@ -48,7 +48,7 @@ export default function ApproverCard({ approver }: { approver: TDashboardApprove
         <p className="text-xs text-muted-foreground">{t("decided", { count: approver.decided_this_month })}</p>
 
         <Button asChild variant="outline" size="sm" className="mt-auto self-start">
-          <Link href="/leave/approvals">
+          <Link href="/leave/requests?scope=approvals">
             {t("open")}
             <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
           </Link>

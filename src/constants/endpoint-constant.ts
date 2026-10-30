@@ -14,7 +14,6 @@ const leaveRequest = (id: number | string) => `${leaveRequests}/${id}`;
 const leaveRequestCancel = (id: number | string) => `${leaveRequests}/${id}/cancel`;
 
 // Approvals (the signed-in user as approver)
-const leaveApprovals = `${leaveRequests}/approvals`;
 const leaveApprove = (id: number | string) => `${leaveRequests}/${id}/approve`;
 const leaveReject = (id: number | string) => `${leaveRequests}/${id}/reject`;
 
@@ -63,7 +62,6 @@ export {
   leaveRequests,
   leaveRequest,
   leaveRequestCancel,
-  leaveApprovals,
   leaveApprove,
   leaveReject,
   leaveTypes,

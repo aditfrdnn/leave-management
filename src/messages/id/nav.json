@@ -8,7 +8,7 @@
     "setup": "Pengaturan"
   },
   "menus": {
-    "mainDashboard": "Dashboard",
+    "mainDashboard": "Beranda",
     "myLeaveRequests": "Cuti Saya",
     "approvals": "Persetujuan",
     "employees": "Karyawan",

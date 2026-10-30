@@ -29,10 +29,13 @@ import { LEAVE_REQUESTS_QUERY_KEY } from "./leave-request-table";
 const dayKey = (date: Date) => format(date, "yyyy-MM-dd");
 const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 
-/** The first working day after the last leave date: weekends and holidays skipped. */
-function getNextWorkday(date: Date, holidayKeys: Set<string>): Date {
+/**
+ * The first working day after the last leave date: weekends and public holidays skipped. Cuti bersama is
+ * optional, so it counts as a working day for anyone who did not take it.
+ */
+function getNextWorkday(date: Date, publicHolidayKeys: Set<string>): Date {
   let next = addDays(date, 1);
-  while (isWeekend(next) || holidayKeys.has(dayKey(next))) next = addDays(next, 1);
+  while (isWeekend(next) || publicHolidayKeys.has(dayKey(next))) next = addDays(next, 1);
   return next;
 }
 
@@ -91,8 +94,15 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
     staleTime: 10 * 60 * 1000,
   });
 
-  const holidayKeys = useMemo(() => new Set((holidays ?? []).map((day) => day.date)), [holidays]);
-  const holidayDates = useMemo(() => (holidays ?? []).map((day) => parse(day.date, "yyyy-MM-dd", new Date())), [holidays]);
+  // Public holidays are days off for everyone; cuti bersama can still be taken (and is then annual leave).
+  const publicHolidayKeys = useMemo(
+    () => new Set((holidays ?? []).filter((day) => !day.is_mass_leave).map((day) => day.date)),
+    [holidays],
+  );
+  const toDates = (days: typeof holidays, massLeave: boolean) =>
+    (days ?? []).filter((day) => day.is_mass_leave === massLeave).map((day) => parse(day.date, "yyyy-MM-dd", new Date()));
+  const publicHolidayDates = useMemo(() => toDates(holidays, false), [holidays]);
+  const massLeaveDates = useMemo(() => toDates(holidays, true), [holidays]);
   const monthHolidays = useMemo(
     () => (holidays ?? []).filter((day) => day.date.startsWith(format(month, "yyyy-MM"))),
     [holidays, month],
@@ -134,7 +144,7 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
 
     setSelectedDates(next);
     form.setValue("leave_date", next.map(toApi), { shouldDirty: true, shouldValidate: form.formState.isSubmitted });
-    form.setValue("return_to_office", next.length ? toApi(getNextWorkday(next[next.length - 1], holidayKeys)) : "", {
+    form.setValue("return_to_office", next.length ? toApi(getNextWorkday(next[next.length - 1], publicHolidayKeys)) : "", {
       shouldValidate: form.formState.isSubmitted,
     });
   };
@@ -218,9 +228,12 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
                         onSelect={onDatesChange}
                         month={month}
                         onMonthChange={setMonth}
-                        disabled={(date) => date < today || isWeekend(date) || holidayKeys.has(dayKey(date))}
-                        modifiers={{ holiday: holidayDates }}
-                        modifiersClassNames={{ holiday: "[&_button]:text-destructive [&_button]:line-through" }}
+                        disabled={(date) => date < today || isWeekend(date) || publicHolidayKeys.has(dayKey(date))}
+                        modifiers={{ holiday: publicHolidayDates, massLeave: massLeaveDates }}
+                        modifiersClassNames={{
+                          holiday: "[&_button]:text-destructive [&_button]:line-through",
+                          massLeave: "[&_button]:underline [&_button]:decoration-yellow-strong [&_button]:decoration-2 [&_button]:underline-offset-4",
+                        }}
                       />
                       <dl className="flex min-w-40 flex-1 flex-col gap-3 text-sm">
                         <div>
@@ -244,12 +257,15 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
                               <ul className="flex flex-col gap-0.5 text-muted-foreground">
                                 {monthHolidays.map((day) => (
                                   <li key={day.date}>
-                                    <span className="text-destructive tabular-nums">{format(parse(day.date, "yyyy-MM-dd", new Date()), "d MMM", { locale: dateLocale })}</span>{" "}
+                                    <span className={cn("tabular-nums", day.is_mass_leave ? "text-yellow-strong" : "text-destructive")}>{format(parse(day.date, "yyyy-MM-dd", new Date()), "d MMM", { locale: dateLocale })}</span>{" "}
                                     {day.name}
                                     {day.is_mass_leave && <span className="text-xs"> · {t("form.holidays.massLeave")}</span>}
                                   </li>
                                 ))}
                               </ul>
+                              {monthHolidays.some((day) => day.is_mass_leave) && (
+                                <p className="mt-1 text-xs text-muted-foreground">{t("form.holidays.massLeaveHint")}</p>
+                              )}
                             </dd>
                           </div>
                         )}

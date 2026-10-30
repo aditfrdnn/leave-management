@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "My Leave Requests",
-    "description": "Submit a new leave request and follow the ones you already sent."
+    "description": "Your leave history, new requests, and requests that wait for your decision."
   },
   "form": {
     "title": "New Leave Request",
@@ -43,7 +43,8 @@
     },
     "holidays": {
       "title": "Holidays this month",
-      "massLeave": "cuti bersama"
+      "massLeave": "cuti bersama",
+      "massLeaveHint": "Cuti bersama is optional: pick it to take it, and it counts as annual leave."
     },
     "close": "Close",
     "newRequest": "New leave request"
@@ -62,12 +63,33 @@
       "reason": "Reason",
       "status": "Status",
       "submittedAt": "Submitted",
-      "actions": "Actions"
+      "actions": "Actions",
+      "requester": "Requester"
     },
     "count": "{count, plural, =0 {No requests} one {# request} other {# requests}}",
     "searchPlaceholder": "Search LVR no. or reason…",
     "emptySearch": "No request matches the filter",
-    "view": "View details"
+    "view": "View details",
+    "scopes": {
+      "all": "All",
+      "mine": "My requests",
+      "approvals": "Awaiting my decision",
+      "label": "Show"
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "emptyApprovals": "Nothing waits for your decision",
+    "you": "You",
+    "titles": {
+      "mine": "My Leave History",
+      "all": "Leave requests",
+      "approvals": "Awaiting my decision"
+    },
+    "descriptions": {
+      "mine": "Every request you sent, newest first.",
+      "all": "Your own requests and the ones you approve.",
+      "approvals": "Requests where you are the approver. Approve or reject the pending ones."
+    }
   },
   "status": {
     "pending": "Pending",
@@ -101,30 +123,7 @@
     "cancel": "Failed to cancel the request"
   },
   "approvals": {
-    "page": {
-      "title": "Approvals",
-      "description": "Leave requests that wait for your decision, and the ones you already decided."
-    },
-    "filters": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "all": "All"
-    },
-    "searchPlaceholder": "Search by requester or LVR no…",
-    "empty": {
-      "pending": "Nothing waits for your approval",
-      "approved": "You have not approved any request yet",
-      "rejected": "You have not rejected any request",
-      "all": "No requests assigned to you yet"
-    },
-    "emptySearch": "No request matches your search",
-    "columns": {
-      "requester": "Requester",
-      "actions": "Actions"
-    },
     "actions": {
-      "view": "View details",
       "approve": "Approve",
       "reject": "Reject"
     },
@@ -150,7 +149,6 @@
       "notesMax": "Note must not exceed 500 characters"
     },
     "errors": {
-      "loadList": "Failed to load approvals",
       "approve": "Failed to approve the request",
       "reject": "Failed to reject the request"
     }

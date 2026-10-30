@@ -395,7 +395,7 @@
   "holidays": {
     "page": {
       "title": "Hari Libur",
-      "description": "Libur nasional dan cuti bersama perusahaan. Tanggal ini tidak bisa diambil sebagai cuti dan dilewati saat menghitung hari kembali bekerja."
+      "description": "Libur nasional dan cuti bersama perusahaan. Libur nasional tidak bisa diambil sebagai cuti; cuti bersama tidak wajib, bisa dipilih di kalender cuti dan dihitung sebagai cuti tahunan."
     },
     "searchPlaceholder": "Cari nama hari libur",
     "createLabel": "Tambah hari libur",
@@ -422,7 +422,7 @@
       "namePlaceholder": "mis. Hari Kemerdekaan RI",
       "descriptionPlaceholder": "Opsional, mis. dasar SKB-nya",
       "isMassLeave": "Cuti bersama",
-      "massLeaveHint": "Biarkan nonaktif untuk libur nasional."
+      "massLeaveHint": "Cuti bersama tidak wajib dan dihitung sebagai cuti tahunan bila diambil. Biarkan nonaktif untuk libur nasional."
     },
     "toast": {
       "created": "Hari libur ditambahkan.",

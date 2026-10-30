@@ -6,7 +6,7 @@ import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated, TDropdownOption } from "@/types/api";
-import type { THolidayDay, TApprover, TLeave, TLeaveListParams } from "@/types/leave";
+import type { THolidayDay, TApprover, TLeave, TLeaveListParams, TLeaveListResponse } from "@/types/leave";
 import type { TMyLeaveBalance } from "@/types/setup";
 import { leaveRequestSchema } from "@/validations/leave-validations";
 
@@ -18,7 +18,7 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetLeaveRequests(params: TLeaveListParams): Promise<TApiPaginated<TLeave>> {
+export async function GetLeaveRequests(params: TLeaveListParams): Promise<TLeaveListResponse> {
   try {
     return await leaveService.getLeaveRequests(params);
   } catch (error) {

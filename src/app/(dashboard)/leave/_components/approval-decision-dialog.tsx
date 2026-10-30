@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form } from "@/components/ui/form";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
 import { isActionState } from "@/lib/action-state";
-import type { TApprovalItem } from "@/types/leave";
+import type { TLeave } from "@/types/leave";
 import { approvalDecisionSchema, type ApprovalDecisionSchemaType } from "@/validations/leave-validations";
 import { DecideLeaveRequest } from "../action";
 
@@ -26,7 +26,7 @@ export default function ApprovalDecisionDialog({
   onOpenChange,
   onSuccess,
 }: {
-  item: TApprovalItem | null;
+  item: TLeave | null;
   decision: TDecision;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;

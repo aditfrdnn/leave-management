@@ -395,7 +395,7 @@
   "holidays": {
     "page": {
       "title": "Holidays",
-      "description": "Public holidays and company cuti bersama. These days cannot be taken as leave and are skipped when counting the return-to-office day."
+      "description": "Public holidays and company cuti bersama. Public holidays cannot be taken as leave; cuti bersama is optional, can be picked in the leave calendar and counts as annual leave."
     },
     "searchPlaceholder": "Search holiday name",
     "createLabel": "Add holiday",
@@ -422,7 +422,7 @@
       "namePlaceholder": "e.g. Independence Day",
       "descriptionPlaceholder": "Optional, e.g. the decree it comes from",
       "isMassLeave": "Cuti bersama (company collective leave)",
-      "massLeaveHint": "Leave it off for a public holiday."
+      "massLeaveHint": "Cuti bersama is optional and counts as annual leave when taken. Leave it off for a public holiday."
     },
     "toast": {
       "created": "Holiday added.",

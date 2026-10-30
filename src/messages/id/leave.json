@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Pengajuan Cuti Saya",
-    "description": "Ajukan cuti baru dan pantau pengajuan yang sudah dikirim."
+    "description": "Riwayat cuti Anda, pengajuan baru, dan pengajuan yang menunggu keputusan Anda."
   },
   "form": {
     "title": "Pengajuan Cuti Baru",
@@ -43,7 +43,8 @@
     },
     "holidays": {
       "title": "Hari libur bulan ini",
-      "massLeave": "cuti bersama"
+      "massLeave": "cuti bersama",
+      "massLeaveHint": "Cuti bersama tidak wajib: pilih tanggalnya kalau ingin ikut, dan dihitung sebagai cuti tahunan."
     },
     "close": "Tutup",
     "newRequest": "Ajukan cuti"
@@ -62,12 +63,33 @@
       "reason": "Alasan",
       "status": "Status",
       "submittedAt": "Dikirim",
-      "actions": "Aksi"
+      "actions": "Aksi",
+      "requester": "Pemohon"
     },
     "count": "{count} pengajuan",
     "searchPlaceholder": "Cari no. LVR atau alasan…",
     "emptySearch": "Tidak ada pengajuan yang cocok dengan filter",
-    "view": "Lihat detail"
+    "view": "Lihat detail",
+    "scopes": {
+      "all": "Semua",
+      "mine": "Pengajuan saya",
+      "approvals": "Perlu persetujuan saya",
+      "label": "Tampilkan"
+    },
+    "approve": "Setujui",
+    "reject": "Tolak",
+    "emptyApprovals": "Tidak ada yang menunggu keputusan Anda",
+    "you": "Anda",
+    "titles": {
+      "mine": "Riwayat Cuti Saya",
+      "all": "Pengajuan cuti",
+      "approvals": "Perlu persetujuan saya"
+    },
+    "descriptions": {
+      "mine": "Semua pengajuan Anda, terbaru di atas.",
+      "all": "Pengajuan Anda sendiri dan pengajuan yang Anda setujui.",
+      "approvals": "Pengajuan dengan Anda sebagai approver. Setujui atau tolak yang masih menunggu."
+    }
   },
   "status": {
     "pending": "Menunggu",
@@ -101,30 +123,7 @@
     "cancel": "Gagal membatalkan pengajuan"
   },
   "approvals": {
-    "page": {
-      "title": "Persetujuan",
-      "description": "Pengajuan cuti yang menunggu keputusan Anda, dan yang sudah Anda putuskan."
-    },
-    "filters": {
-      "pending": "Menunggu",
-      "approved": "Disetujui",
-      "rejected": "Ditolak",
-      "all": "Semua"
-    },
-    "searchPlaceholder": "Cari nama pemohon atau no. LVR…",
-    "empty": {
-      "pending": "Tidak ada yang menunggu persetujuan Anda",
-      "approved": "Belum ada pengajuan yang Anda setujui",
-      "rejected": "Belum ada pengajuan yang Anda tolak",
-      "all": "Belum ada pengajuan untuk Anda"
-    },
-    "emptySearch": "Tidak ada pengajuan yang cocok",
-    "columns": {
-      "requester": "Pemohon",
-      "actions": "Aksi"
-    },
     "actions": {
-      "view": "Lihat detail",
       "approve": "Setujui",
       "reject": "Tolak"
     },
@@ -150,7 +149,6 @@
       "notesMax": "Catatan maksimal 500 karakter"
     },
     "errors": {
-      "loadList": "Gagal memuat persetujuan",
       "approve": "Gagal menyetujui pengajuan",
       "reject": "Gagal menolak pengajuan"
     }

@@ -36,6 +36,10 @@ export type TLeave = {
     portion: string;
     is_counted: number;
   }[];
+  /** History rows (`GET /api/leave-request`, docs/setup-module.md §13): the signed-in user submitted it. */
+  is_mine?: boolean;
+  /** History rows: the signed-in user's approval step on this request, if they are an approver. */
+  my_approval?: TLeaveApproval | null;
 };
 
 /** `/api/dropdown/users` row (approvers). */
@@ -71,18 +75,19 @@ export type TLeaveApproval = {
   approval_by?: { id: number; name: string; email: string } | null;
 };
 
-/** `GET /api/leave-request/approvals` row: the request plus this approver's own flow row. */
-export type TApprovalItem = TLeave & { approval: TLeaveApproval };
 
 /** `GET /api/leave-request/{id}`: the request with every approval step. */
 export type TLeaveDetail = TLeave & { approvals: TLeaveApproval[] };
 
-export type TApprovalStatusFilter = "pending" | "approved" | "rejected" | "all";
 
 export type TLeaveSortKey = "created_at" | "start_date" | "duration" | "status" | "submitted_at";
 
 /** Query string for `GET /api/leave-request`; `status` is a comma-joined list of status codes. */
+/** Whose requests the history shows; `approvals` and `all` need `leave.approve`. */
+export type TLeaveScope = "mine" | "approvals" | "all";
+
 export type TLeaveListParams = {
+  scope?: TLeaveScope;
   page?: number;
   per_page?: number;
   search?: string;
@@ -91,12 +96,6 @@ export type TLeaveListParams = {
   sort_dir?: "asc" | "desc";
 };
 
-export type TApprovalListParams = {
-  status?: TApprovalStatusFilter;
-  page?: number;
-  per_page?: number;
-  search?: string;
-};
 
 export type TApprovalDecisionPayload = {
   notes?: string | null;
@@ -109,4 +108,12 @@ export type THolidayDay = {
   name: string;
   /** Company "cuti bersama" rather than a public holiday. */
   is_mass_leave: boolean;
+};
+
+/** `GET /api/leave-request`: the paginated history plus how many requests wait for my decision. */
+export type TLeaveListResponse = {
+  success: boolean;
+  message: string;
+  data: TLeave[];
+  meta: { pagination: import("./api").TApiPagination; awaiting_my_decision?: number };
 };

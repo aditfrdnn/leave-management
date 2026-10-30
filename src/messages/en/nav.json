@@ -8,7 +8,7 @@
     "setup": "Settings"
   },
   "menus": {
-    "mainDashboard": "Dashboard",
+    "mainDashboard": "Home",
     "myLeaveRequests": "My Leave",
     "approvals": "Approvals",
     "employees": "Employees",
