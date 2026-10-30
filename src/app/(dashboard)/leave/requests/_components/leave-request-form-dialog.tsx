@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format, parse } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
@@ -16,6 +16,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { INITIAL_LEAVE_REQUEST_FORM, LEAVE_DATE_FORMAT } from "@/constants/leave-constant";
 import { useDateLocale } from "@/hooks/use-date-locale";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
@@ -39,8 +41,8 @@ function getNextWorkday(date: Date, publicHolidayKeys: Set<string>): Date {
   return next;
 }
 
-/** The calendar looks a year ahead; holidays outside that window are not offered anyway. */
-const HOLIDAY_WINDOW_DAYS = 400;
+/** Holidays of the year in view plus January of the next, so "return to office" after late December sees them too. */
+const holidayRange = (year: number) => ({ from: `${year}-01-01`, to: `${year + 1}-01-31` });
 
 const toApi = (date: Date) => format(date, LEAVE_DATE_FORMAT);
 const fromApi = (value: string) => parse(value, LEAVE_DATE_FORMAT, new Date());
@@ -76,15 +78,13 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
   const leaveDates = useWatch({ control: form.control, name: "leave_date" }) ?? [];
   const returnToOffice = useWatch({ control: form.control, name: "return_to_office" });
 
-  const today = useMemo(() => {
-    const value = new Date();
-    value.setHours(0, 0, 0, 0);
-    return value;
-  }, []);
-
   const { data: holidays } = useQuery({
-    queryKey: ["leave", "holiday-calendar", dayKey(today)],
-    queryFn: () => GetHolidayCalendar(dayKey(today), dayKey(addDays(today, HOLIDAY_WINDOW_DAYS))),
+    queryKey: ["leave", "holiday-calendar", month.getFullYear()],
+    queryFn: () => {
+      const { from, to } = holidayRange(month.getFullYear());
+      return GetHolidayCalendar(from, to);
+    },
+    placeholderData: keepPreviousData,
     enabled: open,
     staleTime: 10 * 60 * 1000,
   });
@@ -186,12 +186,10 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
             <fieldset disabled={isPending} className="flex flex-col gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormInput form={form} name="subject" label={t("form.fields.subject")} placeholder={t("form.fields.subjectPlaceholder")} isRequired />
-                {/* Read-only: annual leave is the only type in use; the API assigns it. */}
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm font-medium">{t("form.fields.leaveType")}</span>
-                  <p className="flex h-9 items-center rounded-md border border-dashed px-3 text-sm text-muted-foreground">
-                    {t("form.fields.annualLeave")}
-                  </p>
+                {/* Read-only: annual leave is the only type in use; the API assigns it. Same markup as FormInput so both columns line up. */}
+                <div className="grid gap-1.5">
+                  <Label htmlFor="leave-type-annual">{t("form.fields.leaveType")}</Label>
+                  <Input id="leave-type-annual" value={t("form.fields.annualLeave")} readOnly tabIndex={-1} className="rounded-lg bg-muted/40 text-muted-foreground" />
                 </div>
               </div>
 
@@ -214,7 +212,8 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
                         onSelect={onDatesChange}
                         month={month}
                         onMonthChange={setMonth}
-                        disabled={(date) => date < today || isWeekend(date) || publicHolidayKeys.has(dayKey(date))}
+                        // Past days stay open: leave is sometimes filed late or after a sudden absence.
+                        disabled={(date) => isWeekend(date) || publicHolidayKeys.has(dayKey(date))}
                         modifiers={{ holiday: publicHolidayDates, massLeave: massLeaveDates }}
                         modifiersClassNames={{
                           holiday: "[&_button]:text-destructive [&_button]:line-through",
@@ -234,7 +233,7 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
                         </div>
                         <div>
                           <dt className="font-medium">{t("form.fields.daysTotal")}</dt>
-                          <dd className="type-metric">{t("form.fields.days", { count: leaveDates.length })}</dd>
+                          <dd className="text-muted-foreground">{t("form.fields.days", { count: leaveDates.length })}</dd>
                         </div>
                         {monthHolidays.length > 0 && (
                           <div>
@@ -259,7 +258,7 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
                           <div>
                             <dt className="font-medium">{t("form.balance.label")}</dt>
                             <dd className="text-muted-foreground">
-                              <span className={cn("font-semibold text-foreground tabular-nums", availableDays < 0 && "text-destructive")}>
+                              <span className={cn(availableDays < 0 && "text-destructive")}>
                                 {t("form.fields.days", { count: myBalance.balance })}
                               </span>
                               {myBalance.pending_days > 0 && (

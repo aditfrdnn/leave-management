@@ -30,7 +30,7 @@ Bearer-token API over HTTPS. The frontend never talks to the WhatsApp service.
 
 - Every request carries `Authorization: Bearer <token>` (added by `lib/axios/instance.ts` from the httpOnly cookie) and `X-Locale` (ignored by the API today).
 - Envelope: `{ success, message, data }`. Errors: `{ success: false, message, errors?: { field: string[] } }` for controller **and** framework errors (401/403/404/405/422/429/500 are rendered as the same envelope by `bootstrap/app.php`). `lib/api-error.ts` still accepts the legacy `data` field map.
-- `POST /api/leave-request` is validated by `StoreLeaveRequestRequest` (`lang/id` + `lang/en` messages): dates `dd-MM-yyyy`, not in the past, no weekend, no overlap with the user's other requests, approver ≠ self, `return_to_office` after the last leave day. Per-date errors come back as `leave_date.0`, `leave_date.1`, …
+- `POST /api/leave-request` is validated by `StoreLeaveRequestRequest` (`lang/id` + `lang/en` messages): dates `dd-MM-yyyy` (past dates allowed for late or sudden leave), no weekend, no overlap with the user's other requests, approver ≠ self, `return_to_office` after the last leave day. Per-date errors come back as `leave_date.0`, `leave_date.1`, …
 - Config: `NEXT_PUBLIC_DEV_SERVER_URL` / `NEXT_PUBLIC_PROD_SERVER_URL` (no trailing `/api`). Production is `https://lvr-api.pdi-ptcs.com`; `https://lvr.pdi-ptcs.com` is the frontend itself.
 
 ## 2. leave-service → WhatsApp service
