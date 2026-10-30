@@ -1,9 +1,9 @@
-export const INITIAL_LOGIN_FORM = {
+export const INITIAL_SIGN_IN_FORM = {
   email: "",
   password: "",
 };
 
-export const INITIAL_LOGIN_STATE = {
+export const INITIAL_SIGN_IN_STATE = {
   status: "idle",
   errors: {
     email: [],

@@ -1,0 +1,81 @@
+{
+  "page": {
+    "title": "Pengajuan Cuti Saya",
+    "description": "Ajukan cuti baru dan pantau pengajuan yang sudah dikirim."
+  },
+  "form": {
+    "title": "Pengajuan Cuti Baru",
+    "description": "Pilih tanggal, tentukan approver dan serahkan pekerjaan yang sedang berjalan.",
+    "submit": "Kirim Pengajuan",
+    "fields": {
+      "subject": "No. LVR",
+      "subjectPlaceholder": "Masukkan No. LVR",
+      "leaveType": "Jenis Cuti",
+      "leaveTypePlaceholder": "Pilih jenis cuti",
+      "leaveDate": "Tanggal Cuti",
+      "leaveDateHint": "Pilih satu atau beberapa hari kerja",
+      "selectedDates": "Tanggal Cuti",
+      "returnToOffice": "Kembali Bekerja",
+      "daysTotal": "Total Hari",
+      "days": "{count} hari",
+      "noDates": "Belum ada tanggal dipilih",
+      "approver": "Approver (Lead / Supervisor)",
+      "approverPlaceholder": "Pilih approver",
+      "reason": "Alasan Cuti",
+      "reasonPlaceholder": "mis. Liburan keluarga ke Bali",
+      "location": "Lokasi Selama Cuti",
+      "locationPlaceholder": "mis. Bali, Indonesia",
+      "ongoingTask": "Tugas Berjalan",
+      "ongoingTaskPlaceholder": "mis. Laporan commissioning site A",
+      "replacement": "Pengganti Sementara",
+      "replacementPlaceholder": "mis. Budi",
+      "phone": "Nomor Telepon",
+      "phonePlaceholder": "mis. +62 812 3456 7890"
+    },
+    "toast": {
+      "created": "Pengajuan cuti terkirim.",
+      "failed": "Gagal mengirim pengajuan cuti"
+    }
+  },
+  "history": {
+    "title": "Riwayat Cuti Saya",
+    "description": "Semua pengajuan yang pernah dikirim, terbaru di atas.",
+    "empty": "Belum ada pengajuan cuti",
+    "emptyHint": "Kirim pengajuan cuti untuk melihat riwayatnya di sini.",
+    "columns": {
+      "no": "No.",
+      "subject": "No. LVR",
+      "dates": "Tanggal",
+      "leaveType": "Jenis Cuti",
+      "duration": "Durasi",
+      "reason": "Alasan",
+      "status": "Status",
+      "submittedAt": "Dikirim"
+    }
+  },
+  "status": {
+    "pending": "Menunggu",
+    "approved": "Disetujui",
+    "rejected": "Ditolak"
+  },
+  "validation": {
+    "subjectRequired": "Masukkan nomor LVR",
+    "leaveTypeRequired": "Pilih jenis cuti",
+    "leaveDateRequired": "Pilih minimal satu tanggal",
+    "approverRequired": "Pilih approver",
+    "reasonMin": "Alasan minimal 10 karakter",
+    "reasonMax": "Alasan maksimal 200 karakter",
+    "locationMin": "Lokasi minimal 2 karakter",
+    "returnRequired": "Tanggal kembali belum terisi",
+    "ongoingTaskMin": "Tuliskan tugas yang sedang berjalan",
+    "replacementMin": "Masukkan nama pengganti",
+    "phoneMin": "Masukkan nomor telepon yang valid"
+  },
+  "errors": {
+    "loadList": "Gagal memuat pengajuan cuti",
+    "loadLeaveTypes": "Gagal memuat jenis cuti",
+    "loadApprovers": "Gagal memuat daftar approver",
+    "create": "Gagal mengirim pengajuan cuti",
+    "formDataEmpty": "Data form kosong"
+  }
+}

@@ -15,7 +15,8 @@ export default function FormInput<T extends FieldValues>({
   label,
   placeholder,
   disabled,
-  readonly,
+  readOnly,
+  isRequired,
   type = "text",
 }: {
   form: UseFormReturn<T>;
@@ -23,39 +24,41 @@ export default function FormInput<T extends FieldValues>({
   label: string;
   placeholder?: string;
   disabled?: boolean;
-  readonly?: boolean;
+  readOnly?: boolean;
   type?: string;
+  isRequired?: boolean;
 }) {
   return (
     <FormField
       name={name}
       control={form.control}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
+      disabled={disabled}
+      render={({ field: { ...rest } }) => (
+        <FormItem className="gap-1.5">
+          {label && <FormLabel>{label}{isRequired && <span className="text-destructive -ml-1">*</span>}</FormLabel>}
           <FormControl>
             {type === "textarea" ? (
               <Textarea
-                {...field}
-                disabled={disabled || false}
-                className="resize-none rounded-lg"
+                {...rest}
+                className="resize-none min-h-26 rounded-lg"
+                rows={10}
                 autoComplete="off"
-                readOnly={readonly}
+                readOnly={readOnly}
                 placeholder={placeholder}
               />
             ) : (
               <Input
                 type={type}
-                {...field}
-                disabled={disabled || false}
+                {...rest}
                 autoFocus={false}
-                readOnly={readonly}
+                readOnly={readOnly}
                 autoComplete="off"
+                className="rounded-lg"
                 placeholder={placeholder}
               />
             )}
           </FormControl>
-          <FormMessage className="text-xs italic" />
+          <FormMessage className="-mt-1 text-xs italic" />
         </FormItem>
       )}
     />

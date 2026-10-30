@@ -1,0 +1,81 @@
+{
+  "page": {
+    "title": "My Leave Requests",
+    "description": "Submit a new leave request and follow the ones you already sent."
+  },
+  "form": {
+    "title": "New Leave Request",
+    "description": "Pick the dates, name your approver and hand over what you are working on.",
+    "submit": "Submit Request",
+    "fields": {
+      "subject": "LVR No.",
+      "subjectPlaceholder": "Enter LVR No.",
+      "leaveType": "Leave Type",
+      "leaveTypePlaceholder": "Select leave type",
+      "leaveDate": "Leave Dates",
+      "leaveDateHint": "Pick one or more working days",
+      "selectedDates": "Leave Dates",
+      "returnToOffice": "Return To Office",
+      "daysTotal": "Days Total",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "noDates": "No dates selected yet",
+      "approver": "Approver (Lead / Supervisor)",
+      "approverPlaceholder": "Select an approver",
+      "reason": "Reason for Leave",
+      "reasonPlaceholder": "e.g., Family vacation to Bali",
+      "location": "Location During Leave",
+      "locationPlaceholder": "e.g., Bali, Indonesia",
+      "ongoingTask": "Ongoing Tasks",
+      "ongoingTaskPlaceholder": "e.g., Commissioning report for site A",
+      "replacement": "Temporary Replacement",
+      "replacementPlaceholder": "e.g., Budi",
+      "phone": "Phone Number",
+      "phonePlaceholder": "e.g., +62 812 3456 7890"
+    },
+    "toast": {
+      "created": "Leave request submitted.",
+      "failed": "Failed to submit leave request"
+    }
+  },
+  "history": {
+    "title": "My Leave History",
+    "description": "Every request you sent, newest first.",
+    "empty": "No leave requests yet",
+    "emptyHint": "Submit a leave request to see your history here.",
+    "columns": {
+      "no": "No.",
+      "subject": "LVR No.",
+      "dates": "Dates",
+      "leaveType": "Leave Type",
+      "duration": "Duration",
+      "reason": "Reason",
+      "status": "Status",
+      "submittedAt": "Submitted"
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "validation": {
+    "subjectRequired": "Please enter a LVR number",
+    "leaveTypeRequired": "Please select a leave type",
+    "leaveDateRequired": "Please select at least one date",
+    "approverRequired": "Please select an approver",
+    "reasonMin": "Reason must be at least 10 characters",
+    "reasonMax": "Reason must not exceed 200 characters",
+    "locationMin": "Location must be at least 2 characters",
+    "returnRequired": "Return date is missing",
+    "ongoingTaskMin": "Please list your ongoing tasks",
+    "replacementMin": "Please enter the replacement's name",
+    "phoneMin": "Please provide a valid phone number"
+  },
+  "errors": {
+    "loadList": "Failed to load your leave requests",
+    "loadLeaveTypes": "Failed to load leave types",
+    "loadApprovers": "Failed to load approvers",
+    "create": "Failed to submit the leave request",
+    "formDataEmpty": "Form data is empty"
+  }
+}

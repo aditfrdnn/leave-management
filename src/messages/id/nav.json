@@ -1,0 +1,14 @@
+{
+  "menuLabel": "Menu",
+  "switchModule": "Pindah modul",
+  "brand": "LVR System",
+  "modules": {
+    "leave": "Cuti"
+  },
+  "menus": {
+    "myLeaveRequests": "Pengajuan Cuti Saya"
+  },
+  "segments": {
+    "leave-requests": "Pengajuan Cuti"
+  }
+}

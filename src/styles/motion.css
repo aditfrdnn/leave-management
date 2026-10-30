@@ -1,0 +1,155 @@
+/*
+ * Entrance motion. Only opacity and transform are animated (compositor-only, no layout work),
+ * each element animates once when it mounts, and everything is off under prefers-reduced-motion.
+ * Nothing moves outside its own box: a translate would poke past a scroll container's edge for a
+ * moment and flash its scrollbar, shifting the layout. Rows only fade; cards scale down from center.
+ */
+
+@theme inline {
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-enter: enter 420ms var(--ease-out-quint) backwards;
+  --animate-row-in: row-in 320ms var(--ease-out-quint) backwards;
+  --animate-reveal: reveal 520ms var(--ease-out-quint) backwards;
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+  }
+
+  @keyframes row-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: scale(0.99);
+      filter: blur(4px);
+    }
+  }
+}
+
+/* Each page comes into focus once its data is ready (see PageGate). */
+@layer components {
+  .page-reveal > :not([role="status"]) {
+    animation: var(--animate-reveal);
+  }
+
+  /* While the page gate holds a page hidden, its entrance animations wait to play on reveal. */
+  .page-reveal[data-state]:not([data-state="ready"]),
+  .page-reveal[data-state]:not([data-state="ready"]) * {
+    animation-play-state: paused !important;
+  }
+}
+
+/*
+ * Loader: three bars rising and falling in turn (shadcnspace "Spinner 06 - Bars"), sized per
+ * data-size. It fades in after 150ms so quick loads never flash it.
+ */
+@layer components {
+  .loader-fade {
+    animation: loader-fade 300ms ease-out 150ms backwards;
+  }
+
+  .loader {
+    --bar-width: 6px;
+    --bar-gap: 4px;
+    --bar-min: 6px;
+    --bar-max: 20px;
+    display: inline-flex;
+    align-items: flex-end;
+    gap: var(--bar-gap);
+    height: var(--bar-max);
+  }
+  .loader[data-size="xs"] { --bar-width: 2px; --bar-gap: 2px; --bar-min: 4px; --bar-max: 12px; }
+  .loader[data-size="sm"] { --bar-width: 4px; --bar-gap: 3px; --bar-min: 5px; --bar-max: 16px; }
+  .loader[data-size="lg"] { --bar-width: 8px; --bar-gap: 5px; --bar-min: 8px; --bar-max: 28px; }
+
+  /*
+   * Each bar is a rounded track with a fill that slides up inside it. Moving the fill with a
+   * transform keeps it animating on the compositor while the main thread is busy loading the
+   * route (a height animation freezes there), and the clipped track keeps both ends rounded.
+   */
+  .loader-bar {
+    width: var(--bar-width);
+    height: var(--bar-max);
+    border-radius: calc(var(--bar-width) / 2);
+    overflow: hidden;
+  }
+  .loader-bar::before {
+    content: "";
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: currentColor;
+    transform: translateY(calc(var(--bar-max) - var(--bar-min)));
+    animation: loader-bars 0.8s ease-in-out infinite;
+  }
+  .loader-bar:nth-child(2)::before { animation-delay: 0.2s; }
+  .loader-bar:nth-child(3)::before { animation-delay: 0.4s; }
+}
+
+@keyframes loader-bars {
+  50% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes loader-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Table rows appear one after another; past the 15th they share the last delay. */
+@layer components {
+  [data-slot="table-body"]:not([data-motion="off"]) > tr {
+    animation: var(--animate-row-in);
+  }
+  [data-slot="table-body"] > tr:nth-child(2) { animation-delay: 30ms; }
+  [data-slot="table-body"] > tr:nth-child(3) { animation-delay: 60ms; }
+  [data-slot="table-body"] > tr:nth-child(4) { animation-delay: 90ms; }
+  [data-slot="table-body"] > tr:nth-child(5) { animation-delay: 120ms; }
+  [data-slot="table-body"] > tr:nth-child(6) { animation-delay: 150ms; }
+  [data-slot="table-body"] > tr:nth-child(7) { animation-delay: 180ms; }
+  [data-slot="table-body"] > tr:nth-child(8) { animation-delay: 210ms; }
+  [data-slot="table-body"] > tr:nth-child(9) { animation-delay: 240ms; }
+  [data-slot="table-body"] > tr:nth-child(10) { animation-delay: 270ms; }
+  [data-slot="table-body"] > tr:nth-child(11) { animation-delay: 300ms; }
+  [data-slot="table-body"] > tr:nth-child(12) { animation-delay: 330ms; }
+  [data-slot="table-body"] > tr:nth-child(13) { animation-delay: 360ms; }
+  [data-slot="table-body"] > tr:nth-child(14) { animation-delay: 390ms; }
+  [data-slot="table-body"] > tr:nth-child(n + 15) { animation-delay: 420ms; }
+
+  /* Cards rise in; siblings in the same grid or row follow each other. */
+  [data-slot="card"] {
+    animation: var(--animate-enter);
+  }
+  :nth-child(2 of [data-slot="card"]) { animation-delay: 50ms; }
+  :nth-child(3 of [data-slot="card"]) { animation-delay: 100ms; }
+  :nth-child(4 of [data-slot="card"]) { animation-delay: 150ms; }
+  :nth-child(n + 5 of [data-slot="card"]) { animation-delay: 200ms; }
+
+  /* Cards nested in another card (and in dialogs) come in with their parent. */
+  [data-slot="card"] [data-slot="card"],
+  [role="dialog"] [data-slot="card"] {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="table-body"] > tr,
+  [data-slot="card"],
+  .animate-reveal,
+  .page-reveal > *,
+  .loader-fade {
+    animation: none !important;
+  }
+  .loader-bar::before {
+    animation-duration: 1.6s;
+  }
+}

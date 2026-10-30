@@ -1,0 +1,263 @@
+{
+  "language": {
+    "label": "Language"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "add": "Add",
+    "update": "Update",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "upload": "Upload",
+    "download": "Download",
+    "view": "View",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "retry": "Try again",
+    "select": "Select",
+    "clear": "Clear",
+    "logout": "Log out",
+    "login": "Log in"
+  },
+  "states": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "noData": "No data yet",
+    "noResults": "No results found",
+    "comingSoon": "Soon"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Enter a valid email address"
+  },
+  "pagination": {
+    "label": "pagination",
+    "previous": "Previous",
+    "previousLabel": "Go to previous page",
+    "next": "Next",
+    "nextLabel": "Go to next page",
+    "morePages": "More pages"
+  },
+  "breadcrumb": {
+    "label": "breadcrumb",
+    "more": "More"
+  },
+  "command": {
+    "title": "Command Palette",
+    "description": "Search for a command to run..."
+  },
+  "datePicker": {
+    "placeholder": "Select date"
+  },
+  "sidebar": {
+    "title": "Sidebar",
+    "description": "Displays the mobile sidebar.",
+    "toggle": "Toggle Sidebar"
+  },
+  "multiSelect": {
+    "placeholder": "Select options",
+    "search": "Search...",
+    "empty": "No results found.",
+    "more": "+ {count} more",
+    "selectAll": "(Select All)",
+    "selectAllCount": "(Select All - {count} options)",
+    "clear": "Clear",
+    "close": "Close"
+  },
+  "fileUpload": {
+    "label": "File upload",
+    "uploadFailed": "Upload failed",
+    "maxFiles": "Maximum {count} files allowed",
+    "typeNotAccepted": "File type not accepted",
+    "tooLarge": "File too large",
+    "statusError": "Error: {error}",
+    "statusUploading": "Uploading: {progress}% complete",
+    "statusComplete": "Upload complete",
+    "statusReady": "Ready to upload"
+  },
+  "fileUploadForm": {
+    "dropLabel": "Drag & drop files or",
+    "browse": "browse",
+    "acceptedFormats": "Accepted formats: .pdf, .jpg, .jpeg, .png",
+    "maxSize": "Max file size: 20MB"
+  },
+  "calendar": {
+    "more": "+{count} more",
+    "selectMonth": "Select month",
+    "noMonth": "No month found",
+    "searchMonth": "Search month",
+    "selectYear": "Select year",
+    "noYear": "No year found",
+    "searchYear": "Search year"
+  },
+  "gantt": {
+    "tasks": "Tasks",
+    "duration": "Duration",
+    "soFar": "{duration} so far",
+    "removeMarker": "Remove marker",
+    "today": "Today"
+  },
+  "dataTable": {
+    "perPage": "Per Page :",
+    "setColumn": "Set Column",
+    "sortAscending": "Sorted ascending",
+    "sortDescending": "Sorted descending",
+    "sortAria": "Sort by {title}",
+    "clearFilters": "Clear {count, plural, one {# filter} other {# filters}}"
+  },
+  "deleteDialog": {
+    "question": "Are you sure you want to delete <b>{name}</b> ?",
+    "failed": "Delete failed",
+    "success": "Deleted successfully"
+  },
+  "navUser": {
+    "loggingOut": "Logging out...",
+    "logoutSuccess": "Logout successful",
+    "logoutFailed": "Logout failed",
+    "signIn": "Sign In"
+  },
+  "formSelect": {
+    "clearLabel": "Clear {label}",
+    "clearSelection": "Clear selection"
+  },
+  "formCalendar": {
+    "placeholder": "Pick a date"
+  },
+  "boolean": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "validationState": {
+    "passed": "Passed",
+    "warning": "Needs attention",
+    "failed": "Failed"
+  },
+  "spinner": {
+    "loadingCharts": "Loading charts ..."
+  },
+  "pageState": {
+    "retrying": "Still trying to reach the server…",
+    "errorTitle": "This page couldn't load",
+    "errorDescription": "Some of its data didn't come back from the server. Check your connection, then try again.",
+    "retry": "Try again",
+    "showAnyway": "Show the page anyway"
+  },
+  "richText": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "paragraph": "Paragraph",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "bulletList": "Bullet list",
+    "numberedList": "Numbered list",
+    "insertTable": "Insert table",
+    "insertImage": "Insert image",
+    "insertLink": "Insert link",
+    "imageUrl": "Image URL",
+    "linkUrl": "Link URL",
+    "insertVariable": "Insert variable",
+    "placeholder": "Write the section content…"
+  },
+  "charts": {
+    "monthlyProductivity": {
+      "title": "Monthly Productivity",
+      "description": "Track task progress and team performance",
+      "series": "Completed Task"
+    },
+    "healthIndexTrend": {
+      "title": "Health Index Trend",
+      "description": "Average health index over time",
+      "series": "Value"
+    },
+    "assetsByCriticality": {
+      "title": "Assets by Criticality",
+      "description": "Distribution of assets by criticality level",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    }
+  },
+  "kanban": {
+    "status": {
+      "todo": "To-Do",
+      "inProgress": "In Progress",
+      "inReview": "In Review",
+      "completed": "Completed"
+    },
+    "priority": "Priority",
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "label": "Label",
+    "assignedTo": "Assigned to:",
+    "noTasksYet": "No tasks yet",
+    "table": {
+      "title": "Task List",
+      "empty": "No tasks found.",
+      "id": "ID",
+      "statusHeader": "Status",
+      "titleHeader": "Title",
+      "assignedTo": "Assigned To",
+      "actions": "Actions",
+      "openMenu": "Open menu",
+      "duplicate": "Duplicate",
+      "status": {
+        "todo": "To Do",
+        "inProgress": "In Progress",
+        "inReview": "In Review",
+        "completed": "Completed"
+      }
+    }
+  },
+  "taskForm": {
+    "addNew": "Add new",
+    "title": "Create New Task",
+    "description": "Add a new task to the <status></status> status",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "e.g., Develop API Endpoints",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Enter task description...",
+    "priorityPlaceholder": "Select Priority",
+    "labelPlaceholder": "Select Label",
+    "assignTo": "Assign To",
+    "assigneesPlaceholder": "Select assignees...",
+    "submit": "Create Task",
+    "titleRequired": "Task title cannot be empty"
+  },
+  "status": {
+    "draft": "Draft",
+    "verified": "Verified",
+    "ready": "Ready",
+    "hold": "Hold",
+    "available": "Available",
+    "scheduled": "Scheduled",
+    "dedicated": "Dedicated"
+  },
+  "columnFilter": {
+    "blanks": "(Blanks)",
+    "filterAria": "Filter {title}",
+    "searchPlaceholder": "Search values",
+    "searchAria": "Search {title} values",
+    "selectAll": "Select all",
+    "count": "{selected} of {total}",
+    "noMatch": "No value matches",
+    "ok": "OK"
+  }
+}

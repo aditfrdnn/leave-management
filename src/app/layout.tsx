@@ -1,43 +1,50 @@
 import type { Metadata } from "next";
+import { Geist_Mono, Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
+
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/provider/auth/auth-provider";
+import ReactQueryProvider from "@/provider/react-query-provider";
+import { ThemeProvider } from "@/provider/theme-provider";
 import "./globals.css";
-import { Toaster } from "sonner";
-import ReactQueryProvider from "@/providers/react-query-providers";
-// import { AuthProvider } from '@/context/auth-context';
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "LVR System",
   description: "Employee leave request application",
+  icons: { icon: "/lvr.png" },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-body antialiased">
-        <ReactQueryProvider>
-          {children}
-          <Toaster
-            position="top-right"
-            richColors
-            closeButton={true}
-            duration={3000}
-          />
-        </ReactQueryProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${inter.variable} ${geistMono.variable} min-h-svh w-full antialiased tracking-tight`}>
+        <NextIntlClientProvider>
+          <AuthProvider>
+            <ReactQueryProvider>
+              <ThemeProvider>
+                <div className="mx-auto min-h-svh w-full">{children}</div>
+                <Toaster position="top-right" richColors closeButton={true} duration={3000} />
+              </ThemeProvider>
+            </ReactQueryProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

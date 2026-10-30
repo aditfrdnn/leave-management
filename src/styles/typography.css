@@ -1,0 +1,71 @@
+/*
+ * Type scale. Each role has one size and one weight, so hierarchy comes from the role,
+ * not from ad-hoc classes. Weights: 400 body, 500 UI labels, 600 titles and numbers.
+ * 700 (font-bold) is not part of the scale. See docs/typography.md.
+ */
+
+@theme {
+  /* The smallest step, for dense chips, avatar initials and chart ticks. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+}
+
+/* Hero headline, main dashboard only. */
+@utility type-display {
+  font-size: var(--text-3xl);
+  line-height: 1.15;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  @media (width >= 40rem) {
+    font-size: var(--text-4xl);
+  }
+}
+
+/* The one h1 at the top of a page. */
+@utility type-page-title {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Section headings outside cards, dialog and sheet titles. */
+@utility type-heading {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Card titles. */
+@utility type-section-title {
+  font-size: var(--text-base);
+  line-height: 1.375;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Headline numbers on stat cards and donut totals. */
+@utility type-stat {
+  font-size: var(--text-3xl);
+  line-height: 1;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Secondary numbers and short values inside a card. */
+@utility type-metric {
+  font-size: var(--text-2xl);
+  line-height: 1.1;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small uppercase labels above a group ("OR", field group names). */
+@utility type-overline {
+  font-size: var(--text-2xs);
+  line-height: var(--text-2xs--line-height);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}

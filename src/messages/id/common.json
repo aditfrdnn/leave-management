@@ -1,0 +1,263 @@
+{
+  "language": {
+    "label": "Bahasa"
+  },
+  "actions": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "create": "Buat",
+    "add": "Tambah",
+    "update": "Perbarui",
+    "close": "Tutup",
+    "confirm": "Konfirmasi",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "submit": "Kirim",
+    "search": "Cari",
+    "filter": "Filter",
+    "reset": "Atur ulang",
+    "upload": "Unggah",
+    "download": "Unduh",
+    "view": "Lihat",
+    "export": "Ekspor",
+    "import": "Impor",
+    "refresh": "Muat ulang",
+    "retry": "Coba lagi",
+    "select": "Pilih",
+    "clear": "Bersihkan",
+    "logout": "Keluar",
+    "login": "Masuk"
+  },
+  "states": {
+    "loading": "Memuat…",
+    "saving": "Menyimpan…",
+    "noData": "Belum ada data",
+    "noResults": "Tidak ada hasil",
+    "comingSoon": "Segera"
+  },
+  "validation": {
+    "required": "Kolom ini wajib diisi",
+    "invalidEmail": "Masukkan alamat email yang valid"
+  },
+  "pagination": {
+    "label": "paginasi",
+    "previous": "Sebelumnya",
+    "previousLabel": "Ke halaman sebelumnya",
+    "next": "Berikutnya",
+    "nextLabel": "Ke halaman berikutnya",
+    "morePages": "Halaman lainnya"
+  },
+  "breadcrumb": {
+    "label": "breadcrumb",
+    "more": "Lainnya"
+  },
+  "command": {
+    "title": "Palet perintah",
+    "description": "Cari perintah untuk dijalankan..."
+  },
+  "datePicker": {
+    "placeholder": "Pilih tanggal"
+  },
+  "sidebar": {
+    "title": "Sidebar",
+    "description": "Menampilkan sidebar seluler.",
+    "toggle": "Buka/tutup sidebar"
+  },
+  "multiSelect": {
+    "placeholder": "Pilih opsi",
+    "search": "Cari...",
+    "empty": "Tidak ada hasil.",
+    "more": "+ {count} lainnya",
+    "selectAll": "(Pilih semua)",
+    "selectAllCount": "(Pilih semua - {count} opsi)",
+    "clear": "Bersihkan",
+    "close": "Tutup"
+  },
+  "fileUpload": {
+    "label": "Unggah file",
+    "uploadFailed": "Gagal mengunggah",
+    "maxFiles": "Maksimal {count} file",
+    "typeNotAccepted": "Jenis file tidak didukung",
+    "tooLarge": "Ukuran file terlalu besar",
+    "statusError": "Galat: {error}",
+    "statusUploading": "Mengunggah: {progress}% selesai",
+    "statusComplete": "Unggahan selesai",
+    "statusReady": "Siap diunggah"
+  },
+  "fileUploadForm": {
+    "dropLabel": "Seret & lepas file atau",
+    "browse": "pilih file",
+    "acceptedFormats": "Format yang didukung: .pdf, .jpg, .jpeg, .png",
+    "maxSize": "Ukuran file maks.: 20MB"
+  },
+  "calendar": {
+    "more": "+{count} lainnya",
+    "selectMonth": "Pilih bulan",
+    "noMonth": "Bulan tidak ditemukan",
+    "searchMonth": "Cari bulan",
+    "selectYear": "Pilih tahun",
+    "noYear": "Tahun tidak ditemukan",
+    "searchYear": "Cari tahun"
+  },
+  "gantt": {
+    "tasks": "Tugas",
+    "duration": "Durasi",
+    "soFar": "{duration} sejauh ini",
+    "removeMarker": "Hapus penanda",
+    "today": "Hari ini"
+  },
+  "dataTable": {
+    "perPage": "Per halaman :",
+    "setColumn": "Atur kolom",
+    "sortAscending": "Urut naik",
+    "sortDescending": "Urut turun",
+    "sortAria": "Urutkan berdasarkan {title}",
+    "clearFilters": "Hapus {count} filter"
+  },
+  "deleteDialog": {
+    "question": "Yakin ingin menghapus <b>{name}</b>?",
+    "failed": "Gagal menghapus",
+    "success": "Berhasil dihapus"
+  },
+  "navUser": {
+    "loggingOut": "Sedang keluar...",
+    "logoutSuccess": "Berhasil keluar",
+    "logoutFailed": "Gagal keluar",
+    "signIn": "Masuk"
+  },
+  "formSelect": {
+    "clearLabel": "Bersihkan {label}",
+    "clearSelection": "Bersihkan pilihan"
+  },
+  "formCalendar": {
+    "placeholder": "Pilih tanggal"
+  },
+  "boolean": {
+    "yes": "Ya",
+    "no": "Tidak"
+  },
+  "validationState": {
+    "passed": "Lolos",
+    "warning": "Perlu perhatian",
+    "failed": "Gagal"
+  },
+  "spinner": {
+    "loadingCharts": "Memuat grafik ..."
+  },
+  "pageState": {
+    "retrying": "Masih mencoba menghubungi server…",
+    "errorTitle": "Halaman ini gagal dimuat",
+    "errorDescription": "Sebagian datanya tidak berhasil diambil dari server. Periksa koneksi Anda, lalu coba lagi.",
+    "retry": "Coba lagi",
+    "showAnyway": "Tetap tampilkan halaman"
+  },
+  "richText": {
+    "undo": "Urungkan",
+    "redo": "Ulangi",
+    "paragraph": "Paragraf",
+    "heading2": "Judul 2",
+    "heading3": "Judul 3",
+    "bold": "Tebal",
+    "italic": "Miring",
+    "underline": "Garis bawah",
+    "strikethrough": "Coret",
+    "bulletList": "Daftar poin",
+    "numberedList": "Daftar bernomor",
+    "insertTable": "Sisipkan tabel",
+    "insertImage": "Sisipkan gambar",
+    "insertLink": "Sisipkan tautan",
+    "imageUrl": "URL gambar",
+    "linkUrl": "URL tautan",
+    "insertVariable": "Sisipkan variabel",
+    "placeholder": "Tulis isi bagian…"
+  },
+  "charts": {
+    "monthlyProductivity": {
+      "title": "Produktivitas Bulanan",
+      "description": "Pantau progres tugas dan kinerja tim",
+      "series": "Tugas selesai"
+    },
+    "healthIndexTrend": {
+      "title": "Tren Health Index",
+      "description": "Rata-rata Health Index dari waktu ke waktu",
+      "series": "Nilai"
+    },
+    "assetsByCriticality": {
+      "title": "Aset per Criticality",
+      "description": "Sebaran aset per tingkat Criticality",
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi"
+    }
+  },
+  "kanban": {
+    "status": {
+      "todo": "To-Do",
+      "inProgress": "Sedang berjalan",
+      "inReview": "Sedang ditinjau",
+      "completed": "Selesai"
+    },
+    "priority": "Prioritas",
+    "priorities": {
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi"
+    },
+    "label": "Label",
+    "assignedTo": "Ditugaskan ke:",
+    "noTasksYet": "Belum ada tugas",
+    "table": {
+      "title": "Daftar Tugas",
+      "empty": "Tidak ada tugas.",
+      "id": "ID",
+      "statusHeader": "Status",
+      "titleHeader": "Judul",
+      "assignedTo": "Ditugaskan ke",
+      "actions": "Aksi",
+      "openMenu": "Buka menu",
+      "duplicate": "Duplikat",
+      "status": {
+        "todo": "To Do",
+        "inProgress": "Sedang berjalan",
+        "inReview": "Sedang ditinjau",
+        "completed": "Selesai"
+      }
+    }
+  },
+  "taskForm": {
+    "addNew": "Tambah baru",
+    "title": "Buat Tugas Baru",
+    "description": "Tambah tugas baru ke status <status></status>",
+    "titleLabel": "Judul *",
+    "titlePlaceholder": "mis., Develop API Endpoints",
+    "descriptionLabel": "Deskripsi",
+    "descriptionPlaceholder": "Masukkan deskripsi tugas...",
+    "priorityPlaceholder": "Pilih prioritas",
+    "labelPlaceholder": "Pilih label",
+    "assignTo": "Tugaskan ke",
+    "assigneesPlaceholder": "Pilih penerima tugas...",
+    "submit": "Buat Tugas",
+    "titleRequired": "Judul tugas tidak boleh kosong"
+  },
+  "status": {
+    "draft": "Draf",
+    "verified": "Terverifikasi",
+    "ready": "Siap",
+    "hold": "Ditahan",
+    "available": "Tersedia",
+    "scheduled": "Terjadwal",
+    "dedicated": "Dedicated"
+  },
+  "columnFilter": {
+    "blanks": "(Kosong)",
+    "filterAria": "Filter {title}",
+    "searchPlaceholder": "Cari nilai",
+    "searchAria": "Cari nilai {title}",
+    "selectAll": "Pilih semua",
+    "count": "{selected} dari {total}",
+    "noMatch": "Tidak ada nilai yang cocok",
+    "ok": "OK"
+  }
+}

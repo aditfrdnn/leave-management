@@ -1,21 +1,8 @@
-export type LeaveFormState = {
-  status?: string;
-  message?: string;
-  errors?: {
-    leave_type?: string[];
-    subject?: string[];
-    leave_date?: string[];
-    approval_user?: string[];
-    reason?: string[];
-    location_during_leave?: string[];
-    return_to_office?: string[];
-    ongoing_task?: string[];
-    temporary_replacement?: string[];
-    phone_number?: string[];
-    _form?: string[];
-  };
-};
+import type { LEAVE_STATUS } from "@/constants/leave-constant";
 
+export type TLeaveStatus = (typeof LEAVE_STATUS)[keyof typeof LEAVE_STATUS];
+
+/** `GET /api/leave-request` row. */
 export type TLeave = {
   id: number;
   subject: string;
@@ -28,28 +15,20 @@ export type TLeave = {
   ongoing_task: string;
   temporary_replacement: string;
   phone_number: string;
-  status: number;
+  status: TLeaveStatus | number;
+  status_name: string;
   submitted_at: string;
-  approved_at?: string;
-  rejected_at?: string;
+  approved_at?: string | null;
+  rejected_at?: string | null;
   created_at: string;
   updated_at?: string;
-  status_name: string;
   user: {
     id: number;
     name: string;
     department_id: number;
-    department: {
-      id: number;
-      name: string;
-      alias: string;
-    };
+    department: { id: number; name: string; alias: string };
   };
-  leave_type: {
-    id: number;
-    code: string;
-    name: string;
-  };
+  leave_type: { id: number; code: string; name: string };
   leave_request_days: {
     id: number;
     leave_request_id: number;
@@ -59,7 +38,23 @@ export type TLeave = {
   }[];
 };
 
-export type TLeaveType = {
+/** `/api/dropdown/users` row (approvers). */
+export type TApprover = {
   id: number;
-  text: string;
+  name: string;
+  email?: string;
+};
+
+/** Body of `POST /api/leave-request`. Dates are `dd-MM-yyyy`. */
+export type TLeaveRequestPayload = {
+  subject: string;
+  leave_type: string;
+  leave_date: string[];
+  approval_user: string;
+  reason: string;
+  location_during_leave: string;
+  return_to_office: string;
+  ongoing_task: string;
+  temporary_replacement: string;
+  phone_number: string;
 };

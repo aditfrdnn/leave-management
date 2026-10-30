@@ -1,0 +1,49 @@
+name: CI
+
+# Lint and build every pull request into main — the same checks as the
+# pre-commit hook, run on GitHub so reviewers see them on the PR.
+#
+# No environment and no secrets on purpose: pull requests from forks cannot
+# read them, and the build does not need them (config values are read at
+# runtime and may be empty here). Deploying stays in deploy.yml.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  lint-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
