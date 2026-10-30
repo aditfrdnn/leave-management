@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import type { useTranslations } from "next-intl";
 
+import { getLeaveStatusConfig } from "@/lib/status-config";
 import { dateFormatter } from "@/lib/utils/utils";
 import type { TLeave } from "@/types/leave";
 import LeaveStatusBadge from "./leave-status-badge";
@@ -61,8 +62,8 @@ export const leaveRequestColumns = ({ t, locale }: { t: TLeaveTranslator; locale
     header: t("history.columns.status"),
     meta: {
       filterKey: "status",
-      filterLabel: (value) =>
-        value === "1" ? t("status.approved") : value === "2" ? t("status.rejected") : t("status.pending"),
+      // The factory gets the namespaced translator, so strip the `leave.` prefix of the key.
+      filterLabel: (value) => t(getLeaveStatusConfig(Number(value)).labelKey.replace("leave.", "") as "status.pending"),
     },
     cell: ({ row }) => <LeaveStatusBadge status={Number(row.original.status)} />,
   },

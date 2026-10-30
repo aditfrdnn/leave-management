@@ -13,11 +13,15 @@ export const INITIAL_LEAVE_REQUEST_FORM: LeaveRequestSchemaType = {
   phone_number: "",
 };
 
-/** `leave_requests.status` as the API stores it. */
+/** `leave_requests.status` as the API stores it (`LeaveRequest::STATUSES` in leave-service). */
 export const LEAVE_STATUS = {
+  DRAFT: -2,
+  CANCELLED: -1,
   PENDING: 0,
   APPROVED: 1,
   REJECTED: 2,
+  REVISED: 3,
+  REVIEWED: 4,
 } as const;
 
 /** Dates travel as `dd-MM-yyyy` strings between the form and the API. */

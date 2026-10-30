@@ -56,7 +56,11 @@
   "status": {
     "pending": "Pending",
     "approved": "Approved",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "draft": "Draft",
+    "cancelled": "Cancelled",
+    "revised": "Revised",
+    "reviewed": "Reviewed"
   },
   "validation": {
     "subjectRequired": "Please enter a LVR number",

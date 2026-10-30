@@ -2,7 +2,8 @@
 
 Frontend for employee leave requests: an employee signs in, submits a leave request (dates,
 approver, reason, hand-over) and follows the status of what they sent. A Next.js 16 app
-(App Router, React 19, TypeScript) that talks to the leave API over HTTP.
+(App Router, React 19, TypeScript) that talks to `leave-service` (Laravel) over HTTP; approvals
+reach the approver through the `leave-management-wa` WhatsApp bridge (see `docs/integration.md`).
 
 The codebase follows the same structure, rules and look as `next-prm` (Project Readiness
 System) and `next-pdi`, so patterns and components move between the projects without translation.
@@ -10,7 +11,7 @@ System) and `next-pdi`, so patterns and components move between the projects wit
 ## Getting started
 
 ```bash
-cp .env.example .env      # point NEXT_PUBLIC_DEV_SERVER_URL at the leave API
+cp .env.example .env      # NEXT_PUBLIC_DEV_SERVER_URL: local leave-service (127.0.0.1:8000) or https://lvr-api.pdi-ptcs.com
 npm install
 npm run dev               # http://localhost:9002
 ```
@@ -37,7 +38,8 @@ from the repository as before.
 | [docs/data-table.md](docs/data-table.md) | You are adding a list page: sort/filter columns and the request contract |
 | [docs/typography.md](docs/typography.md) | You are choosing a text size or weight |
 | [docs/i18n.md](docs/i18n.md) | You are adding user-visible text (English and Indonesian) |
-| [docs/backend-task.md](docs/backend-task.md) | You work on the leave API: what the frontend needs, in priority order |
+| [docs/integration.md](docs/integration.md) | You touch anything that crosses the three repos: frontend ↔ leave-service ↔ WhatsApp service |
+| [docs/backend-task.md](docs/backend-task.md) | You work on `leave-service`: what the frontend needs, in priority order |
 | [docs/user-guide.md](docs/user-guide.md) | You want the end-user walkthrough (Indonesian) |
 
 ## Routes

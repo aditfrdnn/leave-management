@@ -1,115 +1,161 @@
-# Catatan Tugas Backend — Leave API
+# Catatan Tugas Backend — leave-service
 
-Daftar pekerjaan di API cuti yang dibutuhkan frontend `leave-management` setelah disamakan
-dengan konvensi `next-prm` / `next-pdi`. Ditulis per 30 Oktober 2026 dari sisi **kontrak yang
-dipakai frontend** (`src/constants/endpoint-constant.ts`, `src/services/*.service.ts`,
-`src/types/*.d.ts`); repositori API-nya tidak ada di workspace ini, jadi bagian "kondisi
-sekarang" adalah apa yang terlihat dari frontend, bukan dari kode server.
+Daftar pekerjaan di repositori `leave-service` (Laravel 12, Sanctum, MySQL) yang dibutuhkan
+frontend `leave-management` setelah disamakan dengan konvensi `next-prm` / `next-pdi`. Ditulis
+per 30 Oktober 2026 dari pembacaan kode `leave-service` (`routes/api.php`,
+`app/Http/Controllers/Api/*`, `app/Http/Controllers/Controller.php`, `app/Jobs/SendWhatsappApproval.php`,
+`app/Models/*`, `database/migrations`, `database/seeders`) dan `leave-management-wa/index.js`.
+Peta alur ketiga repo ada di `docs/integration.md`.
 
-Urutan prioritas: **P0** memblokir alur yang sudah ada di UI, **P1** dibutuhkan fitur
-berikutnya, **P2** penyamaan kontrak dengan `next-prm` / `laravel-tailwind`.
+Urutan prioritas: **P0** keamanan / memblokir alur yang sudah ada di UI, **P1** dibutuhkan fitur
+berikutnya, **P2** penyamaan kontrak dengan `next-prm` / `laravel-tailwind`, **P3** kebersihan.
 
-> **Temuan 30 Okt 2026**: host API di `.env` saat ini membalas **404** untuk `POST /api/auth/login`,
-> `GET /api/leave-request`, `GET /api/dropdown/leave-types` dan `GET /api/dropdown/users`.
-> Entah host-nya sudah berubah atau rute-rutenya belum di-deploy — pastikan dulu URL yang benar
-> sebelum mengerjakan daftar di bawah. Frontend menampilkan error state dengan tombol coba lagi
-> selama kondisi ini.
-
-Endpoint yang dipakai sekarang:
-
-| Method | Path | Dipakai untuk | Bentuk yang diasumsikan |
-| --- | --- | --- | --- |
-| POST | `/api/auth/login` | Sign in | `{ data: { ...user, token } }` |
-| GET | `/api/leave-request` | Riwayat cuti user | `{ data: TLeave[] }` (array, tanpa paginasi) |
-| POST | `/api/leave-request` | Pengajuan baru | body `TLeaveRequestPayload`, tanggal `dd-MM-yyyy` |
-| GET | `/api/dropdown/leave-types` | Dropdown jenis cuti | `{ data: [{ id, text }] }` |
-| GET | `/api/dropdown/users` | Dropdown approver | `{ data: [{ id, name, email? }] }` |
+Kontrak yang dipakai frontend saat ini: `src/constants/endpoint-constant.ts`,
+`src/services/*.service.ts`, `src/types/api.d.ts`, `src/types/leave.d.ts`, `src/lib/api-error.ts`.
 
 ---
 
-## P0 — Alur yang sudah ada di UI
+## P0 — Keamanan dan alur yang sudah ada di UI
 
-### 1. `GET /api/me` dan `POST /api/auth/logout`
+### 1. `GET /api/me`
 
-Frontend menyimpan token di cookie httpOnly dan mem-bootstrap identitas lewat `GET /api/me`
-(pola yang sama dengan `next-prm`). Karena endpoint itu belum ada, user hasil login disimpan di
-cookie kedua dan dikembalikan oleh route handler `src/app/api/me/route.ts`. Dampaknya: perubahan
-profil/role di server tidak terlihat sampai login ulang, dan logout hanya menghapus cookie
-(token tetap hidup di server).
+Belum ada. Frontend mem-bootstrap identitas lewat `GET /api/me` (pola `next-prm`); karena tidak
+ada, user hasil login disimpan di cookie httpOnly kedua dan dikembalikan oleh route handler
+Next.js. Dampak: perubahan nama/departemen/nomor HP di server tidak terlihat sampai login ulang.
 
-Dibutuhkan:
+Dibutuhkan: `GET /api/me` (auth:sanctum) → `sendResponse(user->load('department'))`, bentuk sama
+dengan `data` di `POST /api/auth/login` minus `token`. Setelah ada, frontend mengganti route
+handler dan menghapus `setUserCookie`.
 
-- `GET /api/me` → `{ success, data: UserResource }` dengan `id, name, email, phone_number,
-  department{id,name,alias}`, plus `role`/`permissions` bila ada (lihat §3).
-- `POST /api/auth/logout` → mencabut token saat ini.
+### 2. Bentuk error validasi: `errors`, bukan `data`
 
-Setelah ada, frontend mengganti route handler (meneruskan Bearer ke `/api/me`) dan menghapus
-`setUserCookie` di `src/lib/cookies.ts`.
+`Controller::sendError($msg, 422, $e->errors())` menaruh peta field di `data`, dan pesan tampil
+`validation.required` (kunci `lang/id` belum ada karena `APP_LOCALE=id` tanpa file bahasa).
+Frontend sudah menerima `data` maupun `errors`, tetapi:
 
-### 2. Validasi 422 per field
+- pindahkan peta field ke kunci `errors` (standar Laravel dan `next-prm`), `data` tetap `null`;
+- tambahkan `lang/id` + `lang/en` (`php artisan lang:publish`) supaya pesan terbaca;
+- `withExceptions` di `bootstrap/app.php` masih kosong: 401 `Unauthenticated.` dan 404 model
+  memakai bentuk bawaan tanpa `success`. Render semuanya ke `{ success:false, message, errors? }`.
 
-Form mengirim `subject, leave_type, leave_date[], approval_user, reason, location_during_leave,
-return_to_office, ongoing_task, temporary_replacement, phone_number`. Pastikan kegagalan
-validasi dikembalikan sebagai 422 `{ message, errors: { field: [msg] } }` dengan nama field
-**persis** seperti di atas, supaya `toApiErrorState` bisa menempelkan pesan ke field yang benar.
-Aturan yang sebaiknya ada di server (frontend sudah memvalidasi, server adalah trust boundary):
-tanggal tidak di masa lalu dan bukan akhir pekan, tidak tumpang tindih dengan pengajuan lain
-yang belum ditolak, `approval_user` harus user yang berhak menyetujui.
+### 3. `POST /api/leave-request` belum punya FormRequest
 
-### 3. Peran dan hak akses
+Hanya `leave_date` yang dicek (parse `d-m-Y`), plus larangan approver = diri sendiri (400). Field
+lain (`subject`, `leave_type`, `approval_user`, `reason`, `location_during_leave`,
+`return_to_office`, `ongoing_task`, `temporary_replacement`, `phone_number`) masuk tanpa validasi;
+`return_to_office` yang kosong akan meledak di `Carbon::createFromFormat` → 500.
 
-Tidak ada informasi role di respons login, sehingga menu di sidebar tidak bisa dibedakan antara
-pemohon dan approver. Tambahkan `role` (mis. `employee | approver | admin`) atau daftar
-`permissions` pada `UserResource`; frontend memakai pola `constants/permission-constant.ts` +
-`lib/permission.ts` seperti `next-pdi`.
+Buat `StoreLeaveRequest` dengan aturan: wajib semua, `leave_type` `exists:leave_types,id`,
+`approval_user` `exists:users,id` dan `!= auth id`, `leave_date.*` `date_format:d-m-Y|after_or_equal:today`,
+bukan akhir pekan / `holidays`, tidak tumpang tindih `leave_request_days` user yang statusnya
+bukan ditolak/dibatalkan, `reason` 10–200, `phone_number` ≥10 digit. Nama field harus persis
+seperti di atas agar `toApiErrorState` menempelkan pesan ke field yang benar.
 
----
+### 4. Route re-trigger WhatsApp tanpa autentikasi
 
-## P1 — Fitur berikutnya
+`GET /api/leave-request/whatapproval-reminder/{leave_request}/{approval_id}` ada di luar grup
+`auth:sanctum`. Siapa pun yang tahu id bisa mengirim WA ke approver berulang kali. Pindahkan ke
+dalam `auth:sanctum`, batasi ke pemilik pengajuan, dan beri `throttle`.
 
-### 4. Daftar cuti dengan paginasi, sort dan filter
+### 5. Callback WhatsApp tidak memverifikasi kode unik
 
-`GET /api/leave-request` mengembalikan seluruh riwayat. Untuk user lama ini membesar; UI
-sudah siap menerima paginasi (komponen `DataTable` yang sama dengan `next-prm`). Target
-kontrak (`docs/data-table.md`):
+`WhatsappServiceController@leaveRequestApproval` menerima `leave_request_id` + `approver_email`
+dan langsung mengubah status. `uniqueCode` hanya hidup di memori WA service dan hilang saat
+restart. Simpan kode (hash) di `approval_flows` saat dispatch, dan minta WA service mengirimnya
+balik untuk dicocokkan; tolak bila status sudah final (sekarang approve ulang menimpa
+`approved_at`/`rejected_at`).
 
-- Param: `page, per_page, search, sort=<key>&direction=asc|desc, columns[<key>][]=<value>`.
-- Response: `{ success, message, data: TLeave[], meta: { current_page, per_page, total,
-  last_page }, facets: { leave_type: [...], status: [...] } }`.
-- Whitelist sort: `subject, start_date, submitted_at`; filter: `leave_type, status`.
+### 6. Hard-code yang perlu jadi konfigurasi
 
-Acuan implementasi: `App\Support\Table\TableQuery` + `TableFilter` di repositori `laravel-tailwind`.
+- Pengecualian `doni.hardian → asep.saepudin` di `@store` (tidak kirim WA/email).
+- CC `anisa.pertiwi@ptcs.co.id` dan pengirim `fauzi.habibi@ptcs.co.id` di controller WA.
+- Dua nomor operator yang di-bypass di `leave-management-wa/index.js` (`chatId === '62…@c.us'`).
+- `Pak {nama}` di template pesan (asumsi gender).
 
-### 5. Sisi approver
-
-README lama menjanjikan proses persetujuan dan notifikasi; keduanya belum punya endpoint.
-
-- `GET /api/leave-request/approvals` — pengajuan yang menunggu user ini.
-- `PATCH /api/leave-request/{id}/approve` dan `/reject` dengan `note?`.
-- `GET /api/leave-request/{id}` — detail satu pengajuan (hari per hari, riwayat status).
-- `GET /api/notifications` + `PATCH /api/notifications/{id}/read` — mengganti data dummy yang
-  dulu ada di header.
-
-### 6. Pembatalan dan revisi
-
-Status hanya `0 pending / 1 approved / 2 rejected`. Alur "needs revision" dan "cancelled" yang
-disebut di notifikasi dummy butuh status tambahan plus `PATCH /api/leave-request/{id}/cancel`
-untuk pemohon selama status masih pending.
+Pindahkan ke `config/leave.php` / `.env`, dan template pesan ke view/`lang`.
 
 ---
 
-## P2 — Samakan kontrak dengan next-prm
+## P1 — Endpoint untuk fitur berikutnya
 
-7. **Envelope seragam**: setiap respons `{ success, message, data }`, termasuk error framework
-   (401 `Unauthenticated`, 404, 422) lewat `withExceptions` di `bootstrap/app.php`.
-8. **Tanggal**: terima dan kembalikan `YYYY-MM-DD` (ISO) alih-alih `dd-MM-yyyy`. Frontend
-   mengubah `LEAVE_DATE_FORMAT` satu tempat.
-9. **Lokalisasi**: frontend mengirim header `X-Locale: en|id` di setiap request; pasang
-   middleware `setLocale` dan pindahkan pesan sukses/gagal ke `lang/en` + `lang/id`
-   (lihat `next-prm/docs/i18n-backend-task.md`).
-10. **Dropdown**: samakan bentuk `/api/dropdown/users` dengan `/leave-types` (`{ id, text }`),
-    atau sebaliknya; sekarang satu memakai `text`, satu memakai `name`.
-11. **CORS**: tambahkan origin frontend dev (`http://localhost:9002`) dan origin App Hosting
-    produksi ke `config/cors.php`; auth tetap Bearer murni (tanpa `statefulApi()`).
-12. **Dokumentasi kontrak**: satu `docs/api-contract.md` di repo API yang menjadi sumber
-    kebenaran untuk `src/types/api.d.ts` dan `src/types/leave.d.ts` di frontend.
+### 7. Detail, pembatalan, dan paginasi pengajuan
+
+`show`, `update`, `destroy` di `LeaveRequestController` masih kosong, dan `index` memakai `get()`
+tanpa paginasi.
+
+- `GET /api/leave-request/{id}` → detail + `approvals` (level, approver, aksi, catatan, waktu).
+- `PATCH /api/leave-request/{id}/cancel` → status `-1` selama masih `0`.
+- `index` memakai `sendPaginated()` yang sudah ada di `Controller.php` (`meta.pagination`), plus
+  sort/filter — lihat §10. Frontend sudah memakai `DataTable` yang siap untuk itu.
+
+### 8. Sisi approver di web
+
+Persetujuan hanya lewat balasan WhatsApp (dan HRIS). Untuk halaman approver:
+
+- `GET /api/leave-request/approvals?status=` — pengajuan yang `approval_flows.approval_by` = user ini.
+- `PATCH /api/leave-request/{id}/approve` dan `/reject` (`notes?`) → logika yang sama dengan
+  callback WA (pindahkan ke satu service class agar tidak dobel).
+- `role`/`is_approver` pada `UserResource` supaya frontend bisa menampilkan menu approver
+  (`constants/permission-constant.ts` + `lib/permission.ts` seperti `next-pdi`).
+
+### 9. Notifikasi dan saldo cuti
+
+- `GET /api/notifications` + `PATCH /api/notifications/{id}/read` (dulu dummy di header frontend).
+- `GET /api/leave-balances` — tabel `leave_balances` sudah ada tetapi belum pernah diisi/dibaca;
+  UI bisa menampilkan sisa kuota per jenis cuti di atas form.
+- `holidays` sudah ada tabelnya: ekspos `GET /api/holidays?year=` supaya kalender di form
+  menonaktifkan hari libur, bukan hanya akhir pekan.
+
+---
+
+## P2 — Samakan kontrak dengan next-prm / laravel-tailwind
+
+10. **Sort, filter, facets** (`docs/data-table.md`): port `App\Support\Table\TableQuery` +
+    `TableFilter` dari `laravel-tailwind`; param `sort`, `direction`, `columns[key][]`; respons
+    `facets`. Whitelist untuk leave-request: sort `subject, start_date, submitted_at`; filter
+    `leave_type_id, status`.
+11. **Tanggal ISO**: terima/kembalikan `YYYY-MM-DD` alih-alih `d-m-Y` (frontend mengubah
+    `LEAVE_DATE_FORMAT` di satu tempat).
+12. **`X-Locale`**: frontend mengirim header ini di tiap request; pasang middleware `setLocale`
+    dan pindahkan pesan di controller ke `lang/*` (acuan `next-prm/docs/i18n-backend-task.md`).
+13. **Dropdown seragam**: `/dropdown/users` memakai `{ id, name, email }`, `/leave-types`
+    memakai `{ id, text }`. Pilih satu (`{ id, text, ...extra }`), dan batasi `/dropdown/users`
+    ke user yang boleh menjadi approver (sekarang semua user).
+14. **CORS**: tidak ada `config/cors.php` (pakai bawaan framework: `api/*`, semua origin,
+    `supports_credentials=false`). Karena frontend memanggil API dari server (Server Actions)
+    ini tidak menghambat; bila nanti ada panggilan dari browser, daftarkan origin
+    `https://lvr.pdi-ptcs.com` dan `http://localhost:9002`.
+
+---
+
+## P3 — Kebersihan
+
+15. `TestingController` + route `api/test/*` (kirim email ke alamat pribadi) jangan ikut
+    produksi: bungkus `if (app()->isLocal())` atau hapus.
+16. `.env.example` memuat dua blok `MAIL_*`; sisakan satu. Tambahkan `WA_SERVICE_BASE_URL`
+    (dipakai `config/services.php`) yang belum ada di contoh.
+17. `shortCode8()` dan template pesan diduplikasi di `@store` dan `@triggerWhatsAppApproval`;
+    pindahkan ke `App\Services\LeaveApprovalNotifier`.
+18. `users.status` enum dan `hired_at` ada di migrasi tetapi tidak dipakai di API; putuskan dipakai
+    (blokir login user `inactive`) atau dibuang.
+19. Migrasi `leave_requests.status` default `-2` (Draft) tetapi `@store` selalu menulis `0`; tidak
+    ada alur draft. Samakan default dengan kenyataan atau buat alur draft.
+20. `README` menyebut `others/waweb-service`; service-nya sekarang repo terpisah
+    `leave-management-wa`. Perbarui, dan tulis `docs/api-contract.md` yang menjadi sumber
+    kebenaran untuk `src/types/*.d.ts` di frontend.
+
+---
+
+## Ringkasan kontrak yang diasumsikan frontend hari ini
+
+| Hal | Bentuk sekarang (dipakai frontend) | Target |
+| --- | --- | --- |
+| Sukses | `{ success:true, message, data }` | sama |
+| List | `data` = array penuh | `data: Item[]`, `meta.pagination`, `facets?` |
+| Error controller | `{ success:false, message }` | sama, juga untuk error framework |
+| 422 | `{ success:false, message, data:{field:[]} }` | `{ success:false, message, errors:{field:[]} }` |
+| Login | `data: { ...user, token, department }` | sama |
+| Me | tidak ada (cookie user di frontend) | `GET /api/me` |
+| Logout | `DELETE /api/auth/logout` | sama |
+| Tanggal | `dd-MM-yyyy` | `YYYY-MM-DD` |
+| Bahasa | pesan Indonesia hard-code, `validation.*` mentah | mengikuti `X-Locale`, `lang/*` |

@@ -2,6 +2,7 @@
 
 // Auth
 const signIn = "/api/auth/login";
+const signOut = "/api/auth/logout";
 /** Same-origin Route Handler (`src/app/api/me/route.ts`), not the leave API. */
 const me = "/api/me";
 
@@ -12,4 +13,4 @@ const leaveRequests = "/api/leave-request";
 const leaveTypes = "/api/dropdown/leave-types";
 const approvers = "/api/dropdown/users";
 
-export { signIn, me, leaveRequests, leaveTypes, approvers };
+export { signIn, signOut, me, leaveRequests, leaveTypes, approvers };

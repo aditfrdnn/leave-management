@@ -62,8 +62,16 @@ export async function SignIn(prevState: AuthFormState, formData: FormData | null
   }
 }
 
-/** The API has no logout endpoint (docs/backend-task.md §1); signing out clears the cookies. */
+/** Revokes the token on the API, then clears both cookies. A dead token (401) still signs out locally. */
 export async function SignOut(currentUrl?: string) {
+  try {
+    await authService.signOut();
+  } catch (error) {
+    if (!(axios.isAxiosError(error) && error.response?.status === 401)) {
+      return { success: false, message: (await getTranslations("auth"))("signOutFailed") };
+    }
+  }
+
   await Promise.all([removeTokenCookie(), removeUserCookie()]);
 
   const url = `/sign-in${currentUrl && isValidCallbackUrl(currentUrl) ? `?callback=${encodeURIComponent(currentUrl)}` : ""}`;

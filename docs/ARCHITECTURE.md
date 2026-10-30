@@ -4,7 +4,7 @@
 
 **Stack**: Next.js 16 (App Router, React 19, TypeScript, `src/` layout), Tailwind CSS v4, shadcn/ui (`radix-luma` style + Hugeicons), Zustand 5, TanStack React Query v5, TanStack Table v8, React Hook Form + Zod v4, Axios, next-intl, next-themes, sonner, date-fns.
 
-**Backend**: the leave API (a Laravel service; its repository is not in this workspace), reached over HTTP via `NEXT_PUBLIC_DEV_SERVER_URL` / `NEXT_PUBLIC_PROD_SERVER_URL`. What it supports today, and what the frontend still needs, is recorded in `docs/backend-task.md`.
+**Backend**: `leave-service` (Laravel 12 + Sanctum, sibling repository; production `https://lvr-api.pdi-ptcs.com`), reached over HTTP via `NEXT_PUBLIC_DEV_SERVER_URL` / `NEXT_PUBLIC_PROD_SERVER_URL`. It triggers the WhatsApp bridge `leave-management-wa` for approvals. The three-repo flow is in `docs/integration.md`; what the API still needs is in `docs/backend-task.md`.
 
 **History**: the project started as a Firebase Studio prototype ("CutiKu": Firebase Auth + Realtime Database + a Genkit flow). Those pieces are gone; the app only talks to the leave API now.
 
@@ -69,7 +69,7 @@ Every page load:  proxy.ts redirects to /sign-in when the token cookie is missin
 Client bootstrap: AuthProvider → authService.me() → GET /api/me (route handler) → returns the USER_KEY cookie
                   while the token cookie exists → useAuthStore.setAuth(data) | on failure SignOut() + clear()
 Every API call:   lib/axios/instance.ts adds Authorization: Bearer <token cookie> and X-Locale
-Logout:           NavUser → SignOut(currentUrl) → both cookies removed → clear()  (no API logout endpoint yet)
+Logout:           NavUser → SignOut(currentUrl) → DELETE /api/auth/logout (401 tolerated) → both cookies removed → clear()
 ```
 
 - The token never reaches the browser's JavaScript: services run inside Server Actions; the only client-side call (`authService.me()`) hits the same-origin route handler.
@@ -88,7 +88,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 
 - **Reads are Server Actions too** (`GetLeaveRequests`, `GetLeaveTypes`, `GetApprovers`): they return `response.data` and throw a readable `Error` on failure, so the token stays on the server.
 - **Envelope** (`types/api.d.ts`): `{ success?, message?, data }`; lists are plain arrays.
-- **Errors** (`lib/api-error.ts`): `toApiErrorState` turns Laravel's 422 `{ message, errors }` or `{ success:false, message }` into `ActionState` (`errors.<field>` for the form, `errors._form` for a toast).
+- **Errors** (`lib/api-error.ts`): `toApiErrorState` turns leave-service's 422 `{ success:false, message, data:{field:[…]} }` (or Laravel's `{ message, errors }`) and `{ success:false, message }` into `ActionState` (`errors.<field>` for the form, `errors._form` for a toast).
 - **Form → API**: dates travel as `dd-MM-yyyy` strings (`LEAVE_DATE_FORMAT`); `return_to_office` is computed client-side as the next working day after the last selected date; `leave_date[]` is appended per item to `FormData`.
 - **After a successful submit** the form resets and `["leave","requests"]` is invalidated, so the history refetches.
 - **Table** runs `DataTable` in client mode (the API returns the whole list): `meta.sortKey` on LVR no / dates / submitted, `meta.filterKey` on leave type and status, facets counted from the rows.
@@ -99,7 +99,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 
 | File | Methods | Backend |
 | --- | --- | --- |
-| `auth.service.ts` | `me` (bare axios → `/api/me`), `signIn` | `POST /api/auth/login` |
+| `auth.service.ts` | `me` (bare axios → `/api/me`), `signIn`, `signOut` | `POST /api/auth/login`, `DELETE /api/auth/logout` |
 | `leave.service.ts` | `getLeaveRequests`, `createLeaveRequest`, `getLeaveTypes`, `getApprovers` | `/api/leave-request`, `/api/dropdown/leave-types`, `/api/dropdown/users` |
 
 ---
@@ -163,9 +163,9 @@ English (`en`, default) and Indonesian (`id`) through next-intl with a cookie lo
 ## 11. Observations (known gaps, not rules)
 
 - **Identity** relies on a user cookie written at login because the API has no `GET /api/me`; a profile change on the server is not seen until the next login.
-- **No logout endpoint**: the token stays valid on the server after sign-out until it expires (6 h cookie lifetime on the client).
 - **Notifications** from the old header were dummy data and were removed; there is no notification endpoint.
 - **Calendar export** (`.ics` download) from the prototype was already disabled and was not carried over.
 - **History list** is unpaginated; sorting and filtering happen in the browser.
-- **API host**: at the time of writing the configured host answers 404 for every endpoint the app calls, so the smoke test could only verify the sign-in page, the shell and the error state (`docs/backend-task.md`).
+- **Dev-only console warning** on a full page load: "Can't perform a React state update on a component that hasn't mounted yet". It does not fire on client-side navigation and has no visible effect; it most likely comes from the `PageGate` / `RouteLoading` handshake at hydration (same code as `next-prm`). Worth a look when touching `page-gate.tsx`.
+- **API host**: the old `.env` pointed at the frontend's own domain (`lvr.pdi-ptcs.com/api`), which is why every call 404'd; the API lives at `lvr-api.pdi-ptcs.com`.
 - **Approvals**: the approver side (list of requests to approve, approve/reject) has no endpoint yet, so there is no approver page.

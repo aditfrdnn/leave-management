@@ -56,7 +56,11 @@
   "status": {
     "pending": "Menunggu",
     "approved": "Disetujui",
-    "rejected": "Ditolak"
+    "rejected": "Ditolak",
+    "draft": "Draf",
+    "cancelled": "Dibatalkan",
+    "revised": "Direvisi",
+    "reviewed": "Ditinjau"
   },
   "validation": {
     "subjectRequired": "Masukkan nomor LVR",
