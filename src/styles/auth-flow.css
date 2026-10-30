@@ -1,0 +1,93 @@
+/*
+ * Sign-in brand panel: the leave flow plays once (request → dates → WhatsApp approval →
+ * approved → balance), then holds its final state. Each step sets --d (delay). Only opacity
+ * and transform move; nothing loops. Under prefers-reduced-motion the final state shows at once.
+ */
+@layer components {
+  .flow-in {
+    animation: flow-in 640ms var(--ease-out-quint) var(--d, 0ms) backwards;
+  }
+  .flow-pop {
+    animation: flow-pop 420ms var(--ease-out-quint) var(--d, 0ms) backwards;
+  }
+  .flow-fill {
+    transform-origin: left center;
+    animation: flow-fill 900ms var(--ease-out-quint) var(--d, 0ms) backwards;
+  }
+  /* Visible for a while, then gone: the "pending" pill and the typing dots. */
+  .flow-out {
+    animation: flow-out 1ms linear var(--d, 0ms) forwards;
+  }
+  .flow-window {
+    opacity: 0;
+    animation:
+      flow-show 200ms ease-out var(--d, 0ms) forwards,
+      flow-out 200ms ease-in var(--d-out, 0ms) forwards;
+  }
+  .flow-dot {
+    animation: flow-dot 900ms ease-in-out var(--d, 0ms) 3;
+  }
+  .flow-tick {
+    animation: flow-tick 300ms ease-out var(--d, 0ms) backwards;
+  }
+}
+
+@keyframes flow-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+@keyframes flow-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes flow-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes flow-show {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes flow-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes flow-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+@keyframes flow-tick {
+  from {
+    color: #8696a0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-in,
+  .flow-pop,
+  .flow-fill,
+  .flow-dot,
+  .flow-tick {
+    animation: none;
+  }
+  .flow-out,
+  .flow-window {
+    animation: none;
+    display: none;
+  }
+}

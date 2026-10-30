@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 
-import { BrandLogo, BrandMark } from "@/components/common/brand-logo";
+import { BrandLogo } from "@/components/common/brand-logo";
+import LeaveFlowPreview from "./_components/leave-flow-preview";
 
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const t = await getTranslations("auth.layout");
@@ -18,15 +19,14 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
         <p className="text-xs text-muted-foreground">{t("copyright")}</p>
       </div>
 
-      {/* Brand panel: the primary color as a soft gradient, no stock photo. */}
+      {/* Brand panel: the product's own flow on the brand blue, no stock photo or glow. */}
       <div className="relative hidden max-h-screen overflow-hidden p-4 lg:flex">
-        <div className="relative flex h-full w-full flex-col justify-end overflow-hidden rounded-2xl bg-primary p-12 text-primary-foreground">
-          <div className="pointer-events-none absolute -top-24 -right-24 size-96 rounded-full bg-white/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-32 -left-16 size-96 rounded-full bg-black/15 blur-3xl" />
-          <div className="relative flex flex-col gap-4">
-            <div className="flex size-14 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20">
-              <BrandMark className="size-9 text-white" />
-            </div>
+        <div className="relative flex h-full w-full flex-col justify-between gap-10 overflow-hidden rounded-2xl bg-primary p-10 text-primary-foreground xl:p-12">
+          {/* Short screens keep the headline; the illustration steps aside first. */}
+          <div className="flex min-h-0 flex-1 items-center [@media(max-height:600px)]:hidden">
+            <LeaveFlowPreview />
+          </div>
+          <div className="relative flex flex-col gap-3">
             <h1 className="type-display max-w-xl">{t.rich("headline", { br: () => <br /> })}</h1>
             <p className="max-w-lg text-sm text-primary-foreground/80">{t("tagline")}</p>
           </div>

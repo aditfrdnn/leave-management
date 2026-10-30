@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "../styles/launch-ui.css";
 @import "../styles/motion.css";
+@import "../styles/auth-flow.css";
 @import "../styles/typography.css";
 
 /* stylelint-disable-next-line at-rule-no-unknown */
