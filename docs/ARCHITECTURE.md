@@ -17,7 +17,7 @@ src/
 ├── app/              # App Router: routes, layouts, the /api/me route handler
 │   ├── (auth)/       # Sign-in shell + SignIn/SignOut actions
 │   ├── (dashboard)/  # The app shell (module rail + module sidebar + header) and every page
-│   └── api/me/       # Route handler: identity bootstrap from the httpOnly cookies
+│   └── api/me/       # Route handler: identity bootstrap (token cookie → API GET /api/me)
 ├── components/
 │   ├── ui/           # shadcn primitives (CLI-generated) + hugeicons-icon wrapper + shadcn-io/avatar-group
 │   └── common/       # Shared app components (inventory in §7)
@@ -46,11 +46,12 @@ Outside `src/`: `docs/`, `scripts/check-messages.mjs`, `.husky/pre-commit`, `.gi
 | --- | --- | --- | --- |
 | `/` | — | `redirect("/leave-requests")` | — |
 | `/sign-in` | `(auth)` | `SignInForm` | `SignIn` action → `authService.signIn` |
-| `/leave-requests` | `(dashboard)` | `PageHeader` → `LeaveRequestForm` (2/5) + `LeaveRequestTable` (3/5) | `GetLeaveTypes`, `GetApprovers`, `CreateLeaveRequest`, `GetLeaveRequests` |
+| `/leave-requests` | `(dashboard)` | `PageHeader` → `LeaveRequestForm` (2/5) + `LeaveRequestTable` (3/5, server-paged `DataTable`, `LeaveDetailSheet`, `CancelLeaveDialog`) | `GetLeaveTypes`, `GetApprovers`, `CreateLeaveRequest`, `GetLeaveRequests`; shared `GetLeaveRequest`, `CancelLeaveRequest` |
+| `/approvals` | `(dashboard)` | `PageHeader` → `PermissionGate(leave.approve)` → `ApprovalTable` (status tabs + search + `DataTable`, `LeaveDetailSheet`, `ApprovalDecisionDialog`) | `GetApprovals`, `DecideLeaveRequest`, shared `GetLeaveRequest` |
 
-The route has `loading.tsx` (`RouteLoading`) and `error.tsx` (`ErrorState`). `(dashboard)/template.tsx` wraps each page in `PageGate`: one loader until the page's first queries settle, then a single reveal.
+Each route has `loading.tsx` (`RouteLoading`) and `error.tsx` (`ErrorState`). `(dashboard)/template.tsx` wraps each page in `PageGate`: one loader until the page's first queries settle, then a single reveal.
 
-**Modules and navigation.** `constants/app-module-constant.ts` registers one module — Leave (`/leave-requests`, menu "My Leave Requests"). `AppSidebar` draws the module rail plus the active module's menu (no permission filter yet). `useModuleLastPaths` remembers the last page per module. `GeneralBreadcrumb` derives crumbs from the pathname and `nav.segments`.
+**Modules and navigation.** `constants/app-module-constant.ts` registers one module — Leave — with two menus: "My Leave Requests" (`/leave-requests`) and "Approvals" (`/approvals`, `permission: leave.approve`). `AppSidebar` draws the module rail plus the active module's menus filtered by `usePermissionTitles`. `useModuleLastPaths` remembers the last page per module. `GeneralBreadcrumb` derives crumbs from the pathname and `nav.segments`.
 
 The old `/signup` page (Firebase Auth) and the duplicate `/` dashboard are gone; accounts are created on the API side.
 
@@ -61,20 +62,19 @@ The old `/signup` page (Firebase Auth) and the duplicate `/` dashboard are gone;
 ```
 Browser ── POST (server action) ──▶ SignIn ── authService.signIn ──▶ POST /api/auth/login
                                      │  data = { ...user, token }
-                                     │  sets httpOnly cookies: TOKEN_KEY = token, USER_KEY = user (JSON)
+                                     │  sets the httpOnly cookie TOKEN_KEY = token
                                      ◀── { status, redirect, user }
 Browser ── setAuth(user) · router.push(redirect) · router.refresh()
 
 Every page load:  proxy.ts redirects to /sign-in when the token cookie is missing (except "/" and "/sign-in")
-Client bootstrap: AuthProvider → authService.me() → GET /api/me (route handler) → returns the USER_KEY cookie
-                  while the token cookie exists → useAuthStore.setAuth(data) | on failure SignOut() + clear()
+Client bootstrap: AuthProvider → authService.me() → GET /api/me (Next route handler) → Bearer call to the
+                  API's GET /api/me → useAuthStore.setAuth(data) | on failure SignOut() + clear()
 Every API call:   lib/axios/instance.ts adds Authorization: Bearer <token cookie> and X-Locale
-Logout:           NavUser → SignOut(currentUrl) → DELETE /api/auth/logout (401 tolerated) → both cookies removed → clear()
+Logout:           NavUser → SignOut(currentUrl) → DELETE /api/auth/logout (401 tolerated) → token cookie removed → clear()
 ```
 
 - The token never reaches the browser's JavaScript: services run inside Server Actions; the only client-side call (`authService.me()`) hits the same-origin route handler.
-- The user cookie is a stop-gap for the missing `GET /api/me`; when the API has it, `app/api/me/route.ts` forwards the token the way `next-pdi` does and `setUserCookie` goes away.
-- `useAuth()` exposes `user`, `isAuthenticated`, `isInitialized`, `loading`. There is no permission map yet.
+- `useAuth()` exposes `user`, `permissions`, `isAuthenticated`, `isInitialized`, `loading`. `permissions` is a map built from the API's `permissions[]` (`leave.request`, `leave.approve`); `lib/permission.ts` (`usePermission`, `usePermissionTitles`) and `common/permission-gate.tsx` read it. Without a list from the API the store assumes `leave.request` only.
 
 ---
 
@@ -108,7 +108,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 
 | Store / mechanism | Holds | Written by |
 | --- | --- | --- |
-| `stores/auth.store.ts` (Zustand) | `user`, `isAuthenticated`, `isInitialized` | `SignInForm`, `NavUser`, `AuthProvider` |
+| `stores/auth.store.ts` (Zustand) | `user` (refreshed from the API's `/api/me` on every full load), `isAuthenticated`, `isInitialized` | `SignInForm`, `NavUser`, `AuthProvider` |
 | React Query cache | leave requests, leave types, approvers | the feature components' `useQuery` |
 | `useState` in `LeaveRequestForm` | the selected `Date[]` mirrored into the RHF `leave_date` field | the calendar |
 | `useModuleLastPaths` (`localStorage`) | last visited path per module | `AppSidebar` |
@@ -131,7 +131,7 @@ LeaveRequestForm  ── useQuery(["leave","leave-types"|"approvers"]) ──▶
 | `nav-user.tsx`, `avatar-user.tsx` | Header user menu with logout |
 | `mode-toggle.tsx`, `language-switcher.tsx`, `flag-icon.tsx` | Theme and language controls in the header |
 
-Feature-only components live in `app/(dashboard)/leave-requests/_components/`: `leave-request-form.tsx`, `leave-request-table.tsx`, `leave-request-columns.tsx`, `leave-status-badge.tsx`.
+Feature-only components live in `app/(dashboard)/leave-requests/_components/` (`leave-request-form.tsx`, `leave-request-table.tsx`, `leave-request-columns.tsx`) and `app/(dashboard)/approvals/_components/` (`approval-table.tsx`, `approval-columns.tsx`, `approval-decision-dialog.tsx`). Pieces both pages share sit one level up in `app/(dashboard)/_components/` (`leave-status-badge.tsx`, `leave-detail-sheet.tsx`, `cancel-leave-dialog.tsx`) with their actions in `app/(dashboard)/action.ts`.
 
 ---
 
@@ -162,7 +162,6 @@ English (`en`, default) and Indonesian (`id`) through next-intl with a cookie lo
 
 ## 11. Observations (known gaps, not rules)
 
-- **Identity** relies on a user cookie written at login because the API has no `GET /api/me`; a profile change on the server is not seen until the next login.
 - **Notifications** from the old header were dummy data and were removed; there is no notification endpoint.
 - **Calendar export** (`.ics` download) from the prototype was already disabled and was not carried over.
 - **History list** is unpaginated; sorting and filtering happen in the browser.

@@ -8,7 +8,7 @@
 
 **HR Lite** is a Next.js frontend (thin client + BFF) in front of the leave API (a Laravel service reached over HTTP). An employee signs in, submits a leave request — dates, leave type, approver, reason, location, hand-over, replacement, phone — and follows the status of every request they sent.
 
-One module today, one shell (`src/app/(dashboard)`): **Leave** (`/leave-requests`). Approvals, notifications and settings join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
+One module today, one shell (`src/app/(dashboard)`): **Leave** (`/leave-requests`, `/approvals`). Notifications and settings join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
 
 ---
 
@@ -146,13 +146,13 @@ Fallback messages are translated on the server with `getTranslations("<namespace
 
 Do not change this flow; extend features on top of it.
 
-- **Session storage**: an httpOnly cookie named by `environment.TOKEN_KEY` holds the bearer token and, until the API has `GET /api/me`, a second httpOnly cookie (`environment.USER_KEY`) holds the user returned by login. Both are read/set/removed only through `lib/cookies.ts`. Never in `localStorage`, a readable cookie or Zustand.
+- **Session storage**: one httpOnly cookie named by `environment.TOKEN_KEY` holds the bearer token, read/set/removed only through `lib/cookies.ts`. Never in `localStorage`, a readable cookie or Zustand.
 - **Login**: `SignInForm` → `useActionState(SignIn)` → `(auth)/actions.ts` validates with `signInSchema`, calls `authService.signIn` (`POST /api/auth/login`, `data` = user + `token`), stores the token and the user, returns `{ status, redirect, user }`. The client calls `useAuthStore.setAuth(user)`, `setInitialized(true)`, `router.push(redirect)`, `router.refresh()`.
 - **Logout**: `NavUser` → `SignOut(currentUrl)` clears both cookies (the API has no logout endpoint yet) → `useAuthStore.clear()`. `AuthProvider` also signs out when its identity check fails.
 - **Route protection**: `src/proxy.ts` redirects on the cookie's presence for every route except `PUBLIC_ROUTES` (`/`, `/sign-in`). Do not weaken this.
-- **Identity bootstrap**: `AuthProvider` calls `authService.me()` → `app/api/me/route.ts` (returns the user cookie while the token cookie exists; forwards the token to the API once `/api/me` exists) → `useAuthStore.setAuth(data)`.
+- **Identity bootstrap**: `AuthProvider` calls `authService.me()` → `app/api/me/route.ts` (server-side cookie → Bearer call to the API's `GET /api/me`) → `useAuthStore.setAuth(data)`.
 - **Reading auth state**: `useAuth()` (`user`, `permissions`, `isAuthenticated`, `isInitialized`, `loading`). Call store actions directly only from the login/logout flows.
-- **Permissions**: none yet. When the API returns roles/permissions, add `constants/permission-constant.ts`, `lib/permission.ts` and the `permission` field on menus exactly as `next-pdi` does.
+- **Permissions**: `constants/permission-constant.ts` lists the keys the API sends (`leave.request`, `leave.approve`); `lib/permission.ts` exposes `usePermission` / `usePermissionTitles`; a menu declares `permission` and a page wraps its content in `common/permission-gate.tsx`. Hiding UI is not authorisation — the API enforces every rule again.
 
 ---
 

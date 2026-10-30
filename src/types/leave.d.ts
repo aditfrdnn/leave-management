@@ -58,3 +58,46 @@ export type TLeaveRequestPayload = {
   temporary_replacement: string;
   phone_number: string;
 };
+
+/** `approval_flows.approval_action`: 0 pending, 1 approved, 2 rejected. */
+export type TApprovalAction = 0 | 1 | 2;
+
+export type TLeaveApproval = {
+  id: number;
+  approval_level: number;
+  approval_action: TApprovalAction | number;
+  notes: string | null;
+  approved_at: string | null;
+  approval_by?: { id: number; name: string; email: string } | null;
+};
+
+/** `GET /api/leave-request/approvals` row: the request plus this approver's own flow row. */
+export type TApprovalItem = TLeave & { approval: TLeaveApproval };
+
+/** `GET /api/leave-request/{id}`: the request with every approval step. */
+export type TLeaveDetail = TLeave & { approvals: TLeaveApproval[] };
+
+export type TApprovalStatusFilter = "pending" | "approved" | "rejected" | "all";
+
+export type TLeaveSortKey = "created_at" | "start_date" | "duration" | "status" | "submitted_at";
+
+/** Query string for `GET /api/leave-request`; `status` is a comma-joined list of status codes. */
+export type TLeaveListParams = {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  status?: string;
+  sort_by?: TLeaveSortKey;
+  sort_dir?: "asc" | "desc";
+};
+
+export type TApprovalListParams = {
+  status?: TApprovalStatusFilter;
+  page?: number;
+  per_page?: number;
+  search?: string;
+};
+
+export type TApprovalDecisionPayload = {
+  notes?: string | null;
+};

@@ -1,3 +1,9 @@
+import type { PERMISSIONS_CONSTANT } from "@/constants/permission-constant";
+
+export type TPermission = (typeof PERMISSIONS_CONSTANT)[keyof typeof PERMISSIONS_CONSTANT];
+
+export type TPermissions = Record<TPermission, boolean>;
+
 export type TUser = {
   id: number;
   name: string;
@@ -9,6 +15,8 @@ export type TUser = {
     name: string;
     alias: string;
   } | null;
+  /** Permission titles from `GET /api/me`; the login response has none until the next bootstrap. */
+  permissions?: string[];
 };
 
 /** `POST /api/auth/login` → `data`: the user with its bearer token on the same object. */

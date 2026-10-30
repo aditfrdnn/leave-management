@@ -14,3 +14,20 @@ export const leaveRequestSchema = z.object({
 });
 
 export type LeaveRequestSchemaType = z.infer<typeof leaveRequestSchema>;
+
+export const approvalDecisionSchema = z
+  .object({
+    id: z.number().int().positive(),
+    decision: z.enum(["approve", "reject"]),
+    notes: z.string().trim().max(500, "leave.approvals.validation.notesMax"),
+  })
+  .refine((value) => value.decision === "approve" || value.notes.length > 0, {
+    path: ["notes"],
+    message: "leave.approvals.validation.notesRequired",
+  });
+
+export type ApprovalDecisionSchemaType = z.infer<typeof approvalDecisionSchema>;
+
+export const cancelLeaveSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});

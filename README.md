@@ -1,9 +1,10 @@
 # HR Lite (leave-management)
 
 Frontend for employee leave requests: an employee signs in, submits a leave request (dates,
-approver, reason, hand-over) and follows the status of what they sent. A Next.js 16 app
-(App Router, React 19, TypeScript) that talks to `leave-service` (Laravel) over HTTP; approvals
-reach the approver through the `leave-management-wa` WhatsApp bridge (see `docs/integration.md`).
+approver, reason, hand-over), follows the status of what they sent and can cancel it while it is
+pending; an approver decides from the browser or from WhatsApp. A Next.js 16 app (App Router,
+React 19, TypeScript) that talks to `leave-service` (Laravel) over HTTP; WhatsApp goes through the
+`leave-management-wa` bridge (see `docs/integration.md`).
 
 The codebase follows the same structure, rules and look as `next-prm` (Project Readiness
 System) and `next-pdi`, so patterns and components move between the projects without translation.
@@ -47,6 +48,7 @@ from the repository as before.
 | Path | Page |
 | --- | --- |
 | `/sign-in` | Login (public) |
-| `/leave-requests` | New leave request form + the signed-in user's history |
+| `/leave-requests` | New leave request form + the signed-in user's history (paged, sortable, detail sheet, cancel) |
+| `/approvals` | Approver inbox: pending / decided requests, approve or reject with a note (`leave.approve`) |
 
 `/` redirects to `/leave-requests`. Everything except `/sign-in` requires the auth cookie (`src/proxy.ts`).

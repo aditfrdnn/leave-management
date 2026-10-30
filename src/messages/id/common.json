@@ -259,5 +259,9 @@
     "count": "{selected} dari {total}",
     "noMatch": "Tidak ada nilai yang cocok",
     "ok": "OK"
+  },
+  "permissionGate": {
+    "unavailableTitle": "{title} tidak tersedia",
+    "unavailableDescription": "Akun Anda tidak punya hak akses {permission}. Minta administrator untuk memberikannya."
   }
 }

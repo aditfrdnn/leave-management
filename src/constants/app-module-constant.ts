@@ -1,4 +1,5 @@
 import type { TAppModule } from "@/types/menu";
+import { PERMISSIONS_CONSTANT } from "./permission-constant";
 
 export const HOME_MODULE_ID = "leave";
 
@@ -9,8 +10,11 @@ export const appModules: TAppModule[] = [
     titleKey: "leave",
     icon: "calendar-icon",
     href: "/leave-requests",
-    basePaths: ["/leave-requests"],
-    menus: [{ titleKey: "myLeaveRequests", href: "/leave-requests", disabled: false }],
+    basePaths: ["/leave-requests", "/approvals"],
+    menus: [
+      { titleKey: "myLeaveRequests", href: "/leave-requests", disabled: false },
+      { titleKey: "approvals", href: "/approvals", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_APPROVE },
+    ],
   },
 ];
 

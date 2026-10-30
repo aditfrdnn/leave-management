@@ -4,7 +4,7 @@ import axios from "axios";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 
-import { removeTokenCookie, removeUserCookie, setTokenCookie, setUserCookie } from "@/lib/cookies";
+import { removeTokenCookie, setTokenCookie } from "@/lib/cookies";
 import { authService } from "@/services";
 import type { AuthFormState } from "@/types/auth";
 import { signInSchema } from "@/validations/auth-validations";
@@ -34,7 +34,7 @@ export async function SignIn(prevState: AuthFormState, formData: FormData | null
       return { status: "error", errors: { _form: [result.message ?? t("missingAuthData")] } };
     }
 
-    await Promise.all([setTokenCookie(token), setUserCookie(user)]);
+    await setTokenCookie(token);
 
     const callbackUrl = formData?.get("callbackUrl") as string;
     const redirect = callbackUrl && isValidCallbackUrl(callbackUrl) ? callbackUrl : "/leave-requests";
@@ -62,7 +62,7 @@ export async function SignIn(prevState: AuthFormState, formData: FormData | null
   }
 }
 
-/** Revokes the token on the API, then clears both cookies. A dead token (401) still signs out locally. */
+/** Revokes the current token on the API, then clears the cookie. A dead token (401) still signs out locally. */
 export async function SignOut(currentUrl?: string) {
   try {
     await authService.signOut();
@@ -72,7 +72,7 @@ export async function SignOut(currentUrl?: string) {
     }
   }
 
-  await Promise.all([removeTokenCookie(), removeUserCookie()]);
+  await removeTokenCookie();
 
   const url = `/sign-in${currentUrl && isValidCallbackUrl(currentUrl) ? `?callback=${encodeURIComponent(currentUrl)}` : ""}`;
 

@@ -6,9 +6,11 @@
     "leave": "Leave"
   },
   "menus": {
-    "myLeaveRequests": "My Leave Requests"
+    "myLeaveRequests": "My Leave Requests",
+    "approvals": "Approvals"
   },
   "segments": {
-    "leave-requests": "Leave Requests"
+    "leave-requests": "Leave Requests",
+    "approvals": "Approvals"
   }
 }

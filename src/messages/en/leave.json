@@ -50,8 +50,13 @@
       "duration": "Duration",
       "reason": "Reason",
       "status": "Status",
-      "submittedAt": "Submitted"
-    }
+      "submittedAt": "Submitted",
+      "actions": "Actions"
+    },
+    "count": "{count, plural, =0 {No requests} one {# request} other {# requests}}",
+    "searchPlaceholder": "Search LVR no. or reason…",
+    "emptySearch": "No request matches the filter",
+    "view": "View details"
   },
   "status": {
     "pending": "Pending",
@@ -80,6 +85,90 @@
     "loadLeaveTypes": "Failed to load leave types",
     "loadApprovers": "Failed to load approvers",
     "create": "Failed to submit the leave request",
-    "formDataEmpty": "Form data is empty"
+    "formDataEmpty": "Form data is empty",
+    "loadDetail": "Failed to load the request",
+    "cancel": "Failed to cancel the request"
+  },
+  "approvals": {
+    "page": {
+      "title": "Approvals",
+      "description": "Leave requests that wait for your decision, and the ones you already decided."
+    },
+    "filters": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "all": "All"
+    },
+    "searchPlaceholder": "Search by requester or LVR no…",
+    "empty": {
+      "pending": "Nothing waits for your approval",
+      "approved": "You have not approved any request yet",
+      "rejected": "You have not rejected any request",
+      "all": "No requests assigned to you yet"
+    },
+    "emptySearch": "No request matches your search",
+    "columns": {
+      "requester": "Requester",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View details",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "status": {
+      "pending": "Waiting"
+    },
+    "dialog": {
+      "approveTitle": "Approve this request?",
+      "rejectTitle": "Reject this request?",
+      "approveDescription": "<b>{name}</b> · {subject} will be marked as approved and the requester is notified.",
+      "rejectDescription": "<b>{name}</b> · {subject} will be marked as rejected. Tell the requester why.",
+      "notes": "Note",
+      "notesApprovePlaceholder": "Optional note for the requester",
+      "notesRejectPlaceholder": "Reason for rejecting"
+    },
+    "toast": {
+      "approved": "Request approved.",
+      "rejected": "Request rejected.",
+      "failed": "Could not save the decision"
+    },
+    "validation": {
+      "notesRequired": "A reason is required to reject",
+      "notesMax": "Note must not exceed 500 characters"
+    },
+    "errors": {
+      "loadList": "Failed to load approvals",
+      "approve": "Failed to approve the request",
+      "reject": "Failed to reject the request"
+    }
+  },
+  "detail": {
+    "fallbackTitle": "Leave request",
+    "description": "Everything about this request and who has decided on it.",
+    "fields": {
+      "requester": "Requester",
+      "leaveType": "Leave type",
+      "dates": "Dates",
+      "duration": "Duration",
+      "returnToOffice": "Return to office",
+      "reason": "Reason",
+      "location": "Location during leave",
+      "ongoingTask": "Ongoing tasks",
+      "replacement": "Temporary replacement",
+      "phone": "Phone",
+      "submittedAt": "Submitted"
+    },
+    "days": "{count, plural, one {# day} other {# days}}",
+    "daysTitle": "Leave days",
+    "approvalsTitle": "Approval",
+    "level": "Level {level}",
+    "noApprovals": "No approver assigned yet",
+    "cancel": "Cancel request",
+    "cancelConfirm": "Cancel this request? Your approver will no longer see it.",
+    "cancelled": "Request cancelled.",
+    "cancelQuestion": "Withdraw <b>{subject}</b>? Your approver will no longer see it and you can submit a new one.",
+    "cancelFailed": "Could not cancel the request"
   }
 }

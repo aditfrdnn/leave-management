@@ -8,6 +8,25 @@ export type TApiResponse<TData> = {
   data: TData;
 };
 
+/** `Controller::sendPaginated` → `meta.pagination`. */
+export type TApiPagination = {
+  current_page: number;
+  per_page: number;
+  last_page: number;
+  total: number;
+  from: number | null;
+  to: number | null;
+  has_more: boolean;
+  next_page: number | null;
+};
+
+export type TApiPaginated<TItem> = {
+  success: boolean;
+  message: string;
+  data: TItem[];
+  meta: { pagination: TApiPagination };
+};
+
 /** Laravel's own 422 body — note the missing `success` key. */
 export type TValidationErrorBody = {
   message: string;

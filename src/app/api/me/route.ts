@@ -1,18 +1,36 @@
+import axios from "axios";
 import { NextResponse } from "next/server";
 
-import { getTokenCookie, getUserCookie } from "@/lib/cookies";
+import { environment } from "@/configs/environment";
+import { meBackend } from "@/constants/endpoint-constant";
+import { getTokenCookie } from "@/lib/cookies";
 
 /**
- * Identity bootstrap for `AuthProvider`. The leave API has no `GET /api/me` yet, so the user
- * stored at login (httpOnly cookie) is returned as long as the token cookie is still there.
- * Once the API exposes `/api/me`, this handler forwards the token instead (see next-pdi).
+ * Identity bootstrap for `AuthProvider`: reads the httpOnly token cookie on the server and
+ * forwards it as a Bearer token to the leave API's `GET /api/me`, so the token never reaches
+ * the browser. Any failure answers 401 and the client signs out.
  */
 export async function GET() {
-  const [token, user] = await Promise.all([getTokenCookie(), getUserCookie()]);
+  const token = await getTokenCookie();
+  const backendUrl = environment.DEV_URL || environment.PROD_URL;
 
-  if (!token || !user) {
+  if (!token || !backendUrl) {
     return NextResponse.json(null, { status: 401 });
   }
 
-  return NextResponse.json({ success: true, data: user });
+  try {
+    const { data } = await axios.get(`${backendUrl}${meBackend}`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      timeout: 15 * 1000,
+    });
+
+    return NextResponse.json(data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return NextResponse.json(null, { status: error.response?.status ?? 401 });
+    }
+
+    console.error("Error fetching current user:", error);
+    return NextResponse.json(null, { status: 401 });
+  }
 }

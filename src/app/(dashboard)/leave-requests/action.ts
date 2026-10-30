@@ -5,8 +5,8 @@ import { getTranslations } from "next-intl/server";
 import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
-import type { TDropdownOption } from "@/types/api";
-import type { TApprover, TLeave } from "@/types/leave";
+import type { TApiPaginated, TDropdownOption } from "@/types/api";
+import type { TApprover, TLeave, TLeaveListParams } from "@/types/leave";
 import { leaveRequestSchema } from "@/validations/leave-validations";
 
 type LeaveActionState = ActionState<TLeave>;
@@ -17,11 +17,9 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetLeaveRequests(): Promise<TLeave[]> {
+export async function GetLeaveRequests(params: TLeaveListParams): Promise<TApiPaginated<TLeave>> {
   try {
-    const response = await leaveService.getLeaveRequests();
-
-    return response.data ?? [];
+    return await leaveService.getLeaveRequests(params);
   } catch (error) {
     throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadList")));
   }

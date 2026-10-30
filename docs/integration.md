@@ -18,24 +18,28 @@ Bearer-token API over HTTPS. The frontend never talks to the WhatsApp service.
 | Call | Frontend | leave-service |
 | --- | --- | --- |
 | Sign in | `authService.signIn` → `POST /api/auth/login` `{ email, password }` | `AuthController@login` → `{ success, message, data: { ...user, token, department } }` |
-| Sign out | `authService.signOut` → `DELETE /api/auth/logout` (Bearer) | `AuthController@logout` revokes every token |
-| Identity on reload | `GET /api/me` **(same-origin Next route handler)** returns the user cookie | — no `/api/me` on the API yet (`docs/backend-task.md` §1) |
-| My requests | `GetLeaveRequests` → `GET /api/leave-request` | `LeaveRequestController@index`: the user's requests, newest first, with `user.department`, `leave_type`, `leave_request_days`, `status_name` |
+| Sign out | `authService.signOut` → `DELETE /api/auth/logout` (Bearer) | `AuthController@logout` revokes the current token only |
+| Identity on reload | `GET /api/me` **(same-origin Next route handler)** forwards the token cookie as Bearer | `AuthController@me` → `{ success, data: user }` (same shape as login minus `token`), incl. `permissions: string[]` (`leave.request`, `leave.approve`) |
+| My requests | `GetLeaveRequests` → `GET /api/leave-request?page&per_page&search&status&sort_by&sort_dir` | `LeaveRequestController@index` via `sendPaginated`: the user's requests with `user.department`, `leave_type`, `leave_request_days`; `meta.pagination`. `status` is a comma list of codes, `sort_by` ∈ `created_at,start_date,duration,status` |
+| Request detail | `GetLeaveRequest` → `GET /api/leave-request/{id}` (detail sheet on both pages) | `@show`: owner or one of its approvers (else 403); adds `approvals[]` with `approval_by {id,name,email}` |
+| Cancel | `CancelLeaveRequest` → `PATCH /api/leave-request/{id}/cancel` | `@cancel`: owner only, status 0 → -1 (+ `cancelled_at`); 409 once decided |
+| Approvals inbox | `GetApprovals` → `GET /api/leave-request/approvals?status=pending|approved|rejected|all&page&per_page&search` | `@approvals` via `sendPaginated`: leaves whose `approval_flows.approval_by` is me, each with my `approval` row; pending oldest-first |
+| Decide | `DecideLeaveRequest` → `PATCH /api/leave-request/{id}/approve` or `/reject` `{ notes }` (notes required on reject) | `@approve` / `@reject`: must be an approver of that leave (403), 409 once decided; `App\Services\LeaveDecisionService` — the same path the WhatsApp callback uses — updates status, approval row and queues the approved/rejected email |
 | New request | `CreateLeaveRequest` → `POST /api/leave-request` (fields in `types/leave.d.ts`, dates `dd-MM-yyyy`) | `@store`: writes `leave_requests` + `approval_flows` (level 1, `approval_by`) + `leave_request_days`, then queues `SendWhatsappApproval` and `LeaveApprovalRequestMail` |
 | Dropdowns | `GET /api/dropdown/leave-types` (`{ id, text }`), `GET /api/dropdown/users` (`{ id, name, email }`) | `DropdownOptionController` |
 
 - Every request carries `Authorization: Bearer <token>` (added by `lib/axios/instance.ts` from the httpOnly cookie) and `X-Locale` (ignored by the API today).
-- Envelope: `{ success, message, data }`. Errors: `{ success: false, message }`; validation 422 puts the field map under **`data`** (`lib/api-error.ts` handles both `data` and `errors`).
-- `POST /api/leave-request` has no FormRequest: the frontend's Zod schema is the only field validation. The API rejects choosing yourself as approver (400) and empty/invalid dates (422 `dates`).
+- Envelope: `{ success, message, data }`. Errors: `{ success: false, message, errors?: { field: string[] } }` for controller **and** framework errors (401/403/404/405/422/429/500 are rendered as the same envelope by `bootstrap/app.php`). `lib/api-error.ts` still accepts the legacy `data` field map.
+- `POST /api/leave-request` is validated by `StoreLeaveRequestRequest` (`lang/id` + `lang/en` messages): dates `dd-MM-yyyy`, not in the past, no weekend, no overlap with the user's other requests, approver ≠ self, `return_to_office` after the last leave day. Per-date errors come back as `leave_date.0`, `leave_date.1`, …
 - Config: `NEXT_PUBLIC_DEV_SERVER_URL` / `NEXT_PUBLIC_PROD_SERVER_URL` (no trailing `/api`). Production is `https://lvr-api.pdi-ptcs.com`; `https://lvr.pdi-ptcs.com` is the frontend itself.
 
 ## 2. leave-service → WhatsApp service
 
-Fired from `LeaveRequestController@store` (and the unauthenticated `GET /api/leave-request/whatapproval-reminder/{leave}/{approver}` re-trigger) through the queued job `App\Jobs\SendWhatsappApproval` (3 tries, backoff 10/60/180 s, `afterCommit`).
+Fired from `LeaveRequestController@store` and the owner-only, rate-limited (`throttle:5,1`) `GET /api/leave-request/whatapproval-reminder/{leave}/{approver}` re-trigger, both through `App\Services\LeaveApprovalNotifier`, which stores `sha256(code)` + `approval_code_sent_at` on the `approval_flows` row and queues `App\Jobs\SendWhatsappApproval` (3 tries, backoff 10/60/180 s, `afterCommit`) plus the approval email.
 
 ```
 POST {WA_SERVICE_BASE_URL}/send-approval
-X-API-WHATSAPP: <X_API_WHATSAPP_KEY>        # the WA service does not verify this header today
+X-API-WHATSAPP: <X_API_WHATSAPP_KEY>        # verified by the WA service (`requireApiToken`, timing-safe compare with API_TOKEN)
 Idempotency-Key: leave-<id>
 
 { "leaveId", "leave_request_id", "uniqueCode", "unique_code",
@@ -45,7 +49,7 @@ Idempotency-Key: leave-<id>
 
 The WA service (`POST /send-approval`) requires the client to be `READY` + `CONNECTED` (else 503), resolves the number to a chat id, sends `message`, then the bare `uniqueCode` as a second message, and keeps `{ leaveId, uniqueCode, approverNumber, approverEmail }` in an in-memory map keyed by chat id (lost on restart, expires after `APPROVAL_TIMEOUT`).
 
-`uniqueCode` is `shortCode8(leave id)` in the controller: 8 chars from base36(time) interleaved with base36(id). It is not stored anywhere on the API side.
+`uniqueCode` is `LeaveApprovalNotifier::shortCode8(leave id)`: 8 chars from base36(time) interleaved with base36(id). Only its SHA-256 hash is stored (`approval_flows.approval_code_hash`); every re-send replaces it, so the bridge keeps the latest code per leave. Approver numbers in `WA_BYPASS_NUMBERS` skip the real send (local testing).
 
 ## 3. WhatsApp service → leave-service
 
@@ -55,12 +59,12 @@ The approver replies `<CODE> YES` or `<CODE> NO <reason>` (also APPROVE/APPROVED
 POST {API_BASE_URL}/api/whatsapp/leave-request/approval
 X-API-WHATSAPP: <API_TOKEN>                   # verified by VerifyWhatsappApiKey (hash_equals with X_API_WHATSAPP_KEY)
 
-{ "leave_request_id", "approver_phone_number", "approver_email", "approved": true|false, "reason" }
+{ "leave_request_id", "unique_code", "approver_email", "approver_phone_number", "approved": true|false, "reason" }
 ```
 
-`WhatsappServiceController@leaveRequestApproval` sets `leave_requests.status` to 1/2 (+ `approved_at`/`rejected_at`), finds the `approval_flows` row whose approver has `approver_email` (404 if none), stores `approval_action`/`notes`, then queues the approved/rejected email. The WA service relays the API's `message` back to the approver and only forgets the session on success, so a failed callback stays retryable.
+`WhatsappServiceController@leaveRequestApproval` validates the body (422), finds the `approval_flows` row whose approver has `approver_email` (404 if none), checks `hash_equals(approval_code_hash, sha256(unique_code))` (403 `Kode unik tidak cocok.`), refuses a leave that is already 1/2 (409 `Pengajuan sudah diproses.`), then hands over to `App\Services\LeaveDecisionService` — the same code path as the web approve/reject endpoints — which sets `leave_requests.status` 1/2 (+ `approved_at`/`rejected_at`), `approval_action`/`notes`, and queues the approved/rejected email. The WA service relays the API's `message` back to the approver; on 403 it keeps the session (the approver can retry), on 409 or success it forgets it. `LEAVE_REQUIRE_UNIQUE_CODE=false` accepts the legacy body without `unique_code`.
 
-Note the API does **not** check that the code in the reply belongs to that leave: the pairing lives only in the WA service's memory. Final approval is done in HRIS; WhatsApp is the notification/reminder channel (leave-service README).
+Final approval is also done in HRIS; WhatsApp and the web approver page are the notification/decision channels.
 
 ## 4. Shared secrets and env
 
@@ -93,9 +97,21 @@ NEXT_PUBLIC_DEV_SERVER_URL=http://127.0.0.1:8000 npm run dev   # http://localhos
 
 With `QUEUE_CONNECTION=database` and no worker, submitting a request still succeeds; the WA/email jobs just wait in the `jobs` table (verified 30 Oct 2026: login, dropdowns, submit, history and logout all work against the local API). With `MAIL_MAILER=log` the emails land in `storage/logs/laravel.log`.
 
-## 6. Where the frontend grows next (needs the API first)
+## 6. Permissions
 
-- Approver page: list what waits on me, approve/reject from the browser (today only WhatsApp/HRIS) — `docs/backend-task.md` §5.
-- Request detail (`GET /api/leave-request/{id}` is an empty stub) and cancel while pending.
+The API decides who sees what; the frontend only hides UI. `GET /api/me` and `POST /api/auth/login`
+return `permissions: string[]`:
+
+| Permission | Who | Frontend |
+| --- | --- | --- |
+| `leave.request` | every user | `/leave-requests` (form + history) |
+| `leave.approve` | users the API counts as approvers (see `AuthController`) | `/approvals` menu + page (`PermissionGate`) |
+
+`constants/permission-constant.ts` + `lib/permission.ts` mirror `next-pdi`; the store falls back to
+`leave.request` only when the API sends no list.
+
+## 7. Where the frontend grows next (needs the API first)
+
 - Notifications in the header (no endpoint).
-- `GET /api/me` so the user cookie can go away.
+- Leave balance per type (no endpoint, `docs/backend-task.md` §9).
+- Column facets from the API (`facets` in list responses) instead of the static status list.

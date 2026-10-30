@@ -30,6 +30,7 @@ import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { appModules, getActiveMenuHref, getActiveModule } from "@/constants/app-module-constant";
 import { iconMap } from "@/constants/icon-constant";
 import { useModuleLastPaths } from "@/hooks/use-module-last-paths";
+import { usePermissionTitles } from "@/lib/permission";
 import { cn } from "@/lib/utils/utils";
 import { Tick02Icon, UnfoldMoreIcon } from "@hugeicons/core-free-icons";
 
@@ -40,6 +41,7 @@ const activeClass =
 function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { data: permissionTitles } = usePermissionTitles();
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
 
@@ -47,8 +49,13 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const query = searchParams.toString();
   const lastPaths = useModuleLastPaths(activeModule.id, query ? `${pathname}?${query}` : pathname);
 
-  // No permission layer yet (docs/backend-task.md §3); every module and menu is visible.
-  const visibleModules = appModules;
+  const visibleModules = appModules
+    .map((module) => ({
+      ...module,
+      // Hidden until `/api/me` says the user holds the permission.
+      menus: module.menus.filter((menu) => !menu.permission || permissionTitles.includes(menu.permission)),
+    }))
+    .filter((module) => module.menus.length > 0);
 
   const ActiveIcon = iconMap[activeModule.icon];
   const activeMenus = visibleModules.find((module) => module.id === activeModule.id)?.menus ?? [];

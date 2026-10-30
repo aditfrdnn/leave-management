@@ -50,8 +50,13 @@
       "duration": "Durasi",
       "reason": "Alasan",
       "status": "Status",
-      "submittedAt": "Dikirim"
-    }
+      "submittedAt": "Dikirim",
+      "actions": "Aksi"
+    },
+    "count": "{count} pengajuan",
+    "searchPlaceholder": "Cari no. LVR atau alasan…",
+    "emptySearch": "Tidak ada pengajuan yang cocok dengan filter",
+    "view": "Lihat detail"
   },
   "status": {
     "pending": "Menunggu",
@@ -80,6 +85,90 @@
     "loadLeaveTypes": "Gagal memuat jenis cuti",
     "loadApprovers": "Gagal memuat daftar approver",
     "create": "Gagal mengirim pengajuan cuti",
-    "formDataEmpty": "Data form kosong"
+    "formDataEmpty": "Data form kosong",
+    "loadDetail": "Gagal memuat pengajuan",
+    "cancel": "Gagal membatalkan pengajuan"
+  },
+  "approvals": {
+    "page": {
+      "title": "Persetujuan",
+      "description": "Pengajuan cuti yang menunggu keputusan Anda, dan yang sudah Anda putuskan."
+    },
+    "filters": {
+      "pending": "Menunggu",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "all": "Semua"
+    },
+    "searchPlaceholder": "Cari nama pemohon atau no. LVR…",
+    "empty": {
+      "pending": "Tidak ada yang menunggu persetujuan Anda",
+      "approved": "Belum ada pengajuan yang Anda setujui",
+      "rejected": "Belum ada pengajuan yang Anda tolak",
+      "all": "Belum ada pengajuan untuk Anda"
+    },
+    "emptySearch": "Tidak ada pengajuan yang cocok",
+    "columns": {
+      "requester": "Pemohon",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "view": "Lihat detail",
+      "approve": "Setujui",
+      "reject": "Tolak"
+    },
+    "status": {
+      "pending": "Menunggu"
+    },
+    "dialog": {
+      "approveTitle": "Setujui pengajuan ini?",
+      "rejectTitle": "Tolak pengajuan ini?",
+      "approveDescription": "<b>{name}</b> · {subject} akan ditandai disetujui dan pemohon diberi tahu.",
+      "rejectDescription": "<b>{name}</b> · {subject} akan ditandai ditolak. Sampaikan alasannya ke pemohon.",
+      "notes": "Catatan",
+      "notesApprovePlaceholder": "Catatan opsional untuk pemohon",
+      "notesRejectPlaceholder": "Alasan penolakan"
+    },
+    "toast": {
+      "approved": "Pengajuan disetujui.",
+      "rejected": "Pengajuan ditolak.",
+      "failed": "Keputusan gagal disimpan"
+    },
+    "validation": {
+      "notesRequired": "Alasan wajib diisi untuk menolak",
+      "notesMax": "Catatan maksimal 500 karakter"
+    },
+    "errors": {
+      "loadList": "Gagal memuat persetujuan",
+      "approve": "Gagal menyetujui pengajuan",
+      "reject": "Gagal menolak pengajuan"
+    }
+  },
+  "detail": {
+    "fallbackTitle": "Pengajuan cuti",
+    "description": "Semua isi pengajuan ini dan siapa yang sudah memutuskan.",
+    "fields": {
+      "requester": "Pemohon",
+      "leaveType": "Jenis cuti",
+      "dates": "Tanggal",
+      "duration": "Durasi",
+      "returnToOffice": "Kembali bekerja",
+      "reason": "Alasan",
+      "location": "Lokasi selama cuti",
+      "ongoingTask": "Tugas berjalan",
+      "replacement": "Pengganti sementara",
+      "phone": "Telepon",
+      "submittedAt": "Dikirim"
+    },
+    "days": "{count} hari",
+    "daysTitle": "Hari cuti",
+    "approvalsTitle": "Persetujuan",
+    "level": "Level {level}",
+    "noApprovals": "Belum ada approver",
+    "cancel": "Batalkan pengajuan",
+    "cancelConfirm": "Batalkan pengajuan ini? Approver tidak akan melihatnya lagi.",
+    "cancelled": "Pengajuan dibatalkan.",
+    "cancelQuestion": "Batalkan <b>{subject}</b>? Approver tidak akan melihatnya lagi dan Anda bisa mengajukan yang baru.",
+    "cancelFailed": "Pengajuan gagal dibatalkan"
   }
 }

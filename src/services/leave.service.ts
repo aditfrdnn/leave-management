@@ -1,12 +1,37 @@
-import { approvers, leaveRequests, leaveTypes } from "@/constants/endpoint-constant";
+import {
+  approvers,
+  leaveApprovals,
+  leaveApprove,
+  leaveReject,
+  leaveRequest,
+  leaveRequestCancel,
+  leaveRequests,
+  leaveTypes,
+} from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
-import type { TApiResponse, TDropdownOption } from "@/types/api";
-import type { TApprover, TLeave, TLeaveRequestPayload } from "@/types/leave";
+import type { TApiPaginated, TApiResponse, TDropdownOption } from "@/types/api";
+import type {
+  TApprovalDecisionPayload,
+  TApprovalItem,
+  TApprovalListParams,
+  TLeaveListParams,
+  TApprover,
+  TLeave,
+  TLeaveDetail,
+  TLeaveRequestPayload,
+} from "@/types/leave";
+import { toQueryParams } from "./to-query-params";
 
 export const leaveService = {
   /** The signed-in user's requests; the API returns the whole list (no paging yet). */
-  async getLeaveRequests() {
-    const { data } = await instance.get<TApiResponse<TLeave[]>>(leaveRequests);
+  async getLeaveRequests(params: TLeaveListParams) {
+    const { data } = await instance.get<TApiPaginated<TLeave>>(leaveRequests, { params: toQueryParams(params) });
+
+    return data;
+  },
+
+  async getLeaveRequest(id: number | string) {
+    const { data } = await instance.get<TApiResponse<TLeaveDetail>>(leaveRequest(id));
 
     return data;
   },
@@ -16,6 +41,35 @@ export const leaveService = {
 
     return data;
   },
+
+  /** Only while the request is still pending. */
+  async cancelLeaveRequest(id: number | string) {
+    const { data } = await instance.patch<TApiResponse<TLeave>>(leaveRequestCancel(id));
+
+    return data;
+  },
+
+  /* ------------------------------- Approvals ------------------------------- */
+
+  async getApprovals(params: TApprovalListParams) {
+    const { data } = await instance.get<TApiPaginated<TApprovalItem>>(leaveApprovals, { params: toQueryParams(params) });
+
+    return data;
+  },
+
+  async approveLeaveRequest(id: number | string, payload: TApprovalDecisionPayload) {
+    const { data } = await instance.patch<TApiResponse<TLeave>>(leaveApprove(id), payload);
+
+    return data;
+  },
+
+  async rejectLeaveRequest(id: number | string, payload: TApprovalDecisionPayload) {
+    const { data } = await instance.patch<TApiResponse<TLeave>>(leaveReject(id), payload);
+
+    return data;
+  },
+
+  /* ------------------------------- Dropdowns ------------------------------- */
 
   async getLeaveTypes() {
     const { data } = await instance.get<TApiResponse<TDropdownOption[]>>(leaveTypes);

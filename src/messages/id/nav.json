@@ -6,9 +6,11 @@
     "leave": "Cuti"
   },
   "menus": {
-    "myLeaveRequests": "Pengajuan Cuti Saya"
+    "myLeaveRequests": "Pengajuan Cuti Saya",
+    "approvals": "Persetujuan"
   },
   "segments": {
-    "leave-requests": "Pengajuan Cuti"
+    "leave-requests": "Pengajuan Cuti",
+    "approvals": "Persetujuan"
   }
 }

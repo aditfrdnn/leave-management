@@ -15,88 +15,70 @@ Kontrak yang dipakai frontend saat ini: `src/constants/endpoint-constant.ts`,
 
 ---
 
-## P0 — Keamanan dan alur yang sudah ada di UI
+## P0 — Keamanan dan alur yang sudah ada di UI — **selesai 30 Okt 2026**
 
-### 1. `GET /api/me`
+Semua butir di bawah sudah masuk `leave-service` (dan `leave-management-wa` untuk yang menyangkut
+bridge). Catatan dipertahankan sebagai riwayat keputusan; kontrak hasilnya ada di
+`docs/integration.md`.
 
-Belum ada. Frontend mem-bootstrap identitas lewat `GET /api/me` (pola `next-prm`); karena tidak
-ada, user hasil login disimpan di cookie httpOnly kedua dan dikembalikan oleh route handler
-Next.js. Dampak: perubahan nama/departemen/nomor HP di server tidak terlihat sampai login ulang.
+### 1. `GET /api/me` — selesai
 
-Dibutuhkan: `GET /api/me` (auth:sanctum) → `sendResponse(user->load('department'))`, bentuk sama
-dengan `data` di `POST /api/auth/login` minus `token`. Setelah ada, frontend mengganti route
-handler dan menghapus `setUserCookie`.
+`AuthController@me` (auth:sanctum) mengembalikan user + `department` + `permissions[]`, bentuk
+sama dengan `data` login minus `token`. Frontend mem-bootstrap identitas dari sini; cookie user
+dihapus, hanya cookie token yang tersisa. `logout` kini mencabut token yang dipakai saja.
 
-### 2. Bentuk error validasi: `errors`, bukan `data`
+### 2. Bentuk error — selesai
 
-`Controller::sendError($msg, 422, $e->errors())` menaruh peta field di `data`, dan pesan tampil
-`validation.required` (kunci `lang/id` belum ada karena `APP_LOCALE=id` tanpa file bahasa).
-Frontend sudah menerima `data` maupun `errors`, tetapi:
+`sendError` menaruh peta field di `errors` (tidak pernah di `data`) dan memaksa kode non-HTTP ke
+500. `bootstrap/app.php` merender 401/403/404/405/422/429/500 ke `{ success:false, message, errors? }`.
+`lang/id` + `lang/en` dipublikasikan; `validation.php` berisi atribut dan pesan khusus HR Lite.
 
-- pindahkan peta field ke kunci `errors` (standar Laravel dan `next-prm`), `data` tetap `null`;
-- tambahkan `lang/id` + `lang/en` (`php artisan lang:publish`) supaya pesan terbaca;
-- `withExceptions` di `bootstrap/app.php` masih kosong: 401 `Unauthenticated.` dan 404 model
-  memakai bentuk bawaan tanpa `success`. Render semuanya ke `{ success:false, message, errors? }`.
+### 3. `StoreLeaveRequestRequest` — selesai
 
-### 3. `POST /api/leave-request` belum punya FormRequest
+Semua field wajib; `leave_date.*` `d-m-Y`, tidak sebelum hari ini, bukan Sabtu/Minggu, tidak
+tumpang tindih `leave_request_days` user yang statusnya bukan -1/2; `approval_user` ≠ diri sendiri;
+`return_to_office` setelah tanggal cuti terakhir. Error per tanggal berkunci `leave_date.0`, dst.
+Belum: tabel `holidays` (tidak ada di skema) dan batas panjang `reason`.
 
-Hanya `leave_date` yang dicek (parse `d-m-Y`), plus larangan approver = diri sendiri (400). Field
-lain (`subject`, `leave_type`, `approval_user`, `reason`, `location_during_leave`,
-`return_to_office`, `ongoing_task`, `temporary_replacement`, `phone_number`) masuk tanpa validasi;
-`return_to_office` yang kosong akan meledak di `Carbon::createFromFormat` → 500.
+### 4. Route re-trigger WhatsApp — selesai
 
-Buat `StoreLeaveRequest` dengan aturan: wajib semua, `leave_type` `exists:leave_types,id`,
-`approval_user` `exists:users,id` dan `!= auth id`, `leave_date.*` `date_format:d-m-Y|after_or_equal:today`,
-bukan akhir pekan / `holidays`, tidak tumpang tindih `leave_request_days` user yang statusnya
-bukan ditolak/dibatalkan, `reason` 10–200, `phone_number` ≥10 digit. Nama field harus persis
-seperti di atas agar `toApiErrorState` menempelkan pesan ke field yang benar.
+Dipindah ke dalam `auth:sanctum`, hanya pemilik pengajuan (403), `throttle:5,1` (429).
 
-### 4. Route re-trigger WhatsApp tanpa autentikasi
+### 5. Verifikasi kode unik di callback WA — selesai
 
-`GET /api/leave-request/whatapproval-reminder/{leave_request}/{approval_id}` ada di luar grup
-`auth:sanctum`. Siapa pun yang tahu id bisa mengirim WA ke approver berulang kali. Pindahkan ke
-dalam `auth:sanctum`, batasi ke pemilik pengajuan, dan beri `throttle`.
+`LeaveApprovalNotifier` menyimpan `sha256(kode)` + `approval_code_sent_at` di `approval_flows`
+(migrasi `2026_10_30_000000`). Callback wajib membawa `unique_code` (kecuali
+`LEAVE_REQUIRE_UNIQUE_CODE=false`): salah → 403, status sudah final → 409. Bridge mengirim
+`unique_code` balik dan memperlakukan 403 (sesi tetap) / 409 (sesi dihapus) berbeda; `POST /send-approval`
+di bridge kini memverifikasi `X-API-WHATSAPP`.
 
-### 5. Callback WhatsApp tidak memverifikasi kode unik
+### 6. Konfigurasi — selesai
 
-`WhatsappServiceController@leaveRequestApproval` menerima `leave_request_id` + `approver_email`
-dan langsung mengubah status. `uniqueCode` hanya hidup di memori WA service dan hilang saat
-restart. Simpan kode (hash) di `approval_flows` saat dispatch, dan minta WA service mengirimnya
-balik untuk dicocokkan; tolak bila status sudah final (sekarang approve ulang menimpa
-`approved_at`/`rejected_at`).
-
-### 6. Hard-code yang perlu jadi konfigurasi
-
-- Pengecualian `doni.hardian → asep.saepudin` di `@store` (tidak kirim WA/email).
-- CC `anisa.pertiwi@ptcs.co.id` dan pengirim `fauzi.habibi@ptcs.co.id` di controller WA.
-- Dua nomor operator yang di-bypass di `leave-management-wa/index.js` (`chatId === '62…@c.us'`).
-- `Pak {nama}` di template pesan (asumsi gender).
-
-Pindahkan ke `config/leave.php` / `.env`, dan template pesan ke view/`lang`.
+`config/leave.php`: `frontend_url`, `require_unique_code`, `manager_email`, `approved_cc`,
+`noreply_email/name`, `greeting_title`, `notification_exceptions`. Bridge: `WA_BYPASS_NUMBERS`.
+Sisa: template `leave-approval-request-approved.blade.php` masih menyapa "Pak Asep" secara
+hard-code; `X-Locale` (P2) belum dibaca.
 
 ---
 
 ## P1 — Endpoint untuk fitur berikutnya
 
-### 7. Detail, pembatalan, dan paginasi pengajuan
+### 7. Detail, pembatalan, dan paginasi pengajuan — **selesai 30 Okt 2026**
 
-`show`, `update`, `destroy` di `LeaveRequestController` masih kosong, dan `index` memakai `get()`
-tanpa paginasi.
+- `GET /api/leave-request/{id}` → detail + `approvals[]` (pemilik atau approver-nya; lainnya 403).
+- `PATCH /api/leave-request/{id}/cancel` → status `-1` selama masih `0` (409 setelah diputuskan).
+- `index` memakai `sendPaginated()` dengan `page`, `per_page`, `search`, `status` (daftar koma),
+  `sort_by`, `sort_dir`. `update`/`destroy` dilepas dari resource.
+- Belum: `facets` di respons list (frontend memakai daftar status statis), filter `leave_type`.
 
-- `GET /api/leave-request/{id}` → detail + `approvals` (level, approver, aksi, catatan, waktu).
-- `PATCH /api/leave-request/{id}/cancel` → status `-1` selama masih `0`.
-- `index` memakai `sendPaginated()` yang sudah ada di `Controller.php` (`meta.pagination`), plus
-  sort/filter — lihat §10. Frontend sudah memakai `DataTable` yang siap untuk itu.
+### 8. Sisi approver di web — **selesai 30 Okt 2026**
 
-### 8. Sisi approver di web
-
-Persetujuan hanya lewat balasan WhatsApp (dan HRIS). Untuk halaman approver:
-
-- `GET /api/leave-request/approvals?status=` — pengajuan yang `approval_flows.approval_by` = user ini.
-- `PATCH /api/leave-request/{id}/approve` dan `/reject` (`notes?`) → logika yang sama dengan
-  callback WA (pindahkan ke satu service class agar tidak dobel).
-- `role`/`is_approver` pada `UserResource` supaya frontend bisa menampilkan menu approver
-  (`constants/permission-constant.ts` + `lib/permission.ts` seperti `next-pdi`).
+- `GET /api/leave-request/approvals?status=pending|approved|rejected|all` + `search`, paginasi.
+- `PATCH /api/leave-request/{id}/approve` dan `/reject` (`notes`, wajib saat reject) lewat
+  `App\Services\LeaveDecisionService`, dipakai juga oleh callback WA.
+- `permissions[]` di `/api/me` dan login: `leave.request` untuk semua, `leave.approve` untuk approver
+  (aturan di `AuthController`). Belum ada tabel role; bila HRIS punya jabatan, ganti aturannya di
+  satu tempat itu.
 
 ### 9. Notifikasi dan saldo cuti
 

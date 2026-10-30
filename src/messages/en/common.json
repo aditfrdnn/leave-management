@@ -259,5 +259,9 @@
     "count": "{selected} of {total}",
     "noMatch": "No value matches",
     "ok": "OK"
+  },
+  "permissionGate": {
+    "unavailableTitle": "{title} is not available",
+    "unavailableDescription": "Your account does not have the {permission} permission. Ask an administrator to grant it."
   }
 }
