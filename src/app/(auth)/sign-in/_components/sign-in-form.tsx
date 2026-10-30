@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { startTransition, useActionState, useEffect, useState } from "react";
@@ -32,6 +33,7 @@ export default function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
     defaultValues: INITIAL_SIGN_IN_FORM,
   });
 
+  const queryClient = useQueryClient();
   const [signInState, signInAction, isPendingSignIn] = useActionState(SignIn, INITIAL_SIGN_IN_STATE);
 
   const onSubmit = form.handleSubmit((data) => {
@@ -48,12 +50,14 @@ export default function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
     }
 
     if (signInState.status === "success" && signInState.redirect) {
+      // Drop anything cached by a previous session in this tab before the new user's pages load.
+      queryClient.clear();
       if (signInState.user) setAuth(signInState.user);
       setInitialized(true);
       router.push(signInState.redirect);
       router.refresh();
     }
-  }, [signInState, router, setAuth, setInitialized, t, translateMessage]);
+  }, [signInState, router, setAuth, setInitialized, t, translateMessage, queryClient]);
 
   return (
     <Form {...form}>

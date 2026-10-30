@@ -1,0 +1,329 @@
+{
+  "shared": {
+    "system": "System",
+    "columns": {
+      "no": "No.",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewItem": "View {name}",
+      "editItem": "Edit {name}",
+      "deleteItem": "Delete {name}"
+    },
+    "filters": {
+      "allStatuses": "All statuses"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "form": {
+      "none": "None",
+      "noOptions": "Nothing matches."
+    },
+    "permissionGroups": {
+      "leave": "Leave",
+      "setup": "Setup"
+    },
+    "errors": {
+      "formDataEmpty": "The form came through empty. Please try again.",
+      "missingId": "This record could not be identified. Reload the page and try again.",
+      "loadDepartments": "Couldn't load the departments.",
+      "loadEmployees": "Couldn't load the employees.",
+      "loadRoles": "Couldn't load the roles."
+    }
+  },
+  "employees": {
+    "page": {
+      "title": "Employees",
+      "description": "HR master data. A linked account takes its name, phone, department and join date from here."
+    },
+    "searchPlaceholder": "Search name, NIK, email or position",
+    "createLabel": "Add Employee",
+    "empty": "No employees yet.",
+    "emptySearch": "No employee matches these filters.",
+    "fields": {
+      "employeeNumber": "Employee No. (NIK)",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "position": "Position",
+      "department": "Department",
+      "supervisor": "Supervisor",
+      "joinDate": "Join Date",
+      "employmentType": "Employment Type"
+    },
+    "columns": {
+      "account": "Account",
+      "linked": "Linked",
+      "notLinked": "No account"
+    },
+    "employmentTypes": {
+      "permanent": "Permanent",
+      "contract": "Contract",
+      "probation": "Probation",
+      "intern": "Intern"
+    },
+    "filters": {
+      "allDepartments": "All departments",
+      "allEmploymentTypes": "All employment types"
+    },
+    "form": {
+      "createTitle": "Add Employee",
+      "updateTitle": "Edit Employee",
+      "description": "Fields marked * are required. Changes are copied to the linked user account.",
+      "employeeNumberPlaceholder": "e.g., EMP-0012",
+      "namePlaceholder": "e.g., Budi Santoso",
+      "emailPlaceholder": "e.g., budi@company.com",
+      "phonePlaceholder": "e.g., 0812 3456 7890",
+      "positionPlaceholder": "e.g., Field Engineer",
+      "departmentHint": "Select a department",
+      "departmentSearch": "Search departments",
+      "supervisorHint": "Select a supervisor",
+      "supervisorSearch": "Search employees"
+    },
+    "toast": {
+      "created": "Employee added.",
+      "updated": "Employee updated.",
+      "saveFailed": "Couldn't save the employee"
+    },
+    "errors": {
+      "loadList": "Couldn't load the employees.",
+      "create": "Couldn't add the employee.",
+      "update": "Couldn't update the employee.",
+      "delete": "Couldn't delete the employee."
+    },
+    "validation": {
+      "employeeNumberRequired": "Enter the employee number",
+      "employeeNumberMax": "The employee number can be at most 50 characters",
+      "nameRequired": "Enter the employee's name",
+      "nameMax": "The name can be at most 255 characters",
+      "emailInvalid": "Enter a valid email address",
+      "phoneInvalid": "Use digits only, e.g. 081234567890",
+      "positionMax": "The position can be at most 255 characters",
+      "joinDateInvalid": "Pick a valid date",
+      "employmentTypeRequired": "Select an employment type",
+      "statusRequired": "Select a status",
+      "supervisorSelf": "An employee can't be their own supervisor"
+    }
+  },
+  "departments": {
+    "page": {
+      "title": "Departments",
+      "description": "The departments employees and accounts belong to."
+    },
+    "searchPlaceholder": "Search name or alias",
+    "createLabel": "Add Department",
+    "empty": "No departments yet.",
+    "emptySearch": "No department matches your search.",
+    "fields": {
+      "name": "Name",
+      "alias": "Alias"
+    },
+    "columns": {
+      "employees": "Employees",
+      "employeeCount": "{count, plural, =0 {None} one {# employee} other {# employees}}"
+    },
+    "form": {
+      "createTitle": "Add Department",
+      "updateTitle": "Edit Department",
+      "description": "The alias is the short code shown in tables, e.g. ENG.",
+      "namePlaceholder": "e.g., Engineering",
+      "aliasPlaceholder": "e.g., ENG"
+    },
+    "toast": {
+      "created": "Department added.",
+      "updated": "Department updated.",
+      "saveFailed": "Couldn't save the department"
+    },
+    "errors": {
+      "loadList": "Couldn't load the departments.",
+      "create": "Couldn't add the department.",
+      "update": "Couldn't update the department.",
+      "delete": "Couldn't delete the department."
+    },
+    "validation": {
+      "nameRequired": "Enter the department name",
+      "nameMax": "The name can be at most 255 characters",
+      "aliasRequired": "Enter an alias",
+      "aliasMax": "The alias can be at most 50 characters"
+    }
+  },
+  "users": {
+    "page": {
+      "title": "Users",
+      "description": "Sign-in accounts: who can log in, with which role, and which employee they are."
+    },
+    "searchPlaceholder": "Search name or email",
+    "createLabel": "Add User",
+    "empty": "No users yet.",
+    "emptySearch": "No user matches these filters.",
+    "deleteHint": "A user who already has leave requests or approvals can't be deleted. Deactivate the account instead.",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "passwordConfirmation": "Confirm Password",
+      "role": "Role",
+      "employee": "Employee",
+      "active": "Active account"
+    },
+    "columns": {
+      "you": "You",
+      "noRole": "No role",
+      "noEmployee": "Not linked"
+    },
+    "filters": {
+      "allRoles": "All roles"
+    },
+    "form": {
+      "createTitle": "Add User",
+      "updateTitle": "Edit User",
+      "description": "Link the account to an employee so leave requests carry their department and join date.",
+      "namePlaceholder": "e.g., Budi Santoso",
+      "emailPlaceholder": "e.g., budi@company.com",
+      "passwordPlaceholder": "At least 8 characters",
+      "passwordKeepPlaceholder": "Leave blank to keep the current password",
+      "passwordConfirmationPlaceholder": "Type the password again",
+      "rolePlaceholder": "Select a role",
+      "employeeHint": "Select an employee without an account",
+      "employeeSearch": "Search employees",
+      "selfHint": "This is your own account, so its role and status can't be changed here."
+    },
+    "toast": {
+      "created": "User added.",
+      "updated": "User updated.",
+      "saveFailed": "Couldn't save the user"
+    },
+    "errors": {
+      "loadList": "Couldn't load the users.",
+      "create": "Couldn't add the user.",
+      "update": "Couldn't update the user.",
+      "delete": "Couldn't delete the user."
+    },
+    "validation": {
+      "nameRequired": "Enter the user's name",
+      "nameMax": "The name can be at most 255 characters",
+      "emailRequired": "Enter an email address",
+      "emailInvalid": "Enter a valid email address",
+      "passwordRequired": "Enter a password",
+      "passwordMin": "The password must be at least 8 characters",
+      "passwordMismatch": "The passwords don't match",
+      "roleRequired": "Select a role"
+    }
+  },
+  "roles": {
+    "page": {
+      "title": "Roles",
+      "description": "Each user has one role; a role is a set of permissions."
+    },
+    "searchPlaceholder": "Search roles",
+    "createLabel": "Add Role",
+    "empty": "No roles yet.",
+    "emptySearch": "No role matches your search.",
+    "fields": {
+      "title": "Role Name",
+      "description": "Description"
+    },
+    "columns": {
+      "permissions": "Permissions",
+      "permissionCount": "{count, plural, one {# permission} other {# permissions}}",
+      "more": "+{count} more",
+      "users": "Users",
+      "userCount": "{count, plural, =0 {None} one {# user} other {# users}}"
+    },
+    "form": {
+      "createTitle": "Add Role",
+      "updateTitle": "Edit Role",
+      "description": "Tick the permissions this role grants. Users with the role get them on their next page load.",
+      "titlePlaceholder": "e.g., Team Lead",
+      "descriptionPlaceholder": "What this role is for",
+      "systemTitleHint": "Built-in role: its name can't be changed.",
+      "searchPermission": "Search permissions",
+      "selected": "{count, plural, =0 {None selected} other {# selected}}",
+      "selectAllGroup": "{selected} of {total}",
+      "noPermissionMatch": "No permission matches your search.",
+      "noPermissionAvailable": "No permissions are available."
+    },
+    "detail": {
+      "fallbackTitle": "Role",
+      "description": "What this role grants and who holds it.",
+      "permissions": "{count, plural, =0 {Permissions} one {# permission} other {# permissions}}",
+      "users": "{count, plural, =0 {Users} one {# user} other {# users}}",
+      "noPermissions": "This role grants no permissions.",
+      "noUsers": "No user has this role yet."
+    },
+    "toast": {
+      "created": "Role added.",
+      "updated": "Role updated.",
+      "saveFailed": "Couldn't save the role"
+    },
+    "errors": {
+      "loadList": "Couldn't load the roles.",
+      "load": "Couldn't load the role.",
+      "create": "Couldn't add the role.",
+      "update": "Couldn't update the role.",
+      "delete": "Couldn't delete the role."
+    },
+    "validation": {
+      "titleRequired": "Enter the role name",
+      "titleMax": "The role name can be at most 100 characters",
+      "descriptionMax": "The description can be at most 255 characters",
+      "permissionsRequired": "Pick at least one permission"
+    }
+  },
+  "permissions": {
+    "page": {
+      "title": "Permissions",
+      "description": "The catalog roles are built from. Built-in permissions guard the app's pages."
+    },
+    "searchPlaceholder": "Search key or label",
+    "createLabel": "Add Permission",
+    "empty": "No permissions yet.",
+    "emptySearch": "No permission matches these filters.",
+    "fields": {
+      "title": "Key",
+      "label": "Label",
+      "group": "Group"
+    },
+    "columns": {
+      "roles": "Roles",
+      "roleCount": "{count, plural, =0 {Unused} one {# role} other {# roles}}"
+    },
+    "filters": {
+      "allGroups": "All groups"
+    },
+    "form": {
+      "createTitle": "Add Permission",
+      "updateTitle": "Edit Permission",
+      "description": "A permission only does something once the app checks its key.",
+      "titlePlaceholder": "e.g., leave.export",
+      "titleHint": "Lowercase group and action separated by a dot, e.g. leave.export.",
+      "systemTitleHint": "Built-in permission: its key can't be changed.",
+      "labelPlaceholder": "e.g., Export leave data",
+      "groupPlaceholder": "e.g., leave"
+    },
+    "toast": {
+      "created": "Permission added.",
+      "updated": "Permission updated.",
+      "saveFailed": "Couldn't save the permission"
+    },
+    "errors": {
+      "loadList": "Couldn't load the permissions.",
+      "loadGroups": "Couldn't load the permission groups.",
+      "create": "Couldn't add the permission.",
+      "update": "Couldn't update the permission.",
+      "delete": "Couldn't delete the permission."
+    },
+    "validation": {
+      "titleRequired": "Enter the permission key",
+      "titleFormat": "Use lowercase letters and underscores around one dot, e.g. leave.export",
+      "labelRequired": "Enter a label",
+      "labelMax": "The label can be at most 255 characters",
+      "groupRequired": "Enter a group",
+      "groupMax": "The group can be at most 50 characters"
+    }
+  }
+}

@@ -37,7 +37,7 @@ export async function SignIn(prevState: AuthFormState, formData: FormData | null
     await setTokenCookie(token);
 
     const callbackUrl = formData?.get("callbackUrl") as string;
-    const redirect = callbackUrl && isValidCallbackUrl(callbackUrl) ? callbackUrl : "/leave-requests";
+    const redirect = callbackUrl && isValidCallbackUrl(callbackUrl) ? callbackUrl : "/dashboard";
 
     revalidatePath("/", "layout");
 

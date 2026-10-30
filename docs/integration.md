@@ -97,18 +97,14 @@ NEXT_PUBLIC_DEV_SERVER_URL=http://127.0.0.1:8000 npm run dev   # http://localhos
 
 With `QUEUE_CONNECTION=database` and no worker, submitting a request still succeeds; the WA/email jobs just wait in the `jobs` table (verified 30 Oct 2026: login, dropdowns, submit, history and logout all work against the local API). With `MAIL_MAILER=log` the emails land in `storage/logs/laravel.log`.
 
-## 6. Permissions
+## 6. Permissions, roles, Setup and dashboard
 
-The API decides who sees what; the frontend only hides UI. `GET /api/me` and `POST /api/auth/login`
-return `permissions: string[]`:
-
-| Permission | Who | Frontend |
-| --- | --- | --- |
-| `leave.request` | every user | `/leave-requests` (form + history) |
-| `leave.approve` | users the API counts as approvers (see `AuthController`) | `/approvals` menu + page (`PermissionGate`) |
-
-`constants/permission-constant.ts` + `lib/permission.ts` mirror `next-pdi`; the store falls back to
-`leave.request` only when the API sends no list.
+Roles, the permission catalog, users, employees, departments and the dashboard are specified in
+`docs/setup-module.md`. In short: each user has one role (`users.role_id`); `GET /api/me` and login return
+`permissions[]` (the role's titles, plus `leave.approve` for anyone named on an `approval_flows` row) and
+`role` / `employee`; routes are guarded by `permission:<title>` (403 `Anda tidak memiliki akses.`). Inactive
+accounts cannot log in (403). Seeded roles: Administrator, HR, Approver, Employee; grant the first admin with
+`php artisan hr-lite:assign-role {email} Administrator`.
 
 ## 7. Where the frontend grows next (needs the API first)
 

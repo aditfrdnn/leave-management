@@ -4,3 +4,5 @@ export * from "./auth";
 export * from "./leave";
 export * from "./menu";
 export * from "./table";
+export * from "./dashboard";
+export * from "./setup";

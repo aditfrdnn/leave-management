@@ -1,0 +1,81 @@
+{
+  "page": {
+    "title": "Dashboard",
+    "greeting": "Halo, {name}",
+    "description": "Ringkasan cuti Anda dan hal yang perlu Anda tindak lanjuti.",
+    "year": "Tahun",
+    "newRequest": "Ajukan cuti"
+  },
+  "me": {
+    "title": "Cuti saya",
+    "annual": {
+      "label": "Sisa cuti tahunan",
+      "caption": "{used} dari {quota} hari terpakai",
+      "none": "Jenis cuti tahunan belum diatur",
+      "progress": "Cuti tahunan terpakai"
+    },
+    "daysTaken": {
+      "label": "Hari cuti diambil",
+      "caption": "Hari yang disetujui di {year}"
+    },
+    "pending": {
+      "label": "Menunggu persetujuan",
+      "caption": "Pengajuan yang belum diputuskan"
+    },
+    "approved": {
+      "label": "Pengajuan disetujui",
+      "caption": "{rejected} ditolak · {cancelled} dibatalkan"
+    }
+  },
+  "upcoming": {
+    "title": "Cuti mendatang",
+    "description": "Hari libur Anda berikutnya yang disetujui atau masih menunggu.",
+    "viewAll": "Lihat semua",
+    "empty": "Belum ada cuti mendatang. Mau merencanakan?"
+  },
+  "approver": {
+    "title": "Persetujuan",
+    "description": "Pengajuan yang menunggu keputusan Anda.",
+    "waiting": "{count, plural, =0 {tidak ada yang menunggu} other {pengajuan menunggu}}",
+    "oldest": "Paling lama menunggu",
+    "clear": "Semua sudah Anda putuskan.",
+    "decided": "{count} keputusan bulan ini",
+    "open": "Buka persetujuan"
+  },
+  "organization": {
+    "title": "Organisasi",
+    "description": "Cuti seluruh karyawan di {year}.",
+    "employees": "Karyawan aktif",
+    "employeesCaption": "Dari data master karyawan",
+    "onLeaveToday": "Cuti hari ini",
+    "onLeaveWeek": "{count} orang cuti minggu ini",
+    "pending": "Pengajuan menunggu",
+    "submitted": "{count} diajukan tahun ini",
+    "approved": "Pengajuan disetujui",
+    "rejectedCancelled": "{rejected} ditolak · {cancelled} dibatalkan",
+    "monthly": {
+      "title": "Cuti per bulan",
+      "description": "Jumlah pengajuan dan hari yang disetujui per bulan mulai, {year}.",
+      "requests": "Pengajuan",
+      "days": "Hari"
+    },
+    "today": {
+      "title": "Tidak masuk hari ini",
+      "description": "Cuti disetujui yang mencakup hari ini.",
+      "empty": "Semua masuk hari ini.",
+      "until": "sampai {date}"
+    },
+    "byType": {
+      "title": "Hari per jenis cuti",
+      "description": "Hari yang disetujui tahun ini."
+    },
+    "byDepartment": {
+      "title": "Hari per departemen",
+      "description": "Hari yang disetujui tahun ini."
+    },
+    "empty": "Belum ada cuti yang disetujui tahun ini."
+  },
+  "errors": {
+    "load": "Gagal memuat dashboard"
+  }
+}

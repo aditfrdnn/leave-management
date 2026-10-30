@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader } from "@/components/common/loader";
 import { useTransition, Suspense } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -35,6 +36,7 @@ function NavUserContent() {
 
   const { user, isAuthenticated, isInitialized } = useAuth();
   const clear = useAuthStore((state) => state.clear);
+  const queryClient = useQueryClient();
 
   const { theme, systemTheme } = useTheme();
 
@@ -48,6 +50,8 @@ function NavUserContent() {
           toast.success(t("navUser.logoutSuccess"), { id });
           router.replace(url); // navigasi manual, tidak melempar NEXT_REDIRECT
           clear();
+          // Cached lists belong to the account that just left; the next one must not see them.
+          queryClient.clear();
         }
       } catch (e) {
         console.error(e);

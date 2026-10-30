@@ -21,6 +21,25 @@ const leaveReject = (id: number | string) => `${leaveRequests}/${id}/reject`;
 // Dropdowns
 const leaveTypes = "/api/dropdown/leave-types";
 const approvers = "/api/dropdown/users";
+const departmentOptions = "/api/dropdown/departments";
+const roleOptions = "/api/dropdown/roles";
+const employeeOptions = "/api/dropdown/employees";
+
+// Dashboard
+const dashboard = "/api/dashboard";
+
+// Setup (docs/setup-module.md)
+const users = "/api/users";
+const user = (id: number | string) => `${users}/${id}`;
+const employees = "/api/employees";
+const employee = (id: number | string) => `${employees}/${id}`;
+const departments = "/api/departments";
+const department = (id: number | string) => `${departments}/${id}`;
+const roles = "/api/roles";
+const role = (id: number | string) => `${roles}/${id}`;
+const permissions = "/api/permissions";
+const permission = (id: number | string) => `${permissions}/${id}`;
+const permissionGroups = `${permissions}/groups`;
 
 export {
   signIn,
@@ -35,4 +54,19 @@ export {
   leaveReject,
   leaveTypes,
   approvers,
+  departmentOptions,
+  roleOptions,
+  employeeOptions,
+  dashboard,
+  users,
+  user,
+  employees,
+  employee,
+  departments,
+  department,
+  roles,
+  role,
+  permissions,
+  permission,
+  permissionGroups,
 };

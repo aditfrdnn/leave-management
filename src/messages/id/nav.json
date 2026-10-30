@@ -3,14 +3,30 @@
   "switchModule": "Pindah modul",
   "brand": "HR Lite",
   "modules": {
-    "leave": "Cuti"
+    "home": "Beranda",
+    "leave": "Cuti",
+    "setup": "Pengaturan"
   },
   "menus": {
+    "mainDashboard": "Dashboard",
     "myLeaveRequests": "Pengajuan Cuti Saya",
-    "approvals": "Persetujuan"
+    "approvals": "Persetujuan",
+    "employees": "Karyawan",
+    "departments": "Departemen",
+    "users": "Pengguna",
+    "roles": "Role",
+    "permissions": "Hak Akses"
   },
   "segments": {
+    "dashboard": "Dashboard",
     "leave-requests": "Pengajuan Cuti",
-    "approvals": "Persetujuan"
+    "approvals": "Persetujuan",
+    "setup": "Pengaturan",
+    "master-data": "Data Master",
+    "employees": "Karyawan",
+    "departments": "Departemen",
+    "users": "Pengguna",
+    "roles": "Role",
+    "permissions": "Hak Akses"
   }
 }

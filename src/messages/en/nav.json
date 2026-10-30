@@ -3,14 +3,30 @@
   "switchModule": "Switch module",
   "brand": "HR Lite",
   "modules": {
-    "leave": "Leave"
+    "home": "Home",
+    "leave": "Leave",
+    "setup": "Setup"
   },
   "menus": {
+    "mainDashboard": "Dashboard",
     "myLeaveRequests": "My Leave Requests",
-    "approvals": "Approvals"
+    "approvals": "Approvals",
+    "employees": "Employees",
+    "departments": "Departments",
+    "users": "Users",
+    "roles": "Roles",
+    "permissions": "Permissions"
   },
   "segments": {
+    "dashboard": "Dashboard",
     "leave-requests": "Leave Requests",
-    "approvals": "Approvals"
+    "approvals": "Approvals",
+    "setup": "Setup",
+    "master-data": "Master Data",
+    "employees": "Employees",
+    "departments": "Departments",
+    "users": "Users",
+    "roles": "Roles",
+    "permissions": "Permissions"
   }
 }

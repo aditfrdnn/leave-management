@@ -70,7 +70,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* Module rail: always visible, even when the sidebar is collapsed. */}
         <Sidebar collapsible="none" className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r">
           <SidebarHeader className="items-center px-0 py-3">
-            <Link href="/leave-requests" aria-label={t("brand")} className="flex size-8 items-center justify-center rounded-lg">
+            <Link href="/dashboard" aria-label={t("brand")} className="flex size-8 items-center justify-center rounded-lg">
               <BrandMark className="size-7 text-primary" />
             </Link>
           </SidebarHeader>
@@ -88,7 +88,8 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         isActive={module.id === activeModule.id}
                         className={cn("size-9 justify-center p-0", activeClass)}
                       >
-                        <Link href={lastPaths[module.id] ?? module.href}>
+                        {/* The first menu this user may open, so a partial Setup role never lands on a locked page. */}
+                        <Link href={lastPaths[module.id] ?? module.menus[0]?.href ?? module.href}>
                           <HugeiconsIcon icon={Icon} className="size-5!" />
                           <span className="sr-only">{t(`modules.${module.titleKey}`)}</span>
                         </Link>
@@ -128,7 +129,8 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                   return (
                     <DropdownMenuItem key={module.id} asChild className={cn(isActive && "font-semibold text-primary")}>
-                      <Link href={lastPaths[module.id] ?? module.href}>
+                      {/* The first menu this user may open, so a partial Setup role never lands on a locked page. */}
+                        <Link href={lastPaths[module.id] ?? module.menus[0]?.href ?? module.href}>
                         <HugeiconsIcon icon={Icon} className={cn("size-4", isActive && "text-primary")} />
                         <span className="flex-1 truncate">{t(`modules.${module.titleKey}`)}</span>
                         {isActive && <HugeiconsIcon icon={Tick02Icon} className="size-4 text-primary" />}

@@ -1,0 +1,329 @@
+{
+  "shared": {
+    "system": "Bawaan",
+    "columns": {
+      "no": "No.",
+      "status": "Status",
+      "createdAt": "Dibuat",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "viewItem": "Lihat {name}",
+      "editItem": "Ubah {name}",
+      "deleteItem": "Hapus {name}"
+    },
+    "filters": {
+      "allStatuses": "Semua status"
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Nonaktif"
+    },
+    "form": {
+      "none": "Tidak ada",
+      "noOptions": "Tidak ada yang cocok."
+    },
+    "permissionGroups": {
+      "leave": "Cuti",
+      "setup": "Pengaturan"
+    },
+    "errors": {
+      "formDataEmpty": "Formulir terkirim kosong. Silakan coba lagi.",
+      "missingId": "Data ini tidak dapat dikenali. Muat ulang halaman lalu coba lagi.",
+      "loadDepartments": "Gagal memuat daftar departemen.",
+      "loadEmployees": "Gagal memuat daftar karyawan.",
+      "loadRoles": "Gagal memuat daftar role."
+    }
+  },
+  "employees": {
+    "page": {
+      "title": "Karyawan",
+      "description": "Data induk HR. Akun yang tertaut mengambil nama, telepon, departemen, dan tanggal bergabung dari sini."
+    },
+    "searchPlaceholder": "Cari nama, NIK, email, atau jabatan",
+    "createLabel": "Tambah Karyawan",
+    "empty": "Belum ada karyawan.",
+    "emptySearch": "Tidak ada karyawan yang cocok dengan filter ini.",
+    "fields": {
+      "employeeNumber": "NIK",
+      "name": "Nama",
+      "email": "Email",
+      "phone": "Nomor Telepon",
+      "position": "Jabatan",
+      "department": "Departemen",
+      "supervisor": "Atasan",
+      "joinDate": "Tanggal Bergabung",
+      "employmentType": "Status Kepegawaian"
+    },
+    "columns": {
+      "account": "Akun",
+      "linked": "Tertaut",
+      "notLinked": "Belum punya akun"
+    },
+    "employmentTypes": {
+      "permanent": "Tetap",
+      "contract": "Kontrak",
+      "probation": "Masa Percobaan",
+      "intern": "Magang"
+    },
+    "filters": {
+      "allDepartments": "Semua departemen",
+      "allEmploymentTypes": "Semua status kepegawaian"
+    },
+    "form": {
+      "createTitle": "Tambah Karyawan",
+      "updateTitle": "Ubah Karyawan",
+      "description": "Kolom bertanda * wajib diisi. Perubahan ikut disalin ke akun user yang tertaut.",
+      "employeeNumberPlaceholder": "mis. EMP-0012",
+      "namePlaceholder": "mis. Budi Santoso",
+      "emailPlaceholder": "mis. budi@perusahaan.com",
+      "phonePlaceholder": "mis. 0812 3456 7890",
+      "positionPlaceholder": "mis. Field Engineer",
+      "departmentHint": "Pilih departemen",
+      "departmentSearch": "Cari departemen",
+      "supervisorHint": "Pilih atasan",
+      "supervisorSearch": "Cari karyawan"
+    },
+    "toast": {
+      "created": "Karyawan berhasil ditambahkan.",
+      "updated": "Data karyawan diperbarui.",
+      "saveFailed": "Gagal menyimpan data karyawan"
+    },
+    "errors": {
+      "loadList": "Gagal memuat daftar karyawan.",
+      "create": "Gagal menambahkan karyawan.",
+      "update": "Gagal memperbarui data karyawan.",
+      "delete": "Gagal menghapus karyawan."
+    },
+    "validation": {
+      "employeeNumberRequired": "Masukkan NIK",
+      "employeeNumberMax": "NIK maksimal 50 karakter",
+      "nameRequired": "Masukkan nama karyawan",
+      "nameMax": "Nama maksimal 255 karakter",
+      "emailInvalid": "Masukkan alamat email yang valid",
+      "phoneInvalid": "Gunakan angka saja, mis. 081234567890",
+      "positionMax": "Jabatan maksimal 255 karakter",
+      "joinDateInvalid": "Pilih tanggal yang valid",
+      "employmentTypeRequired": "Pilih status kepegawaian",
+      "statusRequired": "Pilih status",
+      "supervisorSelf": "Karyawan tidak bisa menjadi atasan dirinya sendiri"
+    }
+  },
+  "departments": {
+    "page": {
+      "title": "Departemen",
+      "description": "Departemen tempat karyawan dan akun user bernaung."
+    },
+    "searchPlaceholder": "Cari nama atau alias",
+    "createLabel": "Tambah Departemen",
+    "empty": "Belum ada departemen.",
+    "emptySearch": "Tidak ada departemen yang cocok dengan pencarian.",
+    "fields": {
+      "name": "Nama",
+      "alias": "Alias"
+    },
+    "columns": {
+      "employees": "Karyawan",
+      "employeeCount": "{count, plural, =0 {Belum ada} other {# karyawan}}"
+    },
+    "form": {
+      "createTitle": "Tambah Departemen",
+      "updateTitle": "Ubah Departemen",
+      "description": "Alias adalah kode singkat yang tampil di tabel, mis. ENG.",
+      "namePlaceholder": "mis. Engineering",
+      "aliasPlaceholder": "mis. ENG"
+    },
+    "toast": {
+      "created": "Departemen berhasil ditambahkan.",
+      "updated": "Departemen diperbarui.",
+      "saveFailed": "Gagal menyimpan departemen"
+    },
+    "errors": {
+      "loadList": "Gagal memuat daftar departemen.",
+      "create": "Gagal menambahkan departemen.",
+      "update": "Gagal memperbarui departemen.",
+      "delete": "Gagal menghapus departemen."
+    },
+    "validation": {
+      "nameRequired": "Masukkan nama departemen",
+      "nameMax": "Nama maksimal 255 karakter",
+      "aliasRequired": "Masukkan alias",
+      "aliasMax": "Alias maksimal 50 karakter"
+    }
+  },
+  "users": {
+    "page": {
+      "title": "User",
+      "description": "Akun untuk masuk aplikasi: siapa yang bisa login, dengan role apa, dan sebagai karyawan yang mana."
+    },
+    "searchPlaceholder": "Cari nama atau email",
+    "createLabel": "Tambah User",
+    "empty": "Belum ada user.",
+    "emptySearch": "Tidak ada user yang cocok dengan filter ini.",
+    "deleteHint": "User yang sudah punya pengajuan cuti atau persetujuan tidak bisa dihapus. Nonaktifkan saja akunnya.",
+    "fields": {
+      "name": "Nama",
+      "email": "Email",
+      "password": "Kata Sandi",
+      "passwordConfirmation": "Konfirmasi Kata Sandi",
+      "role": "Role",
+      "employee": "Karyawan",
+      "active": "Akun aktif"
+    },
+    "columns": {
+      "you": "Anda",
+      "noRole": "Tanpa role",
+      "noEmployee": "Belum tertaut"
+    },
+    "filters": {
+      "allRoles": "Semua role"
+    },
+    "form": {
+      "createTitle": "Tambah User",
+      "updateTitle": "Ubah User",
+      "description": "Tautkan akun ke data karyawan agar pengajuan cuti membawa departemen dan tanggal bergabungnya.",
+      "namePlaceholder": "mis. Budi Santoso",
+      "emailPlaceholder": "mis. budi@perusahaan.com",
+      "passwordPlaceholder": "Minimal 8 karakter",
+      "passwordKeepPlaceholder": "Kosongkan jika tidak ingin mengganti",
+      "passwordConfirmationPlaceholder": "Ketik ulang kata sandi",
+      "rolePlaceholder": "Pilih role",
+      "employeeHint": "Pilih karyawan yang belum punya akun",
+      "employeeSearch": "Cari karyawan",
+      "selfHint": "Ini akun Anda sendiri, jadi role dan statusnya tidak bisa diubah di sini."
+    },
+    "toast": {
+      "created": "User berhasil ditambahkan.",
+      "updated": "User diperbarui.",
+      "saveFailed": "Gagal menyimpan user"
+    },
+    "errors": {
+      "loadList": "Gagal memuat daftar user.",
+      "create": "Gagal menambahkan user.",
+      "update": "Gagal memperbarui user.",
+      "delete": "Gagal menghapus user."
+    },
+    "validation": {
+      "nameRequired": "Masukkan nama user",
+      "nameMax": "Nama maksimal 255 karakter",
+      "emailRequired": "Masukkan alamat email",
+      "emailInvalid": "Masukkan alamat email yang valid",
+      "passwordRequired": "Masukkan kata sandi",
+      "passwordMin": "Kata sandi minimal 8 karakter",
+      "passwordMismatch": "Konfirmasi kata sandi tidak sama",
+      "roleRequired": "Pilih role"
+    }
+  },
+  "roles": {
+    "page": {
+      "title": "Role",
+      "description": "Setiap user punya satu role; satu role berisi sekumpulan izin."
+    },
+    "searchPlaceholder": "Cari role",
+    "createLabel": "Tambah Role",
+    "empty": "Belum ada role.",
+    "emptySearch": "Tidak ada role yang cocok dengan pencarian.",
+    "fields": {
+      "title": "Nama Role",
+      "description": "Deskripsi"
+    },
+    "columns": {
+      "permissions": "Izin",
+      "permissionCount": "{count} izin",
+      "more": "+{count} lainnya",
+      "users": "User",
+      "userCount": "{count, plural, =0 {Belum ada} other {# user}}"
+    },
+    "form": {
+      "createTitle": "Tambah Role",
+      "updateTitle": "Ubah Role",
+      "description": "Centang izin yang diberikan role ini. User dengan role tersebut mendapatkannya saat halaman dimuat ulang.",
+      "titlePlaceholder": "mis. Team Lead",
+      "descriptionPlaceholder": "Untuk apa role ini dipakai",
+      "systemTitleHint": "Role bawaan: namanya tidak bisa diubah.",
+      "searchPermission": "Cari izin",
+      "selected": "{count, plural, =0 {Belum ada yang dipilih} other {# dipilih}}",
+      "selectAllGroup": "{selected} dari {total}",
+      "noPermissionMatch": "Tidak ada izin yang cocok dengan pencarian.",
+      "noPermissionAvailable": "Belum ada izin yang tersedia."
+    },
+    "detail": {
+      "fallbackTitle": "Role",
+      "description": "Izin yang diberikan role ini dan siapa saja pemegangnya.",
+      "permissions": "{count, plural, =0 {Izin} other {# izin}}",
+      "users": "{count, plural, =0 {User} other {# user}}",
+      "noPermissions": "Role ini belum memberikan izin apa pun.",
+      "noUsers": "Belum ada user dengan role ini."
+    },
+    "toast": {
+      "created": "Role berhasil ditambahkan.",
+      "updated": "Role diperbarui.",
+      "saveFailed": "Gagal menyimpan role"
+    },
+    "errors": {
+      "loadList": "Gagal memuat daftar role.",
+      "load": "Gagal memuat role.",
+      "create": "Gagal menambahkan role.",
+      "update": "Gagal memperbarui role.",
+      "delete": "Gagal menghapus role."
+    },
+    "validation": {
+      "titleRequired": "Masukkan nama role",
+      "titleMax": "Nama role maksimal 100 karakter",
+      "descriptionMax": "Deskripsi maksimal 255 karakter",
+      "permissionsRequired": "Pilih minimal satu izin"
+    }
+  },
+  "permissions": {
+    "page": {
+      "title": "Izin",
+      "description": "Katalog izin yang menjadi bahan role. Izin bawaan menjaga halaman-halaman aplikasi."
+    },
+    "searchPlaceholder": "Cari kode atau label",
+    "createLabel": "Tambah Izin",
+    "empty": "Belum ada izin.",
+    "emptySearch": "Tidak ada izin yang cocok dengan filter ini.",
+    "fields": {
+      "title": "Kode",
+      "label": "Label",
+      "group": "Grup"
+    },
+    "columns": {
+      "roles": "Role",
+      "roleCount": "{count, plural, =0 {Belum dipakai} other {# role}}"
+    },
+    "filters": {
+      "allGroups": "Semua grup"
+    },
+    "form": {
+      "createTitle": "Tambah Izin",
+      "updateTitle": "Ubah Izin",
+      "description": "Izin baru berpengaruh setelah aplikasi memeriksa kodenya.",
+      "titlePlaceholder": "mis. leave.export",
+      "titleHint": "Grup dan aksi dalam huruf kecil, dipisah titik, mis. leave.export.",
+      "systemTitleHint": "Izin bawaan: kodenya tidak bisa diubah.",
+      "labelPlaceholder": "mis. Ekspor data cuti",
+      "groupPlaceholder": "mis. leave"
+    },
+    "toast": {
+      "created": "Izin berhasil ditambahkan.",
+      "updated": "Izin diperbarui.",
+      "saveFailed": "Gagal menyimpan izin"
+    },
+    "errors": {
+      "loadList": "Gagal memuat daftar izin.",
+      "loadGroups": "Gagal memuat grup izin.",
+      "create": "Gagal menambahkan izin.",
+      "update": "Gagal memperbarui izin.",
+      "delete": "Gagal menghapus izin."
+    },
+    "validation": {
+      "titleRequired": "Masukkan kode izin",
+      "titleFormat": "Gunakan huruf kecil dan garis bawah dengan satu titik di tengah, mis. leave.export",
+      "labelRequired": "Masukkan label",
+      "labelMax": "Label maksimal 255 karakter",
+      "groupRequired": "Masukkan grup",
+      "groupMax": "Grup maksimal 50 karakter"
+    }
+  }
+}

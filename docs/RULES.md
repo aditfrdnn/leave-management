@@ -8,7 +8,7 @@
 
 **HR Lite** is a Next.js frontend (thin client + BFF) in front of the leave API (a Laravel service reached over HTTP). An employee signs in, submits a leave request — dates, leave type, approver, reason, location, hand-over, replacement, phone — and follows the status of every request they sent.
 
-One module today, one shell (`src/app/(dashboard)`): **Leave** (`/leave-requests`, `/approvals`). Notifications and settings join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
+Three modules, one shell (`src/app/(dashboard)`): **Home** (`/dashboard`), **Leave** (`/leave-requests`, `/approvals`) and **Setup** (`/setup/**`, contract in `docs/setup-module.md`). Notifications join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
 
 ---
 

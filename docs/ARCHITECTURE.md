@@ -44,14 +44,16 @@ Outside `src/`: `docs/`, `scripts/check-messages.mjs`, `.husky/pre-commit`, `.gi
 
 | Route | Group | Page composition | Data |
 | --- | --- | --- | --- |
-| `/` | — | `redirect("/leave-requests")` | — |
+| `/` | — | `redirect("/dashboard")` | — |
+| `/dashboard` | `(dashboard)` | `DashboardView`: `MySummary` (stat tiles), `UpcomingLeaves`, `ApproverCard` (when `approver` ≠ null), `OrganizationSummary` (stat tiles, monthly bar chart, out-today list, by-type and by-department bars; when `organization` ≠ null) | `GetDashboard(year)` |
 | `/sign-in` | `(auth)` | `SignInForm` | `SignIn` action → `authService.signIn` |
 | `/leave-requests` | `(dashboard)` | `PageHeader` → `LeaveRequestForm` (2/5) + `LeaveRequestTable` (3/5, server-paged `DataTable`, `LeaveDetailSheet`, `CancelLeaveDialog`) | `GetLeaveTypes`, `GetApprovers`, `CreateLeaveRequest`, `GetLeaveRequests`; shared `GetLeaveRequest`, `CancelLeaveRequest` |
 | `/approvals` | `(dashboard)` | `PageHeader` → `PermissionGate(leave.approve)` → `ApprovalTable` (status tabs + search + `DataTable`, `LeaveDetailSheet`, `ApprovalDecisionDialog`) | `GetApprovals`, `DecideLeaveRequest`, shared `GetLeaveRequest` |
+| `/setup/master-data/employees`, `/setup/master-data/departments`, `/setup/users`, `/setup/roles`, `/setup/permissions` | `(dashboard)` | `PageHeader` → `PermissionGate(<menu permission>)` → `<x>-table` (search, filters, server-paged `DataTable`) + `<x>-form-dialog` (create/update) + `DeleteDialog`; roles add a detail sheet | `src/app/(dashboard)/setup/**/action.ts` → `setupService`; contract in `docs/setup-module.md` |
 
 Each route has `loading.tsx` (`RouteLoading`) and `error.tsx` (`ErrorState`). `(dashboard)/template.tsx` wraps each page in `PageGate`: one loader until the page's first queries settle, then a single reveal.
 
-**Modules and navigation.** `constants/app-module-constant.ts` registers one module — Leave — with two menus: "My Leave Requests" (`/leave-requests`) and "Approvals" (`/approvals`, `permission: leave.approve`). `AppSidebar` draws the module rail plus the active module's menus filtered by `usePermissionTitles`. `useModuleLastPaths` remembers the last page per module. `GeneralBreadcrumb` derives crumbs from the pathname and `nav.segments`.
+**Modules and navigation.** `constants/app-module-constant.ts` registers three modules, as in next-pdi: Home (`/dashboard`), Leave ("My Leave Requests", "Approvals" with `leave.approve`) and Setup (Employees, Departments, Users, Roles, Permissions, each with its `*.manage` permission). `AppSidebar` draws the module rail plus the active module's menus filtered by `usePermissionTitles`; a module with no visible menu leaves the rail, and a rail icon opens the first menu the user may see. `useModuleLastPaths` remembers the last page per module. `GeneralBreadcrumb` derives crumbs from the pathname and `nav.segments`.
 
 The old `/signup` page (Firebase Auth) and the duplicate `/` dashboard are gone; accounts are created on the API side.
 
@@ -147,7 +149,7 @@ Feature-only components live in `app/(dashboard)/leave-requests/_components/` (`
 
 ## 9. i18n
 
-English (`en`, default) and Indonesian (`id`) through next-intl with a cookie locale (`docs/i18n.md`). Namespaces: `common`, `nav`, `auth`, `leave`. Zod messages and server-action fallbacks are message keys. `npm run check:messages` keeps `en` and `id` in parity. The Axios instance sends `X-Locale`; the API ignores it until `docs/backend-task.md` §5 is done.
+English (`en`, default) and Indonesian (`id`) through next-intl with a cookie locale (`docs/i18n.md`). Namespaces: `common`, `nav`, `auth`, `leave`, `dashboard`, `setup`. Zod messages and server-action fallbacks are message keys. `npm run check:messages` keeps `en` and `id` in parity. The Axios instance sends `X-Locale`; the API ignores it until `docs/backend-task.md` §5 is done.
 
 ---
 

@@ -76,9 +76,14 @@ hard-code; `X-Locale` (P2) belum dibaca.
 - `GET /api/leave-request/approvals?status=pending|approved|rejected|all` + `search`, paginasi.
 - `PATCH /api/leave-request/{id}/approve` dan `/reject` (`notes`, wajib saat reject) lewat
   `App\Services\LeaveDecisionService`, dipakai juga oleh callback WA.
-- `permissions[]` di `/api/me` dan login: `leave.request` untuk semua, `leave.approve` untuk approver
-  (aturan di `AuthController`). Belum ada tabel role; bila HRIS punya jabatan, ganti aturannya di
-  satu tempat itu.
+- `permissions[]` di `/api/me` dan login kini berasal dari role user (tabel `roles`, `permissions`,
+  `permission_role`, `users.role_id`) — lihat `docs/setup-module.md`.
+
+### 8b. Setup, role & permission, dashboard — **selesai 30 Okt 2026**
+
+Kontrak di `docs/setup-module.md`. Sisa: dropdown combobox belum memakai `search` di server (50 baris
+pertama), menonaktifkan karyawan tidak menonaktifkan akunnya, `down()` migrasi belum diuji, belum ada
+tes otomatis.
 
 ### 9. Notifikasi dan saldo cuti
 

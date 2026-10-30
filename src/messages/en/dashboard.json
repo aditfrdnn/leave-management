@@ -1,0 +1,81 @@
+{
+  "page": {
+    "title": "Dashboard",
+    "greeting": "Hello, {name}",
+    "description": "Your leave at a glance, and what needs your attention.",
+    "year": "Year",
+    "newRequest": "New request"
+  },
+  "me": {
+    "title": "My leave",
+    "annual": {
+      "label": "Annual leave left",
+      "caption": "{used} of {quota} days used",
+      "none": "No annual leave type configured",
+      "progress": "Annual leave used"
+    },
+    "daysTaken": {
+      "label": "Days taken",
+      "caption": "Approved days in {year}"
+    },
+    "pending": {
+      "label": "Waiting for approval",
+      "caption": "Requests not decided yet"
+    },
+    "approved": {
+      "label": "Approved requests",
+      "caption": "{rejected} rejected · {cancelled} cancelled"
+    }
+  },
+  "upcoming": {
+    "title": "Upcoming leave",
+    "description": "Your next approved or pending days off.",
+    "viewAll": "View all",
+    "empty": "No upcoming leave. Time to plan one?"
+  },
+  "approver": {
+    "title": "Approvals",
+    "description": "Requests that wait for your decision.",
+    "waiting": "{count, plural, =0 {nothing waiting} one {request waiting} other {requests waiting}}",
+    "oldest": "Waiting longest",
+    "clear": "You are all caught up.",
+    "decided": "{count, plural, =0 {No decisions} one {# decision} other {# decisions}} this month",
+    "open": "Open approvals"
+  },
+  "organization": {
+    "title": "Organisation",
+    "description": "Everyone's leave in {year}.",
+    "employees": "Active employees",
+    "employeesCaption": "In the employee master",
+    "onLeaveToday": "On leave today",
+    "onLeaveWeek": "{count} on leave this week",
+    "pending": "Pending requests",
+    "submitted": "{count} submitted this year",
+    "approved": "Approved requests",
+    "rejectedCancelled": "{rejected} rejected · {cancelled} cancelled",
+    "monthly": {
+      "title": "Leave per month",
+      "description": "Requests and approved days by start month, {year}.",
+      "requests": "Requests",
+      "days": "Days"
+    },
+    "today": {
+      "title": "Out today",
+      "description": "Approved leave covering today.",
+      "empty": "Everyone is in today.",
+      "until": "until {date}"
+    },
+    "byType": {
+      "title": "Days by leave type",
+      "description": "Approved days this year."
+    },
+    "byDepartment": {
+      "title": "Days by department",
+      "description": "Approved days this year."
+    },
+    "empty": "No approved leave yet this year."
+  },
+  "errors": {
+    "load": "Failed to load the dashboard"
+  }
+}
