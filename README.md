@@ -28,6 +28,9 @@ The pre-commit hook (`.husky/pre-commit`) runs lint and build; CI (`.github/work
 runs the same on every pull request into `main`. Firebase App Hosting (`apphosting.yaml`) builds
 from the repository as before.
 
+Deploying: [DEPLOY.md](./DEPLOY.md) (order across the three repos and the checklist).
+Local admin login: see "Login sebagai admin di lokal" in the leave-service README.
+
 ## Where to read next
 
 | Doc | Read it when |

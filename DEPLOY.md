@@ -1,0 +1,66 @@
+# Deploy — leave-management (frontend HR Lite)
+
+Rilis ini mengganti "LVR System" lama dengan HR Lite: rebrand, dashboard, halaman approver,
+detail/batal cuti, riwayat berpaginasi, dan modul Setup (karyawan, departemen, user, role, permission).
+
+## Urutan deploy ketiga project
+
+1. **leave-management-wa** (bridge WhatsApp) — `DEPLOY.md` di repo itu.
+2. **leave-service** (API) — `DEPLOY.md` di repo itu, termasuk menunjuk Administrator pertama.
+3. **leave-management** (dokumen ini) — **langsung setelah API selesai**. Frontend baru tidak bisa
+   jalan dengan API lama, dan sebaliknya.
+
+Hosting: Firebase App Hosting (`apphosting.yaml`), build dari branch `main`.
+
+---
+
+## Langkah
+
+**1. Cek environment variable di Firebase App Hosting**
+
+Firebase console → App Hosting → backend `leave-management` → Settings → Environment.
+
+| Variable | Isi |
+| --- | --- |
+| `NEXT_PUBLIC_PROD_SERVER_URL` | `https://lvr-api.pdi-ptcs.com` |
+| `TOKEN_KEY` | `auth_token` |
+| `NEXT_PUBLIC_DEV_SERVER_URL` | **tidak boleh ada / kosong** — kalau terisi, production akan memanggil URL dev |
+
+**2. Pastikan `main` berisi versi yang sudah diuji**
+
+```bash
+git checkout main
+git pull origin main
+npm ci
+npm run build
+```
+
+Build harus sukses tanpa error.
+
+**3. Rollout**
+
+Firebase console → App Hosting → `leave-management` → **Rollouts** → *Create rollout* dari branch
+`main` (atau tunggu rollout otomatis kalau fitur itu aktif). Tunggu sampai statusnya **Succeeded**.
+
+Catat rollout yang sedang live **sebelum** membuat yang baru, untuk rollback.
+
+**4. Cek cepat di browser** (jendela incognito)
+
+- [ ] `https://lvr.pdi-ptcs.com/` membuka halaman login HR Lite (logo H biru).
+- [ ] `https://lvr.pdi-ptcs.com/login` diarahkan ke `/sign-in` (bookmark lama tetap jalan).
+- [ ] Login sebagai Administrator → Dashboard tampil, termasuk bagian **Organisasi**.
+- [ ] Menu **Setup → Users** tampil; atur role user lain (mis. HR) bila perlu.
+- [ ] Login sebagai karyawan biasa → hanya modul Home dan Leave yang tampil.
+- [ ] Ajukan satu cuti uji → muncul di riwayat dan di **Approvals** milik approver-nya → setujui → status berubah.
+- [ ] Batalkan / hapus data uji itu setelahnya.
+
+Kalau setelah login muncul sesi lama yang aneh, logout lalu login lagi (cookie lama dari LVR System).
+
+---
+
+## Kalau ada masalah (rollback)
+
+Firebase console → App Hosting → Rollouts → pilih rollout lama yang tadi dicatat → **Roll back**.
+
+Rollback frontend saja tidak cukup kalau API sudah versi baru: kembalikan leave-service juga
+(lihat `DEPLOY.md` di repo itu).
