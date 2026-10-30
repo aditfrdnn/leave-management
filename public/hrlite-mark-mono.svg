@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="HR Lite">
+  <g fill="currentColor">
+    <rect x="8" y="10" width="13" height="44" rx="6.5"/>
+    <rect x="43" y="10" width="13" height="44" rx="6.5"/>
+    <rect x="18" y="33" width="28" height="12" rx="6"/>
+    <circle cx="32" cy="21" r="7"/>
+  </g>
+</svg>

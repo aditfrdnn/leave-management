@@ -1,4 +1,4 @@
-# Architecture Documentation — LVR System (leave-management)
+# Architecture Documentation — HR Lite (leave-management)
 
 > Observation-only snapshot of the codebase on branch `main` after the alignment with `next-prm` / `next-pdi` (October 2026). It describes what is implemented, including what is still thin or waiting on the backend. It does not prescribe changes — that is `docs/RULES.md`.
 
@@ -141,7 +141,7 @@ Feature-only components live in `app/(dashboard)/leave-requests/_components/`: `
 - `styles/typography.css` defines the `type-*` roles (`docs/typography.md`); ESLint rejects `font-bold` and arbitrary font sizes.
 - `styles/motion.css`: cards and table rows animate in on mount; all off under `prefers-reduced-motion`.
 - Icons: `components/ui/hugeicons-icon.tsx` (2px stroke). `lucide-react` is no longer a dependency.
-- Logo: `public/lvr.png`.
+- Brand: HR Lite. The H-person lettermark lives in `public/hrlite-mark*.svg` and `public/hrlite-app-icon.svg` (favicon); `components/common/brand-logo.tsx` renders it inline (mark and mark + wordmark). Primary `#2563eb` light / `#3b82f6` dark.
 
 ---
 

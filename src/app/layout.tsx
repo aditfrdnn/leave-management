@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LVR System",
+  title: "HR Lite",
   description: "Employee leave request application",
-  icons: { icon: "/lvr.png" },
+  icons: { icon: "/hrlite-app-icon.svg" },
 };
 
 export default async function RootLayout({

@@ -2,7 +2,7 @@
   "name": "leave-management",
   "version": "0.1.0",
   "private": true,
-  "description": "LVR System: employee leave request frontend (Next.js) for the leave API.",
+  "description": "HR Lite: employee leave request frontend (Next.js) for the leave API (leave-service).",
   "scripts": {
     "dev": "next dev -p ${PORT:-9002}",
     "build": "next build",

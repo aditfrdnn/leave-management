@@ -1,4 +1,4 @@
-# LVR System (leave-management)
+# HR Lite (leave-management)
 
 Frontend for employee leave requests: an employee signs in, submits a leave request (dates,
 approver, reason, hand-over) and follows the status of what they sent. A Next.js 16 app

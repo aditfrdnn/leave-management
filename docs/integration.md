@@ -5,7 +5,7 @@ headers and payloads, and where each piece runs. Read it before touching any cro
 
 | Repo | What | Stack | Runs at |
 | --- | --- | --- | --- |
-| `leave-management` (this repo) | Employee frontend: sign in, submit a leave request, follow its status | Next.js 16 | dev `http://localhost:9002`, prod `https://lvr.pdi-ptcs.com` (Firebase App Hosting) |
+| `leave-management` (this repo) | HR Lite employee frontend: sign in, submit a leave request, follow its status | Next.js 16 | dev `http://localhost:9002`, prod `https://lvr.pdi-ptcs.com` (Firebase App Hosting) |
 | `leave-service` | API + business rules + email + WhatsApp trigger | Laravel 12, Sanctum, MySQL, database queue | dev `http://127.0.0.1:8000` (`php artisan serve`), prod `https://lvr-api.pdi-ptcs.com` |
 | `leave-management-wa` | WhatsApp bridge: sends the approval message, parses the approver's reply, posts the decision back | Node (Express + whatsapp-web.js), PM2 | VPS, `HOST:PORT` from its `.env`; dev `http://127.0.0.1:3000` |
 

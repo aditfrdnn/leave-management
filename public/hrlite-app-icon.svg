@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HR Lite">
+  <rect width="512" height="512" rx="128" fill="#2563EB"/>
+  <g fill="#FFFFFF" transform="translate(96 96) scale(5)">
+    <rect x="8" y="10" width="13" height="44" rx="6.5"/>
+    <rect x="43" y="10" width="13" height="44" rx="6.5"/>
+    <rect x="18" y="33" width="28" height="12" rx="6"/>
+    <circle cx="32" cy="21" r="7"/>
+  </g>
+</svg>

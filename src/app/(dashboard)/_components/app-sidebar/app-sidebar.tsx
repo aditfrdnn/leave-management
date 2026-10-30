@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Suspense } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -26,6 +25,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BrandMark } from "@/components/common/brand-logo";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { appModules, getActiveMenuHref, getActiveModule } from "@/constants/app-module-constant";
 import { iconMap } from "@/constants/icon-constant";
@@ -64,7 +64,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar collapsible="none" className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r">
           <SidebarHeader className="items-center px-0 py-3">
             <Link href="/leave-requests" aria-label={t("brand")} className="flex size-8 items-center justify-center rounded-lg">
-              <Image src="/lvr.png" alt="Logo" width={26} height={26} loading="eager" priority={true} className="object-contain" />
+              <BrandMark className="size-7 text-primary" />
             </Link>
           </SidebarHeader>
           <SidebarContent>

@@ -1,4 +1,4 @@
-# RULES.md — LVR System (leave-management)
+# RULES.md — HR Lite (leave-management)
 
 > Binding engineering rules for this repository. They are the same rules as `next-prm`'s and `next-pdi`'s `docs/RULES.md`, with this project's domain and backend filled in, so code and components move between the two projects without translation. `docs/ARCHITECTURE.md` describes what exists; this file says what is allowed.
 
@@ -6,7 +6,7 @@
 
 # 1. Project Goal
 
-**LVR System** is a Next.js frontend (thin client + BFF) in front of the leave API (a Laravel service reached over HTTP). An employee signs in, submits a leave request — dates, leave type, approver, reason, location, hand-over, replacement, phone — and follows the status of every request they sent.
+**HR Lite** is a Next.js frontend (thin client + BFF) in front of the leave API (a Laravel service reached over HTTP). An employee signs in, submits a leave request — dates, leave type, approver, reason, location, hand-over, replacement, phone — and follows the status of every request they sent.
 
 One module today, one shell (`src/app/(dashboard)`): **Leave** (`/leave-requests`). Approvals, notifications and settings join the same shell when the API grows (see `docs/backend-task.md`). The rules below keep that growth consistent.
 
