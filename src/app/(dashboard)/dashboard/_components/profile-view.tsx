@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getInitials } from "@/lib/get-initials";
 import { cn, dateFormatter } from "@/lib/utils/utils";
-import type { TMyProfile } from "@/types/profile";
+import type { TMyEmployee, TMyProfile } from "@/types/profile";
 import { GetMyProfile } from "../action";
 
 export const MY_PROFILE_QUERY_KEY = ["home", "profile"] as const;
@@ -100,7 +100,12 @@ function Profile({ profile }: { profile: TMyProfile }) {
                 <Field label={t("employment.employeeNumber")}>
                   <span className="tabular-nums">{employee.employee_number}</span>
                 </Field>
-                <Field label={t("employment.position")}>{employee.position}</Field>
+                <Field label={t("employment.position")}>
+                  {employee.position}
+                  {employee.grade != null && (
+                    <span className="font-normal text-muted-foreground"> · {t("employment.grade", { grade: employee.grade })}</span>
+                  )}
+                </Field>
                 <Field label={t("employment.department")}>
                   {employee.department ? `${employee.department.name} (${employee.department.alias})` : null}
                 </Field>
@@ -158,6 +163,8 @@ function Profile({ profile }: { profile: TMyProfile }) {
             </Card>
           </div>
 
+          {employee.careers?.length > 0 && <CareerTimeline careers={employee.careers} />}
+
           {employee.subordinates.length > 0 && (
             <Card className="min-w-0 lg:col-span-3">
               <CardHeader>
@@ -183,5 +190,58 @@ function Profile({ profile }: { profile: TMyProfile }) {
         </div>
       )}
     </Reveal>
+  );
+}
+
+/** Position, employment type, grade and department over time, newest first. */
+function CareerTimeline({ careers }: { careers: TMyEmployee["careers"] }) {
+  const t = useTranslations("home");
+  const locale = useLocale();
+
+  return (
+    <Card className="min-w-0 lg:col-span-3">
+      <CardHeader>
+        <CardTitle>{t("careers.title")}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ol className="flex flex-col">
+          {careers.map((career, index) => (
+            <li key={career.id} className="relative flex gap-3 pb-5 last:pb-0">
+              {index < careers.length - 1 && <span aria-hidden className="absolute top-3 bottom-0 left-1.25 w-px bg-border" />}
+              <span
+                aria-hidden
+                className={cn(
+                  "relative mt-1.5 size-2.75 shrink-0 rounded-full border-2",
+                  career.is_current ? "border-primary bg-primary" : "border-border bg-background",
+                )}
+              />
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <p className="flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                  <span className="tabular-nums">{dateFormatter(career.effective_date, locale)}</span>
+                  <span aria-hidden>·</span>
+                  <span>{t(`employment.types.${career.employment_type}`)}</span>
+                  {career.grade != null && (
+                    <>
+                      <span aria-hidden>·</span>
+                      <span className="tabular-nums">{t("employment.grade", { grade: career.grade })}</span>
+                    </>
+                  )}
+                  {career.is_current && (
+                    <Badge variant="default" className="ml-1">
+                      {t("careers.current")}
+                    </Badge>
+                  )}
+                </p>
+                <p className={cn("text-sm break-words", career.is_current && "font-medium")}>
+                  {career.position}
+                  {career.department && <span className="font-normal text-muted-foreground"> · {career.department.name}</span>}
+                </p>
+                {career.note && <p className="text-xs break-words text-muted-foreground">{career.note}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </CardContent>
+    </Card>
   );
 }

@@ -14,10 +14,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
-import type { TActiveStatus, TEmployeeItem, TEmployeeListParams, TEmployeeSortKey, TEmploymentType } from "@/types/setup";
+import type { TActiveStatus, TEmployeeCareer, TEmployeeItem, TEmployeeListParams, TEmployeeSortKey, TEmploymentType } from "@/types/setup";
 import { ACTIVE_STATUSES, EMPLOYMENT_TYPES } from "@/validations/setup-validations";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { DeleteEmployee, GetDepartmentOptions, GetEmployees } from "../action";
+import CareerFormDialog, { type TCareerFormTarget } from "./career-form-dialog";
+import CareerHistorySheet from "./career-history-sheet";
 import { employeeColumns } from "./employee-columns";
 import EmployeeFormDialog, { DEPARTMENT_OPTIONS_QUERY_KEY } from "./employee-form-dialog";
 
@@ -38,6 +40,8 @@ export default function EmployeeTable() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<TEmployeeItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<TEmployeeItem | null>(null);
+  const [careerEmployee, setCareerEmployee] = useState<TEmployeeItem | null>(null);
+  const [careerTarget, setCareerTarget] = useState<TCareerFormTarget | null>(null);
 
   const params: TEmployeeListParams = {
     page,
@@ -75,6 +79,7 @@ export default function EmployeeTable() {
           setEditedItem(item);
           setIsFormOpen(true);
         },
+        onClickCareers: (item) => setCareerEmployee(item),
         onClickDelete: (item) => setDeletedItem(item),
       }),
     [t, locale, pagination, perPage],
@@ -85,6 +90,17 @@ export default function EmployeeTable() {
     queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
     queryClient.invalidateQueries({ queryKey: ["setup", "options", "employees"] });
     queryClient.invalidateQueries({ queryKey: ["setup", "users"] });
+    queryClient.invalidateQueries({ queryKey: ["setup", "leave-balances"] });
+    queryClient.invalidateQueries({ queryKey: ["home", "profile"] });
+  };
+
+  // A career change rewrites the employee's current position, type, grade and department; the
+  // invalidation above also refetches the open history (its key sits under the employees key).
+  const onCareerSaved = (employee?: TEmployeeItem) => {
+    refresh();
+    if (!employee) return;
+    setEditedItem((current) => (current?.id === employee.id ? employee : current));
+    setCareerEmployee((current) => (current?.id === employee.id ? employee : current));
   };
 
   const filterChange = (setter: (value: string) => void) => (value: string) => {
@@ -189,7 +205,19 @@ export default function EmployeeTable() {
           }}
           item={editedItem}
           onSuccess={refresh}
+          onChangeCareer={(employee) => setCareerTarget({ employee, career: null })}
+          onShowCareers={(employee) => setCareerEmployee(employee)}
         />
+
+        <CareerHistorySheet
+          employee={careerEmployee}
+          onOpenChange={(open) => !open && setCareerEmployee(null)}
+          onAdd={(employee) => setCareerTarget({ employee, career: null })}
+          onEdit={(employee: TEmployeeItem, career: TEmployeeCareer) => setCareerTarget({ employee, career })}
+          onChanged={() => onCareerSaved()}
+        />
+
+        <CareerFormDialog target={careerTarget} onOpenChange={(open) => !open && setCareerTarget(null)} onSaved={onCareerSaved} />
 
         <DeleteDialog
           open={!!deletedItem}

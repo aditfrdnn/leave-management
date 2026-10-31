@@ -62,6 +62,8 @@ const users = "/api/users";
 const user = (id: number | string) => `${users}/${id}`;
 const employees = "/api/employees";
 const employee = (id: number | string) => `${employees}/${id}`;
+const employeeCareers = (id: number | string) => `${employees}/${id}/careers`;
+const employeeCareer = (id: number | string, careerId: number | string) => `${employees}/${id}/careers/${careerId}`;
 const departments = "/api/departments";
 const department = (id: number | string) => `${departments}/${id}`;
 const roles = "/api/roles";
@@ -110,6 +112,8 @@ export {
   user,
   employees,
   employee,
+  employeeCareers,
+  employeeCareer,
   departments,
   department,
   roles,

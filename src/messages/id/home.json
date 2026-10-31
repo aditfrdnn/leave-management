@@ -9,6 +9,7 @@
     "title": "Kepegawaian",
     "employeeNumber": "No. karyawan (NIK)",
     "position": "Jabatan",
+    "grade": "Grade {grade}",
     "department": "Departemen",
     "supervisor": "Atasan langsung",
     "type": "Status kepegawaian",
@@ -22,6 +23,10 @@
     "tenure": "{years} tahun {months} bulan",
     "tenureYears": "{years} tahun",
     "tenureMonths": "{months, plural, =0 {kurang dari sebulan} other {# bulan}}"
+  },
+  "careers": {
+    "title": "Riwayat karir",
+    "current": "Saat ini"
   },
   "contact": {
     "title": "Kontak",

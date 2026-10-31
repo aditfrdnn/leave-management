@@ -50,6 +50,7 @@
       "email": "Email",
       "phone": "Phone Number",
       "position": "Position",
+      "grade": "Grade",
       "department": "Department",
       "supervisor": "Supervisor",
       "joinDate": "Join Date",
@@ -79,6 +80,7 @@
       "emailPlaceholder": "e.g., budi@company.com",
       "phonePlaceholder": "e.g., 0812 3456 7890",
       "positionPlaceholder": "e.g., Field Engineer",
+      "gradePlaceholder": "e.g., 5",
       "departmentHint": "Select a department",
       "departmentSearch": "Search departments",
       "supervisorHint": "Select a supervisor",
@@ -102,11 +104,55 @@
       "nameMax": "The name can be at most 255 characters",
       "emailInvalid": "Enter a valid email address",
       "phoneInvalid": "Use digits only, e.g. 081234567890",
-      "positionMax": "The position can be at most 255 characters",
+      "positionMax": "The position can be at most 150 characters",
       "joinDateInvalid": "Pick a valid date",
       "employmentTypeRequired": "Select an employment type",
       "statusRequired": "Select a status",
-      "supervisorSelf": "An employee can't be their own supervisor"
+      "supervisorSelf": "An employee can't be their own supervisor",
+      "gradeRange": "Enter a whole number from 1 to 99"
+    },
+    "careers": {
+      "title": "Career history",
+      "currentTitle": "Current position",
+      "change": "Change position/status",
+      "readOnlyHint": "Position, employment type, grade and department change through the career history, so the old values stay on record.",
+      "add": "Add history",
+      "empty": "No career history yet.",
+      "current": "Current",
+      "grade": "Grade {grade}",
+      "addedBy": "Added by {name} · {date}",
+      "showItem": "Career history of {name}",
+      "editItem": "Edit the entry of {date}",
+      "deleteItem": "Delete the entry of {date}",
+      "deleteHint": "The employee's current position, type, grade and department are recalculated from the remaining entries.",
+      "fields": {
+        "effectiveDate": "Effective date",
+        "note": "Note"
+      },
+      "form": {
+        "createTitle": "Add Career History",
+        "updateTitle": "Edit Career History",
+        "effectiveDateHint": "Past or future. A future date takes effect on that day.",
+        "positionPlaceholder": "e.g., Software Engineer Level 1",
+        "notePlaceholder": "e.g., Promotion, made permanent"
+      },
+      "toast": {
+        "created": "Career history added.",
+        "updated": "Career history updated.",
+        "saveFailed": "Couldn't save the career history"
+      },
+      "errors": {
+        "load": "Couldn't load the career history.",
+        "create": "Couldn't add the career history.",
+        "update": "Couldn't update the career history.",
+        "delete": "Couldn't delete the career history."
+      },
+      "validation": {
+        "effectiveDateRequired": "Pick the effective date",
+        "positionRequired": "Enter the position",
+        "noteMax": "The note can be at most 255 characters"
+      },
+      "system": "system"
     }
   },
   "departments": {

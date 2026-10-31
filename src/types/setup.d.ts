@@ -74,6 +74,8 @@ export type TEmployeeItem = {
   position: string | null;
   join_date: string | null;
   employment_type: TEmploymentType;
+  /** Company grade (1–99); a cache of the current career row like position, type and department (§14). */
+  grade: number | null;
   status: TActiveStatus;
   created_at: string;
   department: TDepartmentRef | null;
@@ -94,19 +96,54 @@ export type TEmployeeListParams = {
   sort_dir?: TSortDirection;
 };
 
+/**
+ * `POST/PUT /api/employees`. Position, employment type, department and grade are sent on create only
+ * (they seed the first career row); on update they change only through career rows (§14).
+ */
 export type TEmployeePayload = {
   employee_number: string;
   name: string;
   email: string | null;
   phone_number: string | null;
-  position: string | null;
-  department_id: number | null;
   supervisor_id: number | null;
   /** `Y-m-d`. */
   join_date: string | null;
-  employment_type: TEmploymentType;
   status: TActiveStatus;
+  position?: string | null;
+  department_id?: number | null;
+  employment_type?: TEmploymentType;
+  grade?: number | null;
 };
+
+/** `GET /api/employees/{id}/careers` row (docs/setup-module.md §14), newest `effective_date` first. */
+export type TEmployeeCareer = {
+  id: number;
+  /** `YYYY-MM-DD` */
+  effective_date: string;
+  employment_type: TEmploymentType;
+  grade: number | null;
+  position: string;
+  department: TDepartmentRef | null;
+  note: string | null;
+  /** The row the employee's current values come from (latest `effective_date` ≤ today). */
+  is_current: boolean;
+  created_by: { id: number; name: string } | null;
+  created_at: string;
+};
+
+/** `POST/PUT /api/employees/{id}/careers[/{career}]`. */
+export type TEmployeeCareerPayload = {
+  /** `Y-m-d`; past or future. */
+  effective_date: string;
+  employment_type: TEmploymentType;
+  grade: number | null;
+  position: string;
+  department_id: number | null;
+  note: string | null;
+};
+
+/** A saved career row; the API adds the refreshed employee under `employee`. */
+export type TEmployeeCareerResult = TEmployeeCareer & { employee?: TEmployeeItem };
 
 export type TEmployeeOptionParams = {
   search?: string;

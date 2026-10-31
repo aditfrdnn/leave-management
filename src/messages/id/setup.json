@@ -50,6 +50,7 @@
       "email": "Email",
       "phone": "Nomor Telepon",
       "position": "Jabatan",
+      "grade": "Grade",
       "department": "Departemen",
       "supervisor": "Atasan",
       "joinDate": "Tanggal Bergabung",
@@ -79,6 +80,7 @@
       "emailPlaceholder": "mis. budi@perusahaan.com",
       "phonePlaceholder": "mis. 0812 3456 7890",
       "positionPlaceholder": "mis. Field Engineer",
+      "gradePlaceholder": "mis. 5",
       "departmentHint": "Pilih departemen",
       "departmentSearch": "Cari departemen",
       "supervisorHint": "Pilih atasan",
@@ -102,11 +104,55 @@
       "nameMax": "Nama maksimal 255 karakter",
       "emailInvalid": "Masukkan alamat email yang valid",
       "phoneInvalid": "Gunakan angka saja, mis. 081234567890",
-      "positionMax": "Jabatan maksimal 255 karakter",
+      "positionMax": "Jabatan maksimal 150 karakter",
       "joinDateInvalid": "Pilih tanggal yang valid",
       "employmentTypeRequired": "Pilih status kepegawaian",
       "statusRequired": "Pilih status",
-      "supervisorSelf": "Karyawan tidak bisa menjadi atasan dirinya sendiri"
+      "supervisorSelf": "Karyawan tidak bisa menjadi atasan dirinya sendiri",
+      "gradeRange": "Masukkan angka bulat 1 sampai 99"
+    },
+    "careers": {
+      "title": "Riwayat karir",
+      "currentTitle": "Jabatan saat ini",
+      "change": "Ubah jabatan/status",
+      "readOnlyHint": "Jabatan, status kepegawaian, grade, dan departemen diubah lewat riwayat karir agar data lamanya tetap tercatat.",
+      "add": "Tambah riwayat",
+      "empty": "Belum ada riwayat karir.",
+      "current": "Saat ini",
+      "grade": "Grade {grade}",
+      "addedBy": "Ditambahkan oleh {name} · {date}",
+      "showItem": "Riwayat karir {name}",
+      "editItem": "Ubah riwayat tanggal {date}",
+      "deleteItem": "Hapus riwayat tanggal {date}",
+      "deleteHint": "Jabatan, status, grade, dan departemen karyawan saat ini akan dihitung ulang dari riwayat yang tersisa.",
+      "fields": {
+        "effectiveDate": "Tanggal berlaku",
+        "note": "Catatan"
+      },
+      "form": {
+        "createTitle": "Tambah Riwayat Karir",
+        "updateTitle": "Ubah Riwayat Karir",
+        "effectiveDateHint": "Boleh tanggal lampau atau mendatang. Tanggal mendatang berlaku pada hari itu.",
+        "positionPlaceholder": "mis. Software Engineer Level 1",
+        "notePlaceholder": "mis. Promosi, pengangkatan karyawan tetap"
+      },
+      "toast": {
+        "created": "Riwayat karir berhasil ditambahkan.",
+        "updated": "Riwayat karir diperbarui.",
+        "saveFailed": "Gagal menyimpan riwayat karir"
+      },
+      "errors": {
+        "load": "Gagal memuat riwayat karir.",
+        "create": "Gagal menambahkan riwayat karir.",
+        "update": "Gagal memperbarui riwayat karir.",
+        "delete": "Gagal menghapus riwayat karir."
+      },
+      "validation": {
+        "effectiveDateRequired": "Pilih tanggal berlaku",
+        "positionRequired": "Masukkan jabatan",
+        "noteMax": "Catatan maksimal 255 karakter"
+      },
+      "system": "sistem"
     }
   },
   "departments": {

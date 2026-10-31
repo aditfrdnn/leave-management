@@ -18,8 +18,10 @@ import { Form } from "@/components/ui/form";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
 import { isActionState } from "@/lib/action-state";
 import { toApiDate } from "@/lib/utils/utils";
-import type { TEmployeeItem } from "@/types/setup";
+import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
+import type { TDepartmentOption, TDepartmentRef, TEmployeeItem } from "@/types/setup";
 import { ACTIVE_STATUSES, EMPLOYMENT_TYPES, employeeSchema, type EmployeeSchemaType } from "@/validations/setup-validations";
+import { ArrowDataTransferHorizontalIcon, WorkHistoryIcon } from "@hugeicons/core-free-icons";
 import { CreateEmployee, GetDepartmentOptions, GetEmployeeOptions, UpdateEmployee } from "../action";
 
 export const DEPARTMENT_OPTIONS_QUERY_KEY = ["setup", "options", "departments"] as const;
@@ -31,6 +33,7 @@ const FIELDS = [
   "email",
   "phone_number",
   "position",
+  "grade",
   "department_id",
   "supervisor_id",
   "join_date",
@@ -45,6 +48,10 @@ function buildFormData(values: EmployeeSchemaType) {
   return formData;
 }
 
+/**
+ * On update, position, grade and department are read-only (they change through career rows) and are
+ * not sent, so the form leaves them blank instead of validating values it does not own.
+ */
 function toFormValues(item: TEmployeeItem | null): EmployeeSchemaType {
   return {
     id: item ? String(item.id) : "",
@@ -52,13 +59,80 @@ function toFormValues(item: TEmployeeItem | null): EmployeeSchemaType {
     name: item?.name ?? "",
     email: item?.email ?? "",
     phone_number: item?.phone_number ?? "",
-    position: item?.position ?? "",
-    department_id: item?.department ? String(item.department.id) : "",
+    position: "",
+    grade: "",
+    department_id: "",
     supervisor_id: item?.supervisor ? String(item.supervisor.id) : "",
     join_date: item?.join_date ? item.join_date.slice(0, 10) : "",
     employment_type: item?.employment_type ?? "permanent",
     status: item?.status ?? "active",
   };
+}
+
+/** Combobox items with a "none" row first; `current` is kept when it sits outside the 50 options the API returns. */
+export function toDepartmentItems(departments: TDepartmentOption[] | undefined, current: TDepartmentRef | null, noneLabel: string) {
+  const options = (departments ?? []).map((option) => ({ value: String(option.id), label: option.alias ? `${option.text} (${option.alias})` : option.text }));
+  if (current && !options.some((option) => option.value === String(current.id))) {
+    options.unshift({ value: String(current.id), label: current.alias ? `${current.name} (${current.alias})` : current.name });
+  }
+
+  return [{ value: "", label: noneLabel }, ...options];
+}
+
+/** Read-only position, employment type, grade and department of an existing employee. */
+function CurrentCareerSummary({
+  item,
+  onChangeCareer,
+  onShowCareers,
+}: {
+  item: TEmployeeItem;
+  onChangeCareer?: () => void;
+  onShowCareers?: () => void;
+}) {
+  const t = useTranslations("setup.employees");
+
+  return (
+    <section aria-labelledby="current-career-title" className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 sm:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 id="current-career-title" className="text-sm font-medium">
+          {t("careers.currentTitle")}
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {onShowCareers && (
+            <Button type="button" size="sm" variant="ghost" onClick={onShowCareers}>
+              <HugeiconsIcon icon={WorkHistoryIcon} className="size-4" />
+              {t("careers.title")}
+            </Button>
+          )}
+          {onChangeCareer && (
+            <Button type="button" size="sm" variant="outline" onClick={onChangeCareer}>
+              <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-4" />
+              {t("careers.change")}
+            </Button>
+          )}
+        </div>
+      </div>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
+        <div className="col-span-2 flex min-w-0 flex-col gap-0.5 sm:col-span-1">
+          <dt className="text-xs text-muted-foreground">{t("fields.position")}</dt>
+          <dd className="break-words">{item.position || "-"}</dd>
+        </div>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <dt className="text-xs text-muted-foreground">{t("fields.employmentType")}</dt>
+          <dd>{t(`employmentTypes.${item.employment_type}`)}</dd>
+        </div>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <dt className="text-xs text-muted-foreground">{t("fields.grade")}</dt>
+          <dd className="tabular-nums">{item.grade ?? "-"}</dd>
+        </div>
+        <div className="col-span-2 flex min-w-0 flex-col gap-0.5 sm:col-span-1">
+          <dt className="text-xs text-muted-foreground">{t("fields.department")}</dt>
+          <dd className="break-words">{item.department ? item.department.alias || item.department.name : "-"}</dd>
+        </div>
+      </dl>
+      <p className="text-xs text-muted-foreground">{t("careers.readOnlyHint")}</p>
+    </section>
+  );
 }
 
 /** One dialog for create and update; `item` switches it to update. */
@@ -67,11 +141,17 @@ export default function EmployeeFormDialog({
   onOpenChange,
   item,
   onSuccess,
+  onChangeCareer,
+  onShowCareers,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: TEmployeeItem | null;
   onSuccess?: () => void;
+  /** Update only: opens the career form for a new row. */
+  onChangeCareer?: (item: TEmployeeItem) => void;
+  /** Update only: opens the career history. */
+  onShowCareers?: (item: TEmployeeItem) => void;
 }) {
   const t = useTranslations("setup");
   const tCommon = useTranslations("common.actions");
@@ -86,6 +166,8 @@ export default function EmployeeFormDialog({
     resolver: zodResolver(employeeSchema),
     defaultValues: toFormValues(null),
     values: toFormValues(item),
+    // A career saved while this dialog is open refreshes `item`; keep what the user already typed.
+    resetOptions: { keepDirtyValues: true },
   });
 
   const [departmentId, supervisorId] = useWatch({ control: form.control, name: ["department_id", "supervisor_id"] });
@@ -93,7 +175,7 @@ export default function EmployeeFormDialog({
   const { data: departments, isLoading: isDepartmentsLoading } = useQuery({
     queryKey: DEPARTMENT_OPTIONS_QUERY_KEY,
     queryFn: () => GetDepartmentOptions(),
-    enabled: open,
+    enabled: open && !isUpdate,
   });
 
   const supervisorParams = { exclude_id: item?.id };
@@ -103,16 +185,7 @@ export default function EmployeeFormDialog({
     enabled: open,
   });
 
-  // The edited row's current department/supervisor may sit outside the 50 options the API returns.
-  const departmentItems = useMemo(() => {
-    const options = (departments ?? []).map((option) => ({ value: String(option.id), label: option.alias ? `${option.text} (${option.alias})` : option.text }));
-    const current = item?.department;
-    if (current && !options.some((option) => option.value === String(current.id))) {
-      options.unshift({ value: String(current.id), label: current.alias ? `${current.name} (${current.alias})` : current.name });
-    }
-
-    return [{ value: "", label: t("shared.form.none") }, ...options];
-  }, [departments, item, t]);
+  const departmentItems = useMemo(() => toDepartmentItems(departments, null, t("shared.form.none")), [departments, t]);
 
   const supervisorItems = useMemo(() => {
     const options = (supervisors ?? [])
@@ -186,7 +259,16 @@ export default function EmployeeFormDialog({
               <FormInput form={form} name="name" label={t("employees.fields.name")} placeholder={t("employees.form.namePlaceholder")} isRequired />
               <FormInput form={form} name="email" type="email" label={t("employees.fields.email")} placeholder={t("employees.form.emailPlaceholder")} />
               <FormInput form={form} name="phone_number" type="tel" label={t("employees.fields.phone")} placeholder={t("employees.form.phonePlaceholder")} />
-              <FormInput form={form} name="position" label={t("employees.fields.position")} placeholder={t("employees.form.positionPlaceholder")} />
+              {isUpdate && item && (
+                <CurrentCareerSummary
+                  item={item}
+                  onChangeCareer={onChangeCareer ? () => onChangeCareer(item) : undefined}
+                  onShowCareers={onShowCareers ? () => onShowCareers(item) : undefined}
+                />
+              )}
+              {!isUpdate && (
+                <FormInput form={form} name="position" label={t("employees.fields.position")} placeholder={t("employees.form.positionPlaceholder")} />
+              )}
               <FormCalendar
                 form={form}
                 name="join_date"
@@ -198,24 +280,26 @@ export default function EmployeeFormDialog({
                   setIsJoinDateOpen(false);
                 }}
               />
-              <FormComboBox
-                form={form}
-                name="department_id"
-                label={t("employees.fields.department")}
-                disabled={isPending || isDepartmentsLoading}
-                items={departmentItems}
-                value={departmentId}
-                hint={t("employees.form.departmentHint")}
-                searchLabel={t("employees.form.departmentSearch")}
-                emptyLabel={t("shared.form.noOptions")}
-                isError={!!form.formState.errors.department_id}
-                open={isDepartmentOpen}
-                onOpenChange={setIsDepartmentOpen}
-                onSelect={(value) => {
-                  setField("department_id", value);
-                  setIsDepartmentOpen(false);
-                }}
-              />
+              {!isUpdate && (
+                <FormComboBox
+                  form={form}
+                  name="department_id"
+                  label={t("employees.fields.department")}
+                  disabled={isPending || isDepartmentsLoading}
+                  items={departmentItems}
+                  value={departmentId}
+                  hint={t("employees.form.departmentHint")}
+                  searchLabel={t("employees.form.departmentSearch")}
+                  emptyLabel={t("shared.form.noOptions")}
+                  isError={!!form.formState.errors.department_id}
+                  open={isDepartmentOpen}
+                  onOpenChange={setIsDepartmentOpen}
+                  onSelect={(value) => {
+                    setField("department_id", value);
+                    setIsDepartmentOpen(false);
+                  }}
+                />
+              )}
               <FormComboBox
                 form={form}
                 name="supervisor_id"
@@ -234,13 +318,18 @@ export default function EmployeeFormDialog({
                   setIsSupervisorOpen(false);
                 }}
               />
-              <FormSelect
-                form={form}
-                name="employment_type"
-                label={t("employees.fields.employmentType")}
-                items={EMPLOYMENT_TYPES.map((type) => ({ value: type, label: t(`employees.employmentTypes.${type}`) }))}
-                isRequired
-              />
+              {!isUpdate && (
+                <>
+                  <FormSelect
+                    form={form}
+                    name="employment_type"
+                    label={t("employees.fields.employmentType")}
+                    items={EMPLOYMENT_TYPES.map((type) => ({ value: type, label: t(`employees.employmentTypes.${type}`) }))}
+                    isRequired
+                  />
+                  <FormInput form={form} name="grade" type="number" label={t("employees.fields.grade")} placeholder={t("employees.form.gradePlaceholder")} />
+                </>
+              )}
               <FormSelect
                 form={form}
                 name="status"

@@ -54,7 +54,7 @@ Local admin login: see "Login sebagai admin di lokal" in the leave-service READM
 | `/dashboard` | Home: the signed-in employee's profile |
 | `/leave/dashboard` | Personal leave summary, approver queue, organisation statistics and charts (`leave.view_all`) |
 | `/leave/requests` | My leave history and, for approvers, requests awaiting their decision (scope tabs, approve/reject, cancel, detail sheet), plus the new-request dialog (public holidays blocked, cuti bersama selectable) |
-| `/setup/master-data/employees`, `/setup/master-data/departments` | Employee and department master data (`employees.manage`, `departments.manage`) |
+| `/setup/master-data/employees`, `/setup/master-data/departments` | Employee and department master data with career history (status, grade, position, department over time) (`employees.manage`, `departments.manage`) |
 | `/appraisal/my`, `/appraisal/team`, `/appraisal/reports`, `/appraisal/periods`, `/appraisal/[id]` | Appraisal (F-HR-10): self-assessment, assessor's final ratings and targets, acknowledgement, HR report with PDF (`docs/appraisal-module.md`) |
 | `/setup/appraisal-templates` | Appraisal form template editor: sections, items, scales, leader-only items (`appraisal.manage_templates`) |
 | `/setup/master-data/holidays` | Public holidays and cuti bersama, blocked in the leave calendar (`holidays.manage`) |

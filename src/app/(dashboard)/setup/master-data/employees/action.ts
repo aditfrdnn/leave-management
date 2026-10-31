@@ -8,13 +8,21 @@ import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
 import type {
   TDepartmentOption,
+  TEmployeeCareer,
+  TEmployeeCareerPayload,
+  TEmployeeCareerResult,
   TEmployeeItem,
   TEmployeeListParams,
   TEmployeeOption,
   TEmployeeOptionParams,
   TEmployeePayload,
 } from "@/types/setup";
-import { employeeSchema, setupDeleteSchema } from "@/validations/setup-validations";
+import {
+  employeeCareerDeleteSchema,
+  employeeCareerSchema,
+  employeeSchema,
+  setupDeleteSchema,
+} from "@/validations/setup-validations";
 
 type EmployeeActionState = ActionState<TEmployeeItem>;
 
@@ -69,6 +77,7 @@ async function saveEmployee(formData: FormData | null, isUpdate: boolean): Promi
     email: getText(formData, "email"),
     phone_number: getText(formData, "phone_number"),
     position: getText(formData, "position"),
+    grade: getText(formData, "grade"),
     department_id: getText(formData, "department_id"),
     supervisor_id: getText(formData, "supervisor_id"),
     join_date: getText(formData, "join_date"),
@@ -92,13 +101,19 @@ async function saveEmployee(formData: FormData | null, isUpdate: boolean): Promi
     name: values.name,
     email: values.email || null,
     phone_number: values.phone_number ? values.phone_number.replace(/[\s-]/g, "") : null,
-    position: values.position || null,
-    department_id: toNullableId(values.department_id),
     supervisor_id: toNullableId(values.supervisor_id),
     join_date: values.join_date || null,
-    employment_type: values.employment_type,
     status: values.status,
   };
+
+  // Position, employment type, department and grade seed the first career row; after that they
+  // change only through career rows (docs/setup-module.md §14), so an update leaves them out.
+  if (!isUpdate) {
+    payload.position = values.position || null;
+    payload.department_id = toNullableId(values.department_id);
+    payload.employment_type = values.employment_type;
+    payload.grade = toNullableId(values.grade);
+  }
 
   try {
     const result = isUpdate ? await setupService.updateEmployee(id, payload) : await setupService.createEmployee(payload);
@@ -132,5 +147,104 @@ export async function DeleteEmployee(prevState: ActionState, formData: FormData)
     return { status: "success", message: result.message };
   } catch (error) {
     return toApiErrorState(error, t("employees.errors.delete"));
+  }
+}
+
+/* ----------------------------- Career history ----------------------------- */
+
+type EmployeeCareerActionState = ActionState<TEmployeeCareerResult>;
+
+/** Newest `effective_date` first. */
+export async function GetEmployeeCareers(employeeId: number): Promise<TEmployeeCareer[]> {
+  try {
+    const response = await setupService.getEmployeeCareers(employeeId);
+
+    return response.data ?? [];
+  } catch (error) {
+    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("employees.careers.errors.load")));
+  }
+}
+
+async function saveEmployeeCareer(formData: FormData | null, isUpdate: boolean): Promise<EmployeeCareerActionState> {
+  const t = await getTranslations("setup");
+
+  if (!formData) {
+    return toFormErrorState(t("shared.errors.formDataEmpty"));
+  }
+
+  const parsed = employeeCareerSchema.safeParse({
+    id: getText(formData, "id"),
+    employee_id: getText(formData, "employee_id"),
+    effective_date: getText(formData, "effective_date"),
+    employment_type: getText(formData, "employment_type"),
+    grade: getText(formData, "grade"),
+    position: getText(formData, "position"),
+    department_id: getText(formData, "department_id"),
+    note: getText(formData, "note"),
+  });
+
+  if (!parsed.success) {
+    return { status: "error", errors: parsed.error.flatten().fieldErrors };
+  }
+
+  const { id, employee_id, ...values } = parsed.data;
+
+  if (isUpdate && !id) {
+    return toFormErrorState(t("shared.errors.missingId"));
+  }
+
+  const payload: TEmployeeCareerPayload = {
+    effective_date: values.effective_date,
+    employment_type: values.employment_type,
+    grade: toNullableId(values.grade),
+    position: values.position,
+    department_id: toNullableId(values.department_id),
+    note: values.note || null,
+  };
+
+  try {
+    const result = isUpdate
+      ? await setupService.updateEmployeeCareer(employee_id, id, payload)
+      : await setupService.createEmployeeCareer(employee_id, payload);
+
+    return { status: "success", message: result.message, data: result.data };
+  } catch (error) {
+    return toApiErrorState(error, isUpdate ? t("employees.careers.errors.update") : t("employees.careers.errors.create"));
+  }
+}
+
+/** 422 on `effective_date` when the employee already has a row on that date. */
+export async function CreateEmployeeCareer(
+  prevState: EmployeeCareerActionState,
+  formData: FormData | null,
+): Promise<EmployeeCareerActionState> {
+  return saveEmployeeCareer(formData, false);
+}
+
+export async function UpdateEmployeeCareer(
+  prevState: EmployeeCareerActionState,
+  formData: FormData | null,
+): Promise<EmployeeCareerActionState> {
+  return saveEmployeeCareer(formData, true);
+}
+
+/** `id` = career row, `employee_id` = its employee. 409 when it is the only row. */
+export async function DeleteEmployeeCareer(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  const t = await getTranslations("setup");
+  const parsed = employeeCareerDeleteSchema.safeParse({
+    id: getText(formData, "id"),
+    employee_id: getText(formData, "employee_id"),
+  });
+
+  if (!parsed.success) {
+    return toFormErrorState(t("shared.errors.missingId"));
+  }
+
+  try {
+    const result = await setupService.deleteEmployeeCareer(parsed.data.employee_id, parsed.data.id);
+
+    return { status: "success", message: result.message };
+  } catch (error) {
+    return toApiErrorState(error, t("employees.careers.errors.delete"));
   }
 }

@@ -9,6 +9,8 @@ export const ACTIVE_STATUSES = ["active", "inactive"] as const;
 export const EMPLOYMENT_TYPES = ["permanent", "contract", "probation", "intern"] as const;
 
 const optionalId = z.string().regex(/^\d*$/);
+/** Company grade, 1–99; "" = none. */
+const optionalGrade = z.string().trim().regex(/^([1-9]\d?)?$/, "setup.employees.validation.gradeRange");
 
 export const setupDeleteSchema = z.object({
   id: z.coerce.number().int().positive(),
@@ -62,7 +64,9 @@ export const employeeSchema = z
       .string()
       .trim()
       .regex(/^(\+?[0-9][0-9\s-]{7,19})?$/, "setup.employees.validation.phoneInvalid"),
-    position: z.string().trim().max(255, "setup.employees.validation.positionMax"),
+    // Seeds the first career row on create, so it follows the career limit (§14).
+    position: z.string().trim().max(150, "setup.employees.validation.positionMax"),
+    grade: optionalGrade,
     department_id: optionalId,
     supervisor_id: optionalId,
     join_date: z.string().regex(/^(\d{4}-\d{2}-\d{2})?$/, "setup.employees.validation.joinDateInvalid"),
@@ -75,6 +79,29 @@ export const employeeSchema = z
   });
 
 export type EmployeeSchemaType = z.infer<typeof employeeSchema>;
+
+/** One career row (docs/setup-module.md §14); the effective date may be past or future. */
+export const employeeCareerSchema = z.object({
+  id: optionalId,
+  employee_id: z.string().regex(/^\d+$/, "setup.shared.errors.missingId"),
+  effective_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "setup.employees.careers.validation.effectiveDateRequired"),
+  employment_type: z.enum(EMPLOYMENT_TYPES, "setup.employees.validation.employmentTypeRequired"),
+  grade: optionalGrade,
+  position: z
+    .string()
+    .trim()
+    .min(1, "setup.employees.careers.validation.positionRequired")
+    .max(150, "setup.employees.validation.positionMax"),
+  department_id: optionalId,
+  note: z.string().trim().max(255, "setup.employees.careers.validation.noteMax"),
+});
+
+export type EmployeeCareerSchemaType = z.infer<typeof employeeCareerSchema>;
+
+export const employeeCareerDeleteSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  employee_id: z.coerce.number().int().positive(),
+});
 
 /* ------------------------------ Departments ------------------------------ */
 

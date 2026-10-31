@@ -9,6 +9,7 @@
     "title": "Employment",
     "employeeNumber": "Employee no. (NIK)",
     "position": "Position",
+    "grade": "Grade {grade}",
     "department": "Department",
     "supervisor": "Supervisor",
     "type": "Employment type",
@@ -22,6 +23,10 @@
     "tenure": "{years, plural, one {# year} other {# years}} {months, plural, one {# month} other {# months}}",
     "tenureYears": "{years, plural, one {# year} other {# years}}",
     "tenureMonths": "{months, plural, =0 {less than a month} one {# month} other {# months}}"
+  },
+  "careers": {
+    "title": "Career history",
+    "current": "Current"
   },
   "contact": {
     "title": "Contact",

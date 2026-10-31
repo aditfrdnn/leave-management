@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { dateFormatter } from "@/lib/utils/utils";
 import type { TActiveStatus, TEmployeeItem } from "@/types/setup";
-import { CheckmarkCircle02Icon, Delete02Icon, Link01Icon, MinusSignCircleIcon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
+import {
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Link01Icon,
+  MinusSignCircleIcon,
+  PencilEdit02Icon,
+  WorkHistoryIcon,
+} from "@hugeicons/core-free-icons";
 
 /** `useTranslations("setup")`, passed in because column factories cannot call hooks. */
 type TSetupTranslator = ReturnType<typeof useTranslations<"setup">>;
@@ -28,6 +35,7 @@ export const employeeColumns = ({
   current_page,
   per_page,
   onClickEdit,
+  onClickCareers,
   onClickDelete,
 }: {
   t: TSetupTranslator;
@@ -35,6 +43,7 @@ export const employeeColumns = ({
   current_page: number;
   per_page: number;
   onClickEdit: (item: TEmployeeItem) => void;
+  onClickCareers: (item: TEmployeeItem) => void;
   onClickDelete: (item: TEmployeeItem) => void;
 }): ColumnDef<TEmployeeItem>[] => [
   {
@@ -85,6 +94,16 @@ export const employeeColumns = ({
     cell: ({ row }) => <Badge variant="secondary">{t(`employees.employmentTypes.${row.original.employment_type}`)}</Badge>,
   },
   {
+    accessorKey: "grade",
+    header: t("employees.fields.grade"),
+    cell: ({ row }) =>
+      row.original.grade != null ? (
+        <span className="whitespace-nowrap tabular-nums">{t("employees.careers.grade", { grade: row.original.grade })}</span>
+      ) : (
+        <span className="text-muted-foreground">-</span>
+      ),
+  },
+  {
     accessorKey: "join_date",
     header: t("employees.fields.joinDate"),
     meta: { sortKey: "join_date" },
@@ -115,6 +134,16 @@ export const employeeColumns = ({
     header: () => <span className="sr-only">{t("shared.columns.actions")}</span>,
     cell: ({ row }) => (
       <div className="flex items-center justify-end gap-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          title={t("employees.careers.title")}
+          aria-label={t("employees.careers.showItem", { name: row.original.name })}
+          onClick={() => onClickCareers(row.original)}
+        >
+          <HugeiconsIcon icon={WorkHistoryIcon} className="size-4 text-muted-foreground" />
+        </Button>
         <Button
           type="button"
           variant="ghost"

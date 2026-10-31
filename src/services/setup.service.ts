@@ -3,6 +3,8 @@ import {
   departmentOptions,
   departments,
   employee,
+  employeeCareer,
+  employeeCareers,
   employeeOptions,
   employees,
   holiday,
@@ -26,6 +28,9 @@ import type {
   TDepartmentListParams,
   TDepartmentOption,
   TDepartmentPayload,
+  TEmployeeCareer,
+  TEmployeeCareerPayload,
+  TEmployeeCareerResult,
   TEmployeeItem,
   TEmployeeListParams,
   TEmployeeOption,
@@ -115,6 +120,33 @@ export const setupService = {
 
   async deleteEmployee(id: number | string) {
     const { data } = await instance.delete<TApiResponse<null>>(employee(id));
+
+    return data;
+  },
+
+  /* ---------------------------- Career history ---------------------------- */
+
+  async getEmployeeCareers(employeeId: number | string) {
+    const { data } = await instance.get<TApiResponse<TEmployeeCareer[]>>(employeeCareers(employeeId));
+
+    return data;
+  },
+
+  async createEmployeeCareer(employeeId: number | string, payload: TEmployeeCareerPayload) {
+    const { data } = await instance.post<TApiResponse<TEmployeeCareerResult>>(employeeCareers(employeeId), payload);
+
+    return data;
+  },
+
+  async updateEmployeeCareer(employeeId: number | string, careerId: number | string, payload: TEmployeeCareerPayload) {
+    const { data } = await instance.put<TApiResponse<TEmployeeCareerResult>>(employeeCareer(employeeId, careerId), payload);
+
+    return data;
+  },
+
+  /** 409 when it is the employee's only career row. */
+  async deleteEmployeeCareer(employeeId: number | string, careerId: number | string) {
+    const { data } = await instance.delete<TApiResponse<null>>(employeeCareer(employeeId, careerId));
 
     return data;
   },

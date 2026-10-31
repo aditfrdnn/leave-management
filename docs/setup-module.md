@@ -336,3 +336,58 @@ whose `my_approval.approval_action` is 0 — it feeds the tab badge.
 
 Decisions keep using `PATCH /api/leave-request/{id}/approve|reject`. `GET /api/leave-request/approvals` stays for
 compatibility but the frontend no longer calls it.
+
+---
+
+## 14. Career history and grade — `employees.manage`
+
+Added 31 Oct 2026. An employee's position, employment type, grade and department change over time
+(contract → permanent, promotions, transfers). Every change is a row in a history table; the employee
+record shows the current values.
+
+### Data model
+
+`employee_careers`:
+
+| Column | Notes |
+| --- | --- |
+| `id`, timestamps | |
+| `employee_id` | FK `employees`, cascade |
+| `effective_date` | date the change takes effect; unique per employee |
+| `employment_type` | `permanent`, `contract`, `probation`, `intern` |
+| `grade` | unsigned small int, nullable (company grades are numbers, e.g. 5) |
+| `position` | string ≤ 150, e.g. "Software Engineer Level 1" |
+| `department_id` | FK `departments`, nullable, `set null` |
+| `note` | nullable ≤ 255, e.g. "Pengangkatan karyawan tetap", "Promosi" |
+| `created_by` | FK users nullable |
+
+`employees` gets a nullable `grade` column. `employees.position`, `employment_type`, `department_id` and
+`grade` are a **cache of the current career row** = the row with the latest `effective_date` ≤ today (or, when
+every row is in the future, none applies and the employee keeps what it had). They are recomputed whenever a
+career row is added, changed or deleted, and every day by `php artisan hr-lite:sync-careers` (scheduled
+`dailyAt('00:10')`, Asia/Jakarta) so future-dated rows take effect on their date. The linked user is synced as
+before (department). An employee always has at least one career row (the last one cannot be deleted → 409
+`"Riwayat karir terakhir tidak dapat dihapus."`).
+
+**Backfill:** every existing employee gets one row from its current values, `effective_date` = `join_date`, or the
+employee's `created_at` date when there is none; `grade` null.
+
+### Endpoints
+
+| Method | Path | Body / query | Notes |
+| --- | --- | --- | --- |
+| POST | `/api/employees` | as §4 plus `grade?` | also creates the first career row (`effective_date` = `join_date` or today, note "Data awal") |
+| PUT | `/api/employees/{id}` | as §4 **without** `position`, `employment_type`, `department_id`, `grade` (ignored if sent) | those change only through career rows |
+| GET | `/api/employees/{id}/careers` | | `TEmployeeCareer[]`, newest `effective_date` first |
+| POST | `/api/employees/{id}/careers` | `effective_date` (Y-m-d), `employment_type`, `grade?` (1–99), `position`, `department_id?`, `note?` | 422 `effective_date` "Tanggal ini sudah ada di riwayat karir karyawan." when taken; returns the row + refreshed `TEmployeeItem` under `employee` |
+| PUT | `/api/employees/{id}/careers/{career}` | same | |
+| DELETE | `/api/employees/{id}/careers/{career}` | | 409 when it is the only row |
+
+```ts
+TEmployeeCareer = { id, effective_date, employment_type, grade: number | null, position,
+  department: { id, name, alias } | null, note: string | null, is_current: boolean,
+  created_by: { id, name } | null, created_at }
+```
+
+`TEmployeeItem` (§4) and the profile (§11) add `grade: number | null`. The profile's `employee` adds
+`careers: TEmployeeCareer[]` (newest first).

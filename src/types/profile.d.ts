@@ -1,3 +1,5 @@
+import type { TEmployeeCareer } from "./setup";
+
 /** `GET /api/me/profile` (docs/setup-module.md §11). */
 export type TMyProfile = {
   user: {
@@ -21,8 +23,11 @@ export type TMyEmployee = {
   /** `YYYY-MM-DD` */
   join_date: string | null;
   employment_type: "permanent" | "contract" | "probation" | "intern";
+  grade: number | null;
   status: "active" | "inactive";
   department: { id: number; name: string; alias: string } | null;
   supervisor: { id: number; name: string; employee_number: string; position: string | null } | null;
   subordinates: { id: number; name: string; position: string | null }[];
+  /** Newest `effective_date` first (§14). */
+  careers: TEmployeeCareer[];
 };
