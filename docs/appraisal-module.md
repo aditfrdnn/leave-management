@@ -30,6 +30,9 @@ Envelope, errors, pagination and permission middleware are the ones in `docs/int
   only to them.
 - **Ratings are side by side:** the employee gives `self`, the assessor gives `final`, for every rating item
   (Bagian I–III) and every KPI review row (Bagian IV.A). No overall total; a KPI row shows `weight × final`.
+- **The employee never sees the assessor's work**, also after the assessment: for the appraised employee the
+  API returns `final: null` and empty assessor-only review fields, and the PDF (which carries them) is closed
+  to them (`can_download: false`). The assessor and `appraisal.view_all` (HR) see everything.
 - **Prefill:** a new appraisal copies the KPI *target* rows of the employee's previous assessed appraisal
   into its KPI *review* rows (that is how IV.B of last year becomes IV.A of this year).
 - Closing a period stops new appraisals and editing; assessed ones are untouched.
@@ -152,7 +155,7 @@ with `errors["answers.<sectionKey>.<itemKey|index>.<field>"]` and a summary `mes
 | POST | `/api/appraisals/{id}/submit` | owner, from `draft` | completeness check |
 | POST | `/api/appraisals/{id}/return` | assessor, from `submitted` | `{ note }` required |
 | POST | `/api/appraisals/{id}/assess` | assessor, from `submitted` | completeness check |
-| GET | `/api/appraisals/{id}/pdf` | owner, assessor, `appraisal.view_all` | `application/pdf`, landscape A4, laid out like the paper F-HR-10: company logo + title + identity block, "Form No" and the part heading at the top of every page, final rating ✓ beside the level number, KPI rows with the final rating number and `w × p`, review boxes, "Tanggal" and two signature boxes with the stamped images; footer "Confidential". Self ratings are not printed (the paper form has one rating) |
+| GET | `/api/appraisals/{id}/pdf` | assessor, `appraisal.view_all` (never the appraised employee) | `application/pdf`, landscape A4, laid out like the paper F-HR-10: company logo + title + identity block, "Form No" and the part heading at the top of every page, the final rating's level cell filled green, KPI rows with the final rating number in a green cell and `w × p`, review boxes, "Tanggal" and two signature boxes with the stamped images; footer "Confidential". Self ratings are not printed (the paper form has one rating) |
 | GET / POST / DELETE | `/api/me/signature` | signed-in user | `{ signature: dataUri \| null }`; POST multipart `signature` (PNG/JPG, ≤ 2 MB, re-encoded to PNG, width ≤ 900 px) |
 
 ```ts
@@ -168,7 +171,7 @@ TAppraisalDetail = TAppraisalItem & {
   period: TAppraisalPeriod,
   is_leader: boolean,                     // leader-only items apply
   my_role: "employee" | "assessor" | "viewer",
-  can_edit: boolean, can_submit: boolean, can_return: boolean, can_assess: boolean,
+  can_edit: boolean, can_submit: boolean, can_return: boolean, can_assess: boolean, can_download: boolean,
 }
 ```
 

@@ -134,6 +134,8 @@ export type TAppraisalDetail = Omit<TAppraisalItem, "period"> & {
   can_submit: boolean;
   can_return: boolean;
   can_assess: boolean;
+  /** The PDF holds the assessor's ratings: assessor and `appraisal.view_all` only, never the appraised employee. */
+  can_download: boolean;
 };
 
 export type TAppraisalScope = "mine" | "team" | "all";

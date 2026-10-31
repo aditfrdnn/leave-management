@@ -30,7 +30,7 @@ import {
 import { GetAppraisal, SaveAppraisalAnswers, TransitionAppraisal } from "../../action";
 import { fillPeriodPlaceholders, periodRanges } from "../../_components/appraisal-format";
 import { APPRAISAL_DETAIL_QUERY_KEY } from "../../_components/query-keys";
-import { hasReached, kpiMinRows, normalizeAnswers, scrollToFirstError, toAnswerErrors, type TAnswerErrors, type TKpiRow } from "./answers";
+import { kpiMinRows, normalizeAnswers, scrollToFirstError, toAnswerErrors, type TAnswerErrors, type TKpiRow } from "./answers";
 import AppraisalHeader from "./appraisal-header";
 import ConfirmTransitionDialog from "./confirm-transition-dialog";
 import KpiSection from "./kpi-section";
@@ -76,7 +76,8 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
   const canEdit = detail.can_edit;
   const selfEditable = canEdit && role === "employee";
   const finalEditable = canEdit && role === "assessor";
-  const showFinal = role !== "employee" || hasReached(detail.status, "assessed");
+  // The appraised employee never sees the assessor's ratings or review (the API blanks them too).
+  const showFinal = role !== "employee";
   const ranges = periodRanges(detail.period, locale, (values) => t("format.range", values));
   const fill = (text: string) => fillPeriodPlaceholders(text, ranges);
 
@@ -206,7 +207,7 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
   /* -------------------------------- Render --------------------------------- */
 
   const isTextEditable = (field: TTextField) => canEdit && role !== "viewer" && (field.filled_by === "both" || field.filled_by === role);
-  const isTextHidden = (field: TTextField) => role === "employee" && field.filled_by === "assessor" && !hasReached(detail.status, "assessed");
+  const isTextHidden = (field: TTextField) => role === "employee" && field.filled_by === "assessor";
 
   const readOnlyReason =
     detail.status === "assessed"
@@ -331,12 +332,14 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
           {canEdit ? (isDirty ? t("form.unsaved") : t("form.saved")) : t(`status.${detail.status}`)}
         </p>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <Button asChild variant="outline" size="sm">
-            <a href={appraisalPdf(detail.id)} target="_blank" rel="noopener noreferrer">
-              <HugeiconsIcon icon={Download04Icon} className="size-4" />
-              {t("form.actions.pdf")}
-            </a>
-          </Button>
+          {detail.can_download && (
+            <Button asChild variant="outline" size="sm">
+              <a href={appraisalPdf(detail.id)} target="_blank" rel="noopener noreferrer">
+                <HugeiconsIcon icon={Download04Icon} className="size-4" />
+                {t("form.actions.pdf")}
+              </a>
+            </Button>
+          )}
           {canEdit && (
             <Button type="button" variant="outline" size="sm" disabled={isBusy} onClick={onSave}>
               {pending === "save" ? (

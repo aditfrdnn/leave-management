@@ -186,7 +186,7 @@
       "self": "Self assessment",
       "final": "Assessor rating",
       "notRated": "Not rated yet",
-      "finalHidden": "Shown once your assessor completes the assessment.",
+      "finalHidden": "Only your assessor and HR can see the final rating.",
       "leadersOnly": "Leaders only",
       "showScale": "Show scale descriptions",
       "hideScale": "Hide scale descriptions"
@@ -207,7 +207,7 @@
     },
     "text": {
       "placeholder": "Write here…",
-      "pending": "Your assessor fills this in.",
+      "pending": "Filled in by your assessor. Only your assessor and HR can see it.",
       "filledBy": {
         "employee": "Filled in by the employee",
         "assessor": "Filled in by the assessor",

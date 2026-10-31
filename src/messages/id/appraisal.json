@@ -186,7 +186,7 @@
       "self": "Penilaian diri",
       "final": "Penilaian atasan",
       "notRated": "Belum dinilai",
-      "finalHidden": "Ditampilkan setelah atasan menyelesaikan penilaian.",
+      "finalHidden": "Hanya atasan dan HR yang dapat melihat nilai akhir.",
       "leadersOnly": "Khusus pimpinan",
       "showScale": "Lihat deskripsi skala",
       "hideScale": "Sembunyikan deskripsi skala"
@@ -207,7 +207,7 @@
     },
     "text": {
       "placeholder": "Tulis di sini…",
-      "pending": "Bagian ini diisi oleh atasan Anda.",
+      "pending": "Diisi oleh atasan Anda. Hanya atasan dan HR yang dapat melihatnya.",
       "filledBy": {
         "employee": "Diisi oleh karyawan",
         "assessor": "Diisi oleh atasan",
