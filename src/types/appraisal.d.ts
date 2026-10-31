@@ -115,6 +115,8 @@ export type TAppraisalItem = {
   submitted_at: string | null;
   assessed_at: string | null;
   updated_at: string;
+  /** List rows: whether the viewer may open the PDF (false for their own appraisal). */
+  can_download?: boolean;
 };
 
 export type TAppraisalSnapshot = {

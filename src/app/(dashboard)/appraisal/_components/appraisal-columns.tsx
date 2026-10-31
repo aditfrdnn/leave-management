@@ -96,7 +96,8 @@ export const appraisalColumns = ({
       header: () => <span className="sr-only">{t("columns.actions")}</span>,
       cell: ({ row }) => (
         <div className="flex items-center justify-end gap-1">
-          {showPdf && (
+          {/* The API refuses the PDF to the appraised employee (e.g. HR viewing their own row). */}
+          {showPdf && row.original.can_download !== false && (
             <Button asChild variant="ghost" size="sm">
               <a href={appraisalPdf(row.original.id)} target="_blank" rel="noopener noreferrer" aria-label={t("list.downloadPdfFor", { name: row.original.employee.name })}>
                 <HugeiconsIcon icon={Download04Icon} className="size-4 text-muted-foreground" />

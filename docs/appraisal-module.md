@@ -164,7 +164,8 @@ TAppraisalPeriod = { id, name, review_start, review_end, target_start, target_en
   counts?: { total, draft, submitted, assessed } }
 TAppraisalItem = { id, status, period: { id, name, status }, employee: { id, name, employee_number, position,
   department: { id, name, alias } | null }, assessor: { id, name } | null,
-  submitted_at, assessed_at, updated_at }
+  submitted_at, assessed_at, updated_at,
+  can_download }                         // list rows: false on the viewer's own appraisal
 TAppraisalDetail = TAppraisalItem & {
   answers: TAppraisalAnswers, return_note: string | null, snapshot,
   template: { id, code, name, revision, schema: TAppraisalTemplateSchema },
