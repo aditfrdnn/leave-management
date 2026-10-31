@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       // Approvals live in "My Leave" now (docs/setup-module.md §13).
       { source: "/approvals", destination: "/leave/requests?scope=approvals", permanent: false },
       { source: "/leave/approvals", destination: "/leave/requests?scope=approvals", permanent: false },
+      // Appraisal templates moved from Setup into the Appraisal module.
+      { source: "/setup/appraisal-templates", destination: "/appraisal/templates", permanent: false },
+      { source: "/setup/appraisal-templates/:id", destination: "/appraisal/templates/:id", permanent: false },
     ];
   },
 };

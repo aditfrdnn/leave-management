@@ -43,7 +43,7 @@ import { GroupError, PlaceholderHint } from "./editor-fields";
 import SectionCard from "./section-card";
 import TemplatePreview from "./template-preview";
 
-const LIST_HREF = "/setup/appraisal-templates";
+const LIST_HREF = "/appraisal/templates";
 /** Same key as the list page's table, so a save or duplicate refreshes it. */
 const APPRAISAL_TEMPLATES_QUERY_KEY = ["setup", "appraisal-templates"] as const;
 export const APPRAISAL_TEMPLATE_QUERY_KEY = (id: number) => ["setup", "appraisal-template", id] as const;

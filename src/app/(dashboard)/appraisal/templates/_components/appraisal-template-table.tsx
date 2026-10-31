@@ -63,7 +63,7 @@ export default function AppraisalTemplateTable() {
   const openTemplate = (state: ActionState<TAppraisalTemplate>, fallback: string) => {
     queryClient.invalidateQueries({ queryKey: APPRAISAL_TEMPLATES_QUERY_KEY });
     toast.success(translateMessage(state.message) || fallback);
-    if (state.data) router.push(`/setup/appraisal-templates/${state.data.id}`);
+    if (state.data) router.push(`/appraisal/templates/${state.data.id}`);
   };
 
   const createDraft = useMutation({
@@ -88,7 +88,7 @@ export default function AppraisalTemplateTable() {
         current_page: pagination?.current_page ?? 1,
         per_page: pagination?.per_page ?? perPage,
         busyId,
-        onClickEdit: (item) => router.push(`/setup/appraisal-templates/${item.id}`),
+        onClickEdit: (item) => router.push(`/appraisal/templates/${item.id}`),
         onClickDuplicate: (item) => duplicate.mutate(item),
         onClickDelete: (item) => setDeletedItem(item),
       }),

@@ -24,7 +24,7 @@
     "teamAppraisals": "Team Appraisals",
     "appraisalReports": "Reports",
     "appraisalPeriods": "Periods",
-    "appraisalTemplates": "Appraisal Template"
+    "appraisalTemplates": "Templates"
   },
   "segments": {
     "dashboard": "Dashboard",
@@ -46,8 +46,8 @@
     "team": "Team Appraisals",
     "reports": "Reports",
     "periods": "Periods",
-    "appraisal-templates": "Appraisal Template",
     "appraisal_id": "Form",
-    "appraisal-templates_id": "Editor"
+    "templates": "Templates",
+    "templates_id": "Editor"
   }
 }

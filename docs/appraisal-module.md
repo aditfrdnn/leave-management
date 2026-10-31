@@ -186,7 +186,7 @@ TAppraisalDetail = TAppraisalItem & {
 | `/appraisal/reports` | Appraisal — every appraisal of a period + PDF | `appraisal.view_all` |
 | `/appraisal/periods` | Appraisal — open / close periods | `appraisal.manage_periods` |
 | `/appraisal/[id]` | Appraisal — the form (employee, assessor or read-only view) | access per §5 |
-| `/setup/appraisal-templates`, `/setup/appraisal-templates/[id]` | Setup — template list and editor | `appraisal.manage_templates` |
+| `/appraisal/templates`, `/appraisal/templates/[id]` | Appraisal — template list and editor (old `/setup/appraisal-templates` links redirect) | `appraisal.manage_templates` |
 
 The PDF is fetched through the same-origin route handler `src/app/api/appraisals/[id]/pdf/route.ts`
 (httpOnly token cookie → Bearer), so the browser never sees the token.
