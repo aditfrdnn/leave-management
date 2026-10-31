@@ -39,7 +39,7 @@ function buildFormData(values: RoleSchemaType) {
 
 /**
  * One dialog for create and update. Permissions are checkbox groups from
- * `GET /api/permissions/groups`, each with its own "select all". A system role keeps its title.
+ * `GET /api/permissions/groups`, each with its own "select all". Any role can be renamed; the hint says what a rename affects.
  */
 export default function RoleFormDialog({
   open,
@@ -56,7 +56,6 @@ export default function RoleFormDialog({
   const tCommon = useTranslations("common.actions");
   const translateMessage = useTranslateMessage();
   const isUpdate = !!item;
-  const isSystem = !!item?.is_system;
   const [permissionSearch, setPermissionSearch] = useState("");
 
   const form = useForm<RoleSchemaType>({
@@ -160,10 +159,9 @@ export default function RoleFormDialog({
                   name="title"
                   label={t("roles.fields.title")}
                   placeholder={t("roles.form.titlePlaceholder")}
-                  readOnly={isSystem}
                   isRequired
                 />
-                {isSystem && <p className="text-xs text-muted-foreground">{t("roles.form.systemTitleHint")}</p>}
+                {isUpdate && <p className="text-xs text-muted-foreground">{t("roles.form.titleChangeHint")}</p>}
               </div>
               <FormInput
                 form={form}

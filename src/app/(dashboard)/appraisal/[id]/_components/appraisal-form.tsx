@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -43,12 +44,22 @@ type TPending = "save" | TAppraisalTransition | null;
 /** Loads the appraisal; the API decides access, so a 403 lands in the error state. */
 export default function AppraisalForm({ id }: { id: number }) {
   const t = useTranslations("appraisal");
+  const tGate = useTranslations("common.permissionGate");
+  const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: APPRAISAL_DETAIL_QUERY_KEY(id),
     queryFn: () => GetAppraisal(id),
   });
+  // null = not mine to see (403/404): go home instead of showing a locked page.
+  const denied = !isLoading && !isError && data === null;
 
-  if (isLoading) return <SectionLoader className="min-h-60" />;
+  useEffect(() => {
+    if (!denied) return;
+    toast.info(tGate("redirected"), { id: "route-guard" });
+    router.replace("/");
+  }, [denied, router, tGate]);
+
+  if (isLoading || denied) return <SectionLoader className="min-h-60" />;
 
   if (isError || !data) {
     return <ErrorState title={t("page.form.title")} error={(error as Error) ?? new Error(t("errors.loadDetail"))} reset={() => refetch()} />;
@@ -142,7 +153,7 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
 
   const reloadDetail = async () => {
     const fresh = await queryClient.fetchQuery({ queryKey: detailKey, queryFn: () => GetAppraisal(detail.id), staleTime: 0 });
-    applyDetail(fresh);
+    if (fresh) applyDetail(fresh);
   };
 
   /** PUT the answers; resolves to false when it failed (errors already shown). */

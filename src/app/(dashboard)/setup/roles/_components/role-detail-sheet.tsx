@@ -4,10 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { Reveal, SectionLoader } from "@/components/common/loader";
-import { Badge } from "@/components/ui/badge";
-import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { LockIcon } from "@hugeicons/core-free-icons";
 import { GetRole } from "../action";
 
 export const ROLE_DETAIL_PREFIX = ["setup", "role"] as const;
@@ -29,12 +26,6 @@ export default function RoleDetailSheet({ roleId, onOpenChange }: { roleId: numb
         <SheetHeader>
           <SheetTitle className="flex flex-wrap items-center gap-2">
             {data?.title ?? t("roles.detail.fallbackTitle")}
-            {data?.is_system && (
-              <Badge variant="outline" className="gap-1">
-                <HugeiconsIcon icon={LockIcon} className="size-3" />
-                {t("shared.system")}
-              </Badge>
-            )}
           </SheetTitle>
           <SheetDescription>{data?.description || t("roles.detail.description")}</SheetDescription>
         </SheetHeader>

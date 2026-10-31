@@ -1,33 +1,30 @@
 "use client";
 
+import { useEffect, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { toast } from "sonner";
 
 import { SectionLoader } from "@/components/common/loader";
-import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { usePermission } from "@/lib/permission";
-import { SquareLock02Icon } from "@hugeicons/core-free-icons";
 
-/** Renders `children` only when the signed-in user holds `permission`; otherwise a quiet notice. */
-export default function PermissionGate({ permission, title, children }: { permission: string; title: string; children: ReactNode }) {
+/**
+ * Renders `children` only when the signed-in user holds `permission`. Without it the browser goes
+ * to `/`: nobody is left on a page they may not use (see `RouteGuard` for the route-level check).
+ */
+export default function PermissionGate({ permission, children }: { permission: string; title?: string; children: ReactNode }) {
   const t = useTranslations("common.permissionGate");
+  const router = useRouter();
   const { loading, allowed } = usePermission(permission);
+  const denied = !loading && !allowed;
 
-  if (loading) return <SectionLoader className="min-h-60" />;
+  useEffect(() => {
+    if (!denied) return;
+    toast.info(t("redirected"), { id: "route-guard" });
+    router.replace("/");
+  }, [denied, router, t]);
 
-  if (!allowed) {
-    return (
-      <div className="flex min-h-60 flex-col items-center justify-center gap-3 rounded-xl border border-dashed p-8 text-center">
-        <div className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <HugeiconsIcon icon={SquareLock02Icon} className="size-6" />
-        </div>
-        <div className="flex max-w-md flex-col gap-1">
-          <p className="text-base font-semibold">{t("unavailableTitle", { title })}</p>
-          <p className="text-sm text-muted-foreground">{t("unavailableDescription", { permission })}</p>
-        </div>
-      </div>
-    );
-  }
+  if (!allowed) return <SectionLoader className="min-h-60" />;
 
   return <>{children}</>;
 }

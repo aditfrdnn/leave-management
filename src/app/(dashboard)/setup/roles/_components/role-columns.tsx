@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import type { TRoleItem } from "@/types/setup";
-import { Delete02Icon, LockIcon, PencilEdit02Icon, ViewIcon } from "@hugeicons/core-free-icons";
+import { Delete02Icon, PencilEdit02Icon, ViewIcon } from "@hugeicons/core-free-icons";
 
 /** `useTranslations("setup")`, passed in because column factories cannot call hooks. */
 type TSetupTranslator = ReturnType<typeof useTranslations<"setup">>;
@@ -40,12 +40,6 @@ export const roleColumns = ({
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <span className="font-medium whitespace-nowrap">{row.original.title}</span>
-        {row.original.is_system && (
-          <Badge variant="outline" className="gap-1">
-            <HugeiconsIcon icon={LockIcon} className="size-3" />
-            {t("shared.system")}
-          </Badge>
-        )}
       </div>
     ),
   },
@@ -110,17 +104,15 @@ export const roleColumns = ({
         >
           <HugeiconsIcon icon={PencilEdit02Icon} className="size-4 text-muted-foreground" />
         </Button>
-        {!row.original.is_system && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={t("shared.actions.deleteItem", { name: row.original.title })}
-            onClick={() => onClickDelete(row.original)}
-          >
-            <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={t("shared.actions.deleteItem", { name: row.original.title })}
+          onClick={() => onClickDelete(row.original)}
+        >
+          <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
+        </Button>
       </div>
     ),
   },

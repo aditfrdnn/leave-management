@@ -261,7 +261,6 @@
     "ok": "OK"
   },
   "permissionGate": {
-    "unavailableTitle": "{title} tidak tersedia",
-    "unavailableDescription": "Akun Anda tidak punya hak akses {permission}. Minta administrator untuk memberikannya."
+    "redirected": "Anda tidak punya akses ke halaman itu, jadi diarahkan ke Beranda."
   }
 }

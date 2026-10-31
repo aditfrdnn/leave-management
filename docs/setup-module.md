@@ -14,8 +14,8 @@ All routes below are under `auth:sanctum`.
 
 | Table | Columns | Notes |
 | --- | --- | --- |
-| `permissions` | `id`, `title` unique (`leave.request`), `label`, `group_name`, `is_system` bool, timestamps | Seeded catalog (§2). System rows cannot be deleted or renamed. |
-| `roles` | `id`, `title` unique, `description` nullable, `is_system` bool, timestamps | Seeded roles (§2). |
+| `permissions` | `id`, `title` unique (`leave.request`), `label`, `group_name`, timestamps | Seeded catalog (§2). Every row can be renamed or deleted (the app checks pages by title, so renaming a built-in key closes its feature). |
+| `roles` | `id`, `title` unique, `description` nullable, timestamps | Seeded roles (§2); all editable. |
 | `permission_role` | `permission_id`, `role_id` (both FK cascade, composite PK) | |
 | `users` | + `role_id` nullable FK `set null`, + `employee_id` nullable unique FK `set null` | One role per user (pdi-api, next-prm). |
 | `employees` | `id`, `employee_number` unique (NIK), `name`, `email` nullable unique, `phone_number` nullable, `position` nullable, `department_id` nullable FK, `supervisor_id` nullable FK → `employees.id` `set null`, `join_date` nullable date, `employment_type` enum `permanent,contract,probation,intern` default `permanent`, `status` enum `active,inactive` default `active`, timestamps | HR master data. |
@@ -103,17 +103,17 @@ DELETE → 409 `"Departemen masih dipakai karyawan."` when employees or users re
 | --- | --- | --- | --- |
 | GET | `/api/roles` | `page, per_page, search` (title) | paginated `TRoleItem` |
 | GET | `/api/roles/{id}` | | `TRoleItem` + `users: { id, name, email }[]` |
-| POST / PUT | `/api/roles[/{id}]` | `title, description?, permission_ids: number[]` (min 1) | system role titles cannot change (422 `title`) |
-| DELETE | `/api/roles/{id}` | | 409 when `users_count > 0` or `is_system` |
-| GET | `/api/permissions` | `page, per_page, search` (title, label), `group_name` | paginated `TPermissionItem` |
+| POST / PUT | `/api/roles[/{id}]` | `title, description?, permission_ids: number[]` (min 1) | any title may change |
+| DELETE | `/api/roles/{id}` | | 409 when `users_count > 0` |
+| GET | `/api/permissions` | `page, per_page, search` (title, label), `columns[group][]` | paginated `TPermissionItem` |
 | GET | `/api/permissions/groups` | | `{ group_name, permissions: TPermissionItem[] }[]` — for the role form |
-| POST / PUT | `/api/permissions[/{id}]` | `title` (`^[a-z_]+\.[a-z_]+$`), `label`, `group_name` | system rows: only `label`/`group_name` change |
-| DELETE | `/api/permissions/{id}` | | 409 when `is_system` or attached to a role |
+| POST / PUT | `/api/permissions[/{id}]` | `title` (`^[a-z_]+\.[a-z_]+$`), `label`, `group_name` | |
+| DELETE | `/api/permissions/{id}` | | 409 when attached to a role |
 
 ```ts
-TRoleItem = { id, title, description, is_system, users_count, permission_ids: number[],
+TRoleItem = { id, title, description, users_count, permission_ids: number[],
               permissions: { id, title, label }[], created_at }
-TPermissionItem = { id, title, label, group_name, is_system, roles_count, created_at }
+TPermissionItem = { id, title, label, group_name, roles_count, created_at }
 ```
 
 ## 7. Options (dropdowns)
@@ -393,3 +393,11 @@ TEmployeeCareer = { id, effective_date, employment_type, grade: number | null, p
 
 `TEmployeeItem` (§4) and the profile (§11) add `grade: number | null`. The profile's `employee` adds
 `careers: TEmployeeCareer[]` (newest first).
+
+## 15. Page access
+
+Since 2026-11-01 nobody stays on a page they may not open. `RouteGuard` in the dashboard layout checks
+`canOpenPath(pathname, permissions)` (the module menus' permissions) and `PermissionGate` checks each page's
+permission; either one sends the browser to `/` with a short notice. An appraisal the user may not see
+(API 403/404) does the same. The API keeps enforcing every permission on its own. Roles and permissions no
+longer have a "system" flag: an administrator can rename or delete any of them.

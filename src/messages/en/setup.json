@@ -1,6 +1,5 @@
 {
   "shared": {
-    "system": "System",
     "columns": {
       "no": "No.",
       "status": "Status",
@@ -276,12 +275,12 @@
       "description": "Tick the permissions this role grants. Users with the role get them on their next page load.",
       "titlePlaceholder": "e.g., Team Lead",
       "descriptionPlaceholder": "What this role is for",
-      "systemTitleHint": "Built-in role: its name can't be changed.",
       "searchPermission": "Search permissions",
       "selected": "{count, plural, =0 {None selected} other {# selected}}",
       "selectAllGroup": "{selected} of {total}",
       "noPermissionMatch": "No permission matches your search.",
-      "noPermissionAvailable": "No permissions are available."
+      "noPermissionAvailable": "No permissions are available.",
+      "titleChangeHint": "Some features look roles up by name (e.g. Lead/Project Manager for the approver list and leader-only items). Renaming changes that behaviour."
     },
     "detail": {
       "fallbackTitle": "Role",
@@ -334,9 +333,9 @@
       "description": "A permission only does something once the app checks its key.",
       "titlePlaceholder": "e.g., leave.export",
       "titleHint": "Lowercase group and action separated by a dot, e.g. leave.export.",
-      "systemTitleHint": "Built-in permission: its key can't be changed.",
       "labelPlaceholder": "e.g., Export leave data",
-      "groupPlaceholder": "e.g., leave"
+      "groupPlaceholder": "e.g., leave",
+      "titleChangeHint": "The app opens pages and menus by key. Renaming or deleting a built-in key can close access to its feature."
     },
     "toast": {
       "created": "Permission added.",
@@ -397,7 +396,6 @@
       "title": "Balance history",
       "current": "now {value} days",
       "empty": "No changes yet.",
-      "system": "system",
       "after": "→ {value}",
       "newer": "Newer",
       "older": "Older",
@@ -405,7 +403,8 @@
         "set": "Set by HR",
         "accrual": "Monthly +1 ({period})",
         "leave": "Approved leave"
-      }
+      },
+      "system": "system"
     },
     "toast": {
       "saved": "Balance saved.",

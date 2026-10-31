@@ -183,7 +183,6 @@ export type TRoleItem = {
   id: number;
   title: string;
   description: string | null;
-  is_system: boolean;
   users_count: number;
   permission_ids: number[];
   permissions: { id: number; title: string; label: string }[];
@@ -213,7 +212,6 @@ export type TPermissionItem = {
   title: string;
   label: string;
   group_name: string;
-  is_system: boolean;
   roles_count: number;
   created_at: string;
 };

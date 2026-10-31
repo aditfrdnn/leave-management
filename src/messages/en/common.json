@@ -261,7 +261,6 @@
     "ok": "OK"
   },
   "permissionGate": {
-    "unavailableTitle": "{title} is not available",
-    "unavailableDescription": "Your account does not have the {permission} permission. Ask an administrator to grant it."
+    "redirected": "You do not have access to that page, so you were taken Home."
   }
 }

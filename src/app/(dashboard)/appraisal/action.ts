@@ -36,12 +36,16 @@ export async function GetAppraisalPeriods(params: TAppraisalPeriodListParams): P
   }
 }
 
-export async function GetAppraisal(id: number | string): Promise<TAppraisalDetail> {
+/** `null` when the appraisal does not exist or is not mine to see (403/404): the page then goes home. */
+export async function GetAppraisal(id: number | string): Promise<TAppraisalDetail | null> {
   try {
     const response = await appraisalService.getAppraisal(id);
 
     return response.data;
   } catch (error) {
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (status === 403 || status === 404) return null;
+
     throw new Error(toApiErrorMessage(error, (await getTranslations("appraisal"))("errors.loadDetail")));
   }
 }

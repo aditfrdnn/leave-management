@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import type { TPermissionItem } from "@/types/setup";
-import { Delete02Icon, LockIcon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
+import { Delete02Icon, PencilEdit02Icon } from "@hugeicons/core-free-icons";
 
 /** `useTranslations("setup")`, passed in because column factories cannot call hooks. */
 type TSetupTranslator = ReturnType<typeof useTranslations<"setup">>;
@@ -42,12 +42,6 @@ export const permissionColumns = ({
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <span className="font-mono text-xs whitespace-nowrap">{row.original.title}</span>
-        {row.original.is_system && (
-          <Badge variant="outline" className="gap-1">
-            <HugeiconsIcon icon={LockIcon} className="size-3" />
-            {t("shared.system")}
-          </Badge>
-        )}
       </div>
     ),
   },
@@ -72,7 +66,7 @@ export const permissionColumns = ({
     enableHiding: false,
     header: () => <span className="sr-only">{t("shared.columns.actions")}</span>,
     cell: ({ row }) => {
-      const canDelete = !row.original.is_system && (row.original.roles_count ?? 0) === 0;
+      const canDelete = (row.original.roles_count ?? 0) === 0;
 
       return (
         <div className="flex items-center justify-end gap-1">

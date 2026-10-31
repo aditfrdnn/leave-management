@@ -27,7 +27,7 @@ function buildFormData(values: PermissionSchemaType) {
   return formData;
 }
 
-/** One dialog for create and update. A system permission keeps its title. */
+/** One dialog for create and update. Any permission key can change; the hint says what a rename affects. */
 export default function PermissionFormDialog({
   open,
   onOpenChange,
@@ -43,7 +43,6 @@ export default function PermissionFormDialog({
   const tCommon = useTranslations("common.actions");
   const translateMessage = useTranslateMessage();
   const isUpdate = !!item;
-  const isSystem = !!item?.is_system;
 
   const form = useForm<PermissionSchemaType>({
     resolver: zodResolver(permissionSchema),
@@ -107,10 +106,9 @@ export default function PermissionFormDialog({
                   name="title"
                   label={t("fields.title")}
                   placeholder={t("form.titlePlaceholder")}
-                  readOnly={isSystem}
                   isRequired
                 />
-                <p className="text-xs text-muted-foreground">{isSystem ? t("form.systemTitleHint") : t("form.titleHint")}</p>
+                <p className="text-xs text-muted-foreground">{isUpdate ? t("form.titleChangeHint") : t("form.titleHint")}</p>
               </div>
               <FormInput form={form} name="label" label={t("fields.label")} placeholder={t("form.labelPlaceholder")} isRequired />
               <FormInput form={form} name="group_name" label={t("fields.group")} placeholder={t("form.groupPlaceholder")} isRequired />
