@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { appraisalPdf } from "@/constants/endpoint-constant";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
+import { useRefreshAfterChange } from "@/lib/refresh-after-change";
 import type { ActionState } from "@/types/action-state";
 import type { TAppraisalDetail, TKpiReviewRow, TKpiTargetRow, TRatingAnswer, TTextField } from "@/types/appraisal";
 import type { TAppraisalTransition } from "@/validations/appraisal-validations";
@@ -29,7 +30,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { GetAppraisal, SaveAppraisalAnswers, TransitionAppraisal } from "../../action";
 import { fillPeriodPlaceholders, periodRanges } from "../../_components/appraisal-format";
-import { APPRAISAL_DETAIL_QUERY_KEY, APPRAISAL_LIST_QUERY_KEY, APPRAISAL_PERIODS_QUERY_KEY } from "../../_components/query-keys";
+import { APPRAISAL_DETAIL_QUERY_KEY } from "../../_components/query-keys";
 import { hasReached, kpiMinRows, normalizeAnswers, scrollToFirstError, toAnswerErrors, type TAnswerErrors, type TKpiRow } from "./answers";
 import AppraisalHeader from "./appraisal-header";
 import ConfirmTransitionDialog from "./confirm-transition-dialog";
@@ -62,6 +63,7 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
   const t = useTranslations("appraisal");
   const locale = useLocale();
   const queryClient = useQueryClient();
+  const refreshAfterChange = useRefreshAfterChange();
   const translateMessage = useTranslateMessage();
 
   const [answers, setAnswers] = useState(() => normalizeAnswers(detail));
@@ -155,6 +157,7 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
     setErrors({});
     if (state.data?.template) applyDetail(state.data);
     else await reloadDetail();
+    refreshAfterChange();
 
     return true;
   };
@@ -170,10 +173,6 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
     }
   };
 
-  const refreshLists = () => {
-    queryClient.invalidateQueries({ queryKey: APPRAISAL_LIST_QUERY_KEY });
-    queryClient.invalidateQueries({ queryKey: APPRAISAL_PERIODS_QUERY_KEY });
-  };
 
   const runTransition = async (transition: TAppraisalTransition) => {
     setPending(transition);
@@ -190,8 +189,8 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
 
       toast.success(translateMessage(state.message) || t(`form.toast.${transition}Done`));
       setErrors({});
-      refreshLists();
       await reloadDetail();
+      refreshAfterChange();
     } catch (failure) {
       toast.error(t(`form.toast.${transition}Failed`), { description: failure instanceof Error ? failure.message : undefined });
     } finally {
@@ -200,8 +199,8 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
     }
   };
 
+  // The return itself is a useMutation, so the global refresh already covers the lists.
   const afterReturn = async () => {
-    refreshLists();
     await reloadDetail();
   };
 

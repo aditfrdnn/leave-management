@@ -93,7 +93,7 @@ LeaveRequestFormDialog ── useQuery(["leave","leave-types"|"approvers"]) ─�
 - **Envelope** (`types/api.d.ts`): `{ success?, message?, data }`; lists are plain arrays.
 - **Errors** (`lib/api-error.ts`): `toApiErrorState` turns leave-service's 422 `{ success:false, message, data:{field:[…]} }` (or Laravel's `{ message, errors }`) and `{ success:false, message }` into `ActionState` (`errors.<field>` for the form, `errors._form` for a toast).
 - **Form → API**: dates travel as `dd-MM-yyyy` strings (`LEAVE_DATE_FORMAT`); `return_to_office` is computed client-side as the next working day after the last selected date; `leave_date[]` is appended per item to `FormData`.
-- **After a successful submit** the form resets and `["leave","requests"]` is invalidated, so the history refetches.
+- **After a successful submit** the form resets. The global mutation refresh marks every query stale, so the history, balance and dashboard refetch (RULES "Data freshness").
 - **Table** runs `DataTable` in client mode (the API returns the whole list): `meta.sortKey` on LVR no / dates / submitted, `meta.filterKey` on leave type and status, facets counted from the rows.
 
 ---

@@ -77,7 +77,7 @@
 ## 10. Performance
 
 - [ ] No duplicate `useQuery` for the same resource across sibling components on the same page (`RULES.md` §14).
-- [ ] `queryKey` includes every input that changes the result (page, limit, filters, id) — required because `staleTime` is effectively infinite in this app.
+- [ ] `queryKey` includes every input that changes the result (page, limit, filters, id) — otherwise two inputs share one cache entry.
 - [ ] Zustand selectors are narrow (`useAuthStore((s) => s.user)`), not whole-store destructuring, where the component only needs one field.
 - [ ] Derived table columns are memoized with `useMemo` keyed on the data driving them, matching every existing `*-columns.tsx` consumer.
 - [ ] New non-interactive sections default to Server Components rather than reflexive `"use client"`, where the existing pattern in that area allows it.

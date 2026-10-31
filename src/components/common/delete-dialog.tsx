@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
+import { useRefreshAfterChange } from "@/lib/refresh-after-change";
 
 type DeleteDialogProps = {
   open: boolean
@@ -41,6 +42,7 @@ export default function DeleteDialog({
 }: DeleteDialogProps) {
   const t = useTranslations("common");
   const translateMessage = useTranslateMessage();
+  const refreshAfterChange = useRefreshAfterChange();
 
   // Delete Handling
   const [deleteState, deleteAction, isPendingDelete] = useActionState<ActionState, FormData>(action, { status: "idle" });
@@ -65,6 +67,7 @@ export default function DeleteDialog({
     if (deleteState.status === "success") {
       toast.success(translateMessage(deleteState.message) || t("deleteDialog.success"))
       onOpenChange(false)
+      refreshAfterChange()
       onSuccess?.()
     }
   }, [deleteState])

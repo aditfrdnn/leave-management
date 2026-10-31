@@ -21,7 +21,7 @@ What exists today in the area this touches (files, data flow, the sibling featur
 
 ## 4. Data and API
 
-Service functions called, query keys, which queries a mutation invalidates.
+Service functions called, query keys, and any write that bypasses `useMutation` (it must call `useRefreshAfterChange`).
 
 ## 5. Messages
 

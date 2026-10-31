@@ -160,13 +160,19 @@ Do not change this flow; extend features on top of it.
 
 | Use…                         | When…                                                                                                                                                                  | Not for…                                              |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **React Query** (`useQuery`) | Any read of server data in a client component. Put every input in `queryKey` (`["leave", "requests"]`, `["leave", "leave-types"]`): `staleTime` is `Infinity` and nothing refetches on its own. | Raw `fetch`/`instance` in a component.                |
+| **React Query** (`useQuery`) | Any read of server data in a client component. Put every input in `queryKey` (`["leave", "requests"]`, `["leave", "leave-types"]`): data stays fresh for 30 s, then refetches on page open, tab focus and reconnect. | Raw `fetch`/`instance` in a component.                |
 | **`useMutation`**            | Only as the wrapper around a Server Action in a form dialog (see §9), so pending/error/success wiring is uniform.                                                       | Calling the API directly in `mutationFn`.             |
 | **Zustand**                  | State visible outside a subtree and across routes: the auth session. Select narrow slices (`useAuthStore((s) => s.user)`).                                             | Feature-local UI state.                               |
 | **`useState` / RHF**         | Dialog open/close, filters, page/limit (`useListParams`), all form fields.                                                                                             | Anything another route needs.                         |
 | **Server Actions**           | The only mechanism that writes.                                                                                                                                        | —                                                     |
 
-**After a mutation succeeds** call `queryClient.invalidateQueries` for the exact key (`LEAVE_REQUESTS_QUERY_KEY`) or the owning query's `refetch`. `router.refresh()` is for auth state only.
+**Data freshness.** Every successful write refreshes every cached query and the signed-in identity
+(`src/lib/refresh-after-change.ts`), because writes touch data other screens show: a role change
+moves the approver list and the sidebar, an approval moves balances and the dashboard.
+
+- A write through `useMutation` is covered by the `MutationCache` in `react-query-provider.tsx`; add nothing. Opt out only with `meta: { refresh: false }`.
+- A write that does not use `useMutation` (useActionState, a direct action call) calls `useRefreshAfterChange()` on success. `DeleteDialog` and the appraisal form already do.
+- Never answer stale data with a page reload or a hand-picked list of keys. `router.refresh()` is for auth state only.
 
 ---
 
@@ -252,7 +258,7 @@ Do not change this flow; extend features on top of it.
 | 6   | Reuse `common/Form*`, `DataTable`, `DeleteDialog`, `PageHeader`, the status badge | Rebuild a field, table, confirm dialog, header or status pill           |
 | 7   | Use `useListParams` for page/limit/search                                     | Keep pagination in a global context                                        |
 | 8   | Put every param in the `queryKey`                                             | Reuse a static key for a parameterised query                               |
-| 9   | Refetch/invalidate the affected query after a mutation                        | Rely on a page reload                                                      |
+| 9   | Write through `useMutation` (or call `useRefreshAfterChange` on success)      | Rely on a page reload                                                      |
 | 10  | Icons via `HugeiconsIcon`                                                     | `lucide-react`, raw `@hugeicons/react`, emoji                              |
 | 11  | Tokens (`bg-primary/10`, `text-green-strong`)                                 | Hex or palette colors in `className`                                       |
 | 12  | `type-*` roles and 400/500/600 weights                                        | `font-bold`, arbitrary sizes                                               |
@@ -276,5 +282,5 @@ Mirrors the pre-commit hook and CI (`npm run lint && npm run build`):
 - [ ] Reusable pieces were reused (§5, §10); nothing was duplicated.
 - [ ] Responsive at the breakpoints already used in the area (`sm:`/`lg:`, `useIsMobile`).
 - [ ] Every read has loading and error states; every mutation has a pending state and a toast.
-- [ ] A mutation refetches or invalidates the reads it affects.
+- [ ] A write goes through `useMutation` or calls `useRefreshAfterChange()` on success.
 - [ ] If the change needs something the API does not do yet, `docs/backend-task.md` has the item.
