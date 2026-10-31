@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { SectionLoader } from "@/components/common/loader";
 import { canOpenPath } from "@/constants/app-module-constant";
 import { usePermissionTitles } from "@/lib/permission";
+import { useAuthStore } from "@/stores";
 
 /**
  * Keeps people off pages their permissions do not open (a bookmark, the back button, a stale link,
@@ -19,7 +20,9 @@ export function RouteGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: titles, loading } = usePermissionTitles();
-  const allowed = loading || canOpenPath(pathname, titles);
+  // Signed out (logout clears the store before the sign-in page loads): nothing to check, no notice.
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const allowed = loading || !isAuthenticated || canOpenPath(pathname, titles);
 
   useEffect(() => {
     if (allowed) return;

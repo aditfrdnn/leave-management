@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { SectionLoader } from "@/components/common/loader";
 import { usePermission } from "@/lib/permission";
+import { useAuthStore } from "@/stores";
 
 /**
  * Renders `children` only when the signed-in user holds `permission`. Without it the browser goes
@@ -16,7 +17,9 @@ export default function PermissionGate({ permission, children }: { permission: s
   const t = useTranslations("common.permissionGate");
   const router = useRouter();
   const { loading, allowed } = usePermission(permission);
-  const denied = !loading && !allowed;
+  // After logout the store is empty while the sign-in page loads; that is not a denial.
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const denied = !loading && isAuthenticated && !allowed;
 
   useEffect(() => {
     if (!denied) return;
