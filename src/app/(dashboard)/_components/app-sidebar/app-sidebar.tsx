@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BrandMark } from "@/components/common/brand-logo";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
-import { appModules, getActiveMenuHref, getActiveModule } from "@/constants/app-module-constant";
+import { appModules, getActiveMenuHref, getActiveModule, canOpenPath } from "@/constants/app-module-constant";
 import { iconMap } from "@/constants/icon-constant";
 import { useModuleLastPaths } from "@/hooks/use-module-last-paths";
 import { usePermissionTitles } from "@/lib/permission";
@@ -56,6 +56,13 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
       menus: module.menus.filter((menu) => !menu.permission || permissionTitles.includes(menu.permission)),
     }))
     .filter((module) => module.menus.length > 0);
+
+  // The remembered page only counts when this account may open it (it may be another user's,
+  // or a page a role change took away); otherwise the module's first visible menu.
+  const moduleHref = (module: (typeof visibleModules)[number]) => {
+    const last = lastPaths[module.id];
+    return last && canOpenPath(last, permissionTitles) ? last : (module.menus[0]?.href ?? module.href);
+  };
 
   const ActiveIcon = iconMap[activeModule.icon];
   const activeMenus = visibleModules.find((module) => module.id === activeModule.id)?.menus ?? [];
@@ -89,7 +96,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         className={cn("size-9 justify-center p-0", activeClass)}
                       >
                         {/* The first menu this user may open, so a partial Setup role never lands on a locked page. */}
-                        <Link href={lastPaths[module.id] ?? module.menus[0]?.href ?? module.href}>
+                        <Link href={moduleHref(module)}>
                           <HugeiconsIcon icon={Icon} className="size-5!" />
                           <span className="sr-only">{t(`modules.${module.titleKey}`)}</span>
                         </Link>
@@ -130,7 +137,7 @@ function AppSidebarContent({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   return (
                     <DropdownMenuItem key={module.id} asChild className={cn(isActive && "font-semibold text-primary")}>
                       {/* The first menu this user may open, so a partial Setup role never lands on a locked page. */}
-                        <Link href={lastPaths[module.id] ?? module.menus[0]?.href ?? module.href}>
+                        <Link href={moduleHref(module)}>
                         <HugeiconsIcon icon={Icon} className={cn("size-4", isActive && "text-primary")} />
                         <span className="flex-1 truncate">{t(`modules.${module.titleKey}`)}</span>
                         {isActive && <HugeiconsIcon icon={Tick02Icon} className="size-4 text-primary" />}

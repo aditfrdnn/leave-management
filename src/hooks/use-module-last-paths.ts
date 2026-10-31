@@ -31,6 +31,16 @@ function subscribe(onChange: () => void) {
     };
 }
 
+/** Forgets every remembered page: they belong to the account that just signed out or in. */
+export function clearModuleLastPaths() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+        window.dispatchEvent(new Event(CHANGE_EVENT));
+    } catch {
+        // Nothing stored or storage blocked.
+    }
+}
+
 /**
  * Remembers the last page opened in each module, so switching back to a module
  * returns to where the user left it instead of the module's landing page.

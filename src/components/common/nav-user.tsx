@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Loader } from "@/components/common/loader";
 import { useTransition, Suspense } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { clearModuleLastPaths } from "@/hooks/use-module-last-paths";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -50,8 +51,9 @@ function NavUserContent() {
           toast.success(t("navUser.logoutSuccess"), { id });
           router.replace(url); // navigasi manual, tidak melempar NEXT_REDIRECT
           clear();
-          // Cached lists belong to the account that just left; the next one must not see them.
+          // Cached lists and remembered pages belong to the account that just left.
           queryClient.clear();
+          clearModuleLastPaths();
         }
       } catch (e) {
         console.error(e);

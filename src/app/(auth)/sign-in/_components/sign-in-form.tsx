@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { clearModuleLastPaths } from "@/hooks/use-module-last-paths";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -52,6 +53,7 @@ export default function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
     if (signInState.status === "success" && signInState.redirect) {
       // Drop anything cached by a previous session in this tab before the new user's pages load.
       queryClient.clear();
+      clearModuleLastPaths();
       if (signInState.user) setAuth(signInState.user);
       setInitialized(true);
       router.push(signInState.redirect);
