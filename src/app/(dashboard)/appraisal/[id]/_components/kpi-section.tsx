@@ -79,7 +79,8 @@ export default function KpiSection({
           {t(field)}
         </Label>
         {rowsEditable ? (
-          field === "objective" ? (
+          // Objective and KPI are often long sentences; both get a textarea. Target stays one line.
+          field === "objective" || field === "kpi" ? (
             <Textarea
               id={id}
               value={row[field]}
