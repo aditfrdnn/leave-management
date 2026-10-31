@@ -66,6 +66,9 @@ The old `/signup` page (Firebase Auth) and the duplicate `/` dashboard are gone;
 Browser ── POST (server action) ──▶ SignIn ── authService.signIn ──▶ POST /api/auth/login
                                      │  data = { ...user, token }
                                      │  sets the httpOnly cookie TOKEN_KEY = token
+                                     │  redirect = callback only when the same user signed in last
+                                     │  (cookie hrlite_last_user) AND canOpenPath(callback, permissions);
+                                     │  otherwise "/"
                                      ◀── { status, redirect, user }
 Browser ── setAuth(user) · router.push(redirect) · router.refresh()
 

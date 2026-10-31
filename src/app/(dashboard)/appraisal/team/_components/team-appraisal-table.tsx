@@ -21,10 +21,10 @@ import PeriodSelect, { ALL_PERIODS } from "../../_components/period-select";
 import { APPRAISAL_LIST_QUERY_KEY } from "../../_components/query-keys";
 import { usePeriodOptions } from "../../_components/use-period-options";
 
-type TTeamTab = "submitted" | "all" | "draft" | "assessed" | "acknowledged";
+type TTeamTab = "submitted" | "all" | "draft" | "assessed";
 
 /** "Needs assessment" first: that is the assessor's to-do list. */
-const TABS: TTeamTab[] = ["submitted", "all", "draft", "assessed", "acknowledged"];
+const TABS: TTeamTab[] = ["submitted", "all", "draft", "assessed"];
 
 /** Appraisals I assess (scope=team), by status tab, period and employee search. */
 export default function TeamAppraisalTable() {

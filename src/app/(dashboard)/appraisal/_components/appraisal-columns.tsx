@@ -85,9 +85,9 @@ export const appraisalColumns = ({
       id: "updated_at",
       header: t("columns.lastActivity"),
       cell: ({ row }) => {
-        const { acknowledged_at, assessed_at, submitted_at, updated_at } = row.original;
+        const { assessed_at, submitted_at, updated_at } = row.original;
 
-        return <p className="whitespace-nowrap">{dateFormatter(acknowledged_at ?? assessed_at ?? submitted_at ?? updated_at, locale)}</p>;
+        return <p className="whitespace-nowrap">{dateFormatter(assessed_at ?? submitted_at ?? updated_at, locale)}</p>;
       },
     },
     {

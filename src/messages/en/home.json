@@ -43,6 +43,29 @@
       "inactive": "Inactive"
     }
   },
+  "signature": {
+    "title": "Signature",
+    "description": "Attached to appraisal reports automatically when you submit your appraisal or complete a team member's assessment.",
+    "empty": "No signature yet. Reports will show an empty signature box.",
+    "preview": "Your signature",
+    "upload": "Upload signature",
+    "replace": "Replace",
+    "remove": "Remove",
+    "hint": "PNG or JPG, up to 2 MB. Use a white or transparent background and crop close to the signature.",
+    "saved": "Signature saved.",
+    "removed": "Signature removed.",
+    "saveFailed": "Could not save the signature",
+    "removeFailed": "Could not remove the signature",
+    "errors": {
+      "load": "Could not load the signature.",
+      "required": "Choose a signature image.",
+      "type": "The signature must be a PNG or JPG image.",
+      "size": "The image can be at most 2 MB.",
+      "read": "The image could not be read. Try another file.",
+      "save": "Could not save the signature.",
+      "delete": "Could not remove the signature."
+    }
+  },
   "team": {
     "title": "Reports to you ({count})"
   },

@@ -109,7 +109,7 @@ accounts cannot log in (403). Seeded roles: Administrator, Lead/Project Manager,
 ## 6b. Appraisal
 
 Contract: `docs/appraisal-module.md` — templates (JSON schema, locked once a period uses them), periods, appraisals with
-side-by-side self/final ratings, the draft → submitted → assessed → acknowledged flow, and the F-HR-10 PDF rendered
+side-by-side self/final ratings, the draft → submitted → assessed flow (assessed is final), image signatures, and the F-HR-10 PDF rendered
 by leave-service (dompdf).
 
 ## 7. Where the frontend grows next (needs the API first)

@@ -9,8 +9,7 @@ import { CheckmarkBadge01Icon, CheckmarkCircle02Icon, Clock01Icon, File02Icon, S
 const APPRAISAL_STATUS_TONE = {
   draft: { className: "bg-muted text-muted-foreground", icon: File02Icon },
   submitted: { className: "bg-yellow/12 text-yellow-strong", icon: Clock01Icon },
-  assessed: { className: "bg-primary/10 text-primary", icon: CheckmarkCircle02Icon },
-  acknowledged: { className: "bg-green/10 text-green-strong", icon: CheckmarkBadge01Icon },
+  assessed: { className: "bg-green/10 text-green-strong", icon: CheckmarkBadge01Icon },
 } as const;
 
 const PERIOD_STATUS_TONE = {

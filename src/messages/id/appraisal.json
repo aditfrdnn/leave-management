@@ -2,7 +2,7 @@
   "page": {
     "my": {
       "title": "Penilaian saya",
-      "description": "Isi penilaian diri Anda untuk setiap periode dan pantau hingga Anda mengonfirmasi hasilnya."
+      "description": "Isi penilaian diri Anda untuk setiap periode dan pantau hingga atasan menyelesaikan penilaiannya."
     },
     "team": {
       "title": "Penilaian tim",
@@ -24,8 +24,7 @@
   "status": {
     "draft": "Draf",
     "submitted": "Dikirim",
-    "assessed": "Sudah dinilai",
-    "acknowledged": "Dikonfirmasi"
+    "assessed": "Selesai"
   },
   "periodStatus": {
     "open": "Dibuka",
@@ -74,8 +73,7 @@
       "submitted": "Perlu dinilai",
       "all": "Semua",
       "draft": "Draf",
-      "assessed": "Sudah dinilai",
-      "acknowledged": "Dikonfirmasi"
+      "assessed": "Selesai"
     },
     "awaitingCount": "{count} penilaian menunggu Anda",
     "emptyAwaiting": "Tidak ada penilaian yang menunggu Anda.",
@@ -93,7 +91,7 @@
     "empty": "Belum ada periode penilaian.",
     "emptySearch": "Tidak ada periode yang cocok dengan filter ini.",
     "noDueDate": "Tanpa batas waktu",
-    "countsBreakdown": "{draft} draf · {submitted} dikirim · {assessed} dinilai · {acknowledged} dikonfirmasi",
+    "countsBreakdown": "{draft} draf · {submitted} dikirim · {assessed} selesai",
     "fields": {
       "name": "Nama",
       "ranges": "Periode",
@@ -128,7 +126,7 @@
     },
     "statusDialog": {
       "closeTitle": "Tutup periode ini?",
-      "closeQuestion": "Menutup <b>{name}</b> menghentikan penilaian baru dan semua pengeditan. Penilaian yang sudah dikonfirmasi tidak berubah.",
+      "closeQuestion": "Menutup <b>{name}</b> menghentikan penilaian baru dan semua pengeditan. Penilaian yang sudah selesai tidak berubah.",
       "reopenTitle": "Buka kembali periode ini?",
       "reopenQuestion": "Membuka kembali <b>{name}</b> memungkinkan karyawan dan penilai melanjutkan penilaian."
     },
@@ -169,9 +167,7 @@
     "readOnly": {
       "periodClosed": "Periode ini sudah ditutup, jadi penilaian tidak dapat diubah lagi.",
       "viewer": "Anda melihat penilaian ini; isinya tidak dapat diubah di sini.",
-      "completed": "Penilaian ini sudah selesai dan dikonfirmasi.",
-      "awaitingAcknowledge": "Atasan Anda sudah menyelesaikan penilaian. Periksa hasilnya, lalu konfirmasi.",
-      "assessed": "Penilaian sudah selesai dan menunggu konfirmasi karyawan.",
+      "completed": "Penilaian ini sudah selesai dinilai atasan.",
       "awaitingAssessment": "Sudah dikirim ke atasan. Anda baru bisa mengubahnya lagi jika dikembalikan.",
       "awaitingSubmission": "Karyawan belum mengirim penilaian ini."
     },
@@ -223,21 +219,16 @@
       "submit": "Kirim ke atasan",
       "return": "Kembalikan",
       "assess": "Selesaikan penilaian",
-      "acknowledge": "Konfirmasi hasil",
       "pdf": "Unduh PDF"
     },
     "confirm": {
       "submit": {
         "title": "Kirim ke atasan?",
-        "description": "Jawaban Anda disimpan terlebih dahulu. Setelah dikirim, Anda tidak dapat mengubahnya kecuali atasan mengembalikannya."
+        "description": "Jawaban Anda disimpan terlebih dahulu. Setelah dikirim, Anda tidak dapat mengubahnya kecuali atasan mengembalikannya. Tanda tangan Anda di Beranda ikut dilampirkan pada laporan."
       },
       "assess": {
         "title": "Selesaikan penilaian?",
-        "description": "Jawaban Anda disimpan terlebih dahulu. Karyawan kemudian melihat nilai akhir dan mengonfirmasi hasilnya."
-      },
-      "acknowledge": {
-        "title": "Konfirmasi hasil penilaian?",
-        "description": "Konfirmasi ini menggantikan tanda tangan Anda pada formulir dan menyelesaikan penilaian."
+        "description": "Jawaban Anda disimpan terlebih dahulu. Setelah diselesaikan, penilaian tidak dapat diubah lagi dan HR bisa mengunduh laporannya. Tanda tangan Anda di Beranda ikut dilampirkan."
       }
     },
     "returnDialog": {
@@ -253,8 +244,6 @@
       "submitFailed": "Penilaian gagal dikirim",
       "assessDone": "Penilaian selesai.",
       "assessFailed": "Penilaian gagal diselesaikan",
-      "acknowledgeDone": "Hasil dikonfirmasi.",
-      "acknowledgeFailed": "Hasil gagal dikonfirmasi",
       "returned": "Penilaian dikembalikan ke karyawan.",
       "returnFailed": "Penilaian gagal dikembalikan",
       "fixErrors": "{count} jawaban perlu diperbaiki."
@@ -271,7 +260,6 @@
     "save": "Jawaban gagal disimpan.",
     "submit": "Penilaian gagal dikirim.",
     "assess": "Penilaian gagal diselesaikan.",
-    "acknowledge": "Hasil gagal dikonfirmasi.",
     "return": "Penilaian gagal dikembalikan.",
     "start": "Penilaian gagal dimulai.",
     "formDataEmpty": "Tidak ada data yang dikirim.",

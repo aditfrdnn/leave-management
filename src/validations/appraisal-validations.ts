@@ -69,5 +69,5 @@ export const appraisalAnswersSchema = z.record(
   ]),
 );
 
-export const APPRAISAL_TRANSITIONS = ["submit", "assess", "acknowledge"] as const;
+export const APPRAISAL_TRANSITIONS = ["submit", "assess"] as const;
 export type TAppraisalTransition = (typeof APPRAISAL_TRANSITIONS)[number];

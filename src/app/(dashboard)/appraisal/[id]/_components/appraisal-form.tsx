@@ -21,7 +21,6 @@ import type { TAppraisalTransition } from "@/validations/appraisal-validations";
 import {
   ArrowLeft01Icon,
   ArrowTurnBackwardIcon,
-  CheckmarkBadge01Icon,
   CheckmarkCircle02Icon,
   Download04Icon,
   FloppyDiskIcon,
@@ -178,7 +177,7 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
     setPending(transition);
     try {
       // The server checks completeness against what it has, so unsaved answers go first.
-      if (canEdit && transition !== "acknowledge" && !(await persist())) return;
+      if (canEdit && !(await persist())) return;
 
       const state = await TransitionAppraisal(detail.id, transition);
 
@@ -210,19 +209,15 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
   const isTextHidden = (field: TTextField) => role === "employee" && field.filled_by === "assessor" && !hasReached(detail.status, "assessed");
 
   const readOnlyReason =
-    detail.period.status === "closed" && detail.status !== "acknowledged"
-      ? "periodClosed"
-      : role === "viewer"
-        ? "viewer"
-        : detail.status === "acknowledged"
-          ? "completed"
-          : detail.status === "assessed"
-            ? role === "employee"
-              ? "awaitingAcknowledge"
-              : "assessed"
-            : detail.status === "submitted"
-              ? "awaitingAssessment"
-              : "awaitingSubmission";
+    detail.status === "assessed"
+      ? "completed"
+      : detail.period.status === "closed"
+        ? "periodClosed"
+        : role === "viewer"
+          ? "viewer"
+          : detail.status === "submitted"
+            ? "awaitingAssessment"
+            : "awaitingSubmission";
 
   const backHref = role === "employee" ? "/appraisal/my" : role === "assessor" ? "/appraisal/team" : "/appraisal/reports";
   const isBusy = pending !== null;
@@ -370,12 +365,6 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
             <Button type="button" size="sm" disabled={isBusy} onClick={() => setConfirm("assess")}>
               <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4" />
               {t("form.actions.assess")}
-            </Button>
-          )}
-          {detail.can_acknowledge && (
-            <Button type="button" size="sm" disabled={isBusy} onClick={() => setConfirm("acknowledge")}>
-              <HugeiconsIcon icon={CheckmarkBadge01Icon} className="size-4" />
-              {t("form.actions.acknowledge")}
             </Button>
           )}
         </div>

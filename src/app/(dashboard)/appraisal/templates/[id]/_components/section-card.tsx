@@ -73,6 +73,13 @@ export default function SectionCard({
 
         <FormInput form={form} type="textarea" name={`${path}.instructions`} label={t("sections.fields.instructions")} />
 
+        {kind === "rating" && (
+          <div className="flex flex-col gap-1 sm:max-w-md">
+            <FormInput form={form} name={`${path}.item_heading`} label={t("sections.fields.itemHeading")} placeholder="Key Behavior Definition" />
+            <p className="text-xs text-muted-foreground">{t("sections.fields.itemHeadingHint")}</p>
+          </div>
+        )}
+
         {(kind === "rating" || kind === "kpi_review") && <ScaleLabelsEditor form={form} sectionIndex={index} />}
 
         {(kind === "kpi_review" || kind === "kpi_target") && (

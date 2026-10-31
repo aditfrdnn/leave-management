@@ -532,6 +532,8 @@
           "title": "Judul",
           "key": "Kunci bagian",
           "instructions": "Petunjuk",
+          "itemHeading": "Judul kolom butir",
+          "itemHeadingHint": "Tampil di laporan PDF sebagai judul kolom butir. Kosongkan untuk memakai \"Definition\".",
           "minRows": "Jumlah baris minimum",
           "maxRows": "Jumlah baris maksimum"
         }
@@ -684,7 +686,8 @@
       "labelMax": "Label maksimal 255 karakter.",
       "itemsMin": "Tambahkan minimal satu butir.",
       "fieldsMin": "Tambahkan minimal satu kolom.",
-      "sectionsMin": "Tambahkan minimal satu bagian."
+      "sectionsMin": "Tambahkan minimal satu bagian.",
+      "itemHeadingMax": "Judul kolom maksimal 100 karakter."
     }
   }
 }

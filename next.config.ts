@@ -5,6 +5,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Signature uploads (max 2 MB, resized in the browser first) go through a Server Action.
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   /** The old "LVR System" signed in at /login; keep bookmarks and old e-mail links working. */
   async redirects() {
     return [

@@ -2,7 +2,7 @@
   "page": {
     "my": {
       "title": "My appraisals",
-      "description": "Fill in your self-assessment for each period and follow it until you confirm the result."
+      "description": "Fill in your self-assessment for each period and follow it until your assessor completes it."
     },
     "team": {
       "title": "Team appraisals",
@@ -24,8 +24,7 @@
   "status": {
     "draft": "Draft",
     "submitted": "Submitted",
-    "assessed": "Assessed",
-    "acknowledged": "Acknowledged"
+    "assessed": "Completed"
   },
   "periodStatus": {
     "open": "Open",
@@ -74,8 +73,7 @@
       "submitted": "Needs assessment",
       "all": "All",
       "draft": "Draft",
-      "assessed": "Assessed",
-      "acknowledged": "Acknowledged"
+      "assessed": "Completed"
     },
     "awaitingCount": "{count, plural, one {# appraisal waits} other {# appraisals wait}} for your assessment",
     "emptyAwaiting": "Nothing waits for your assessment.",
@@ -93,7 +91,7 @@
     "empty": "No appraisal periods yet.",
     "emptySearch": "No periods match these filters.",
     "noDueDate": "No due date",
-    "countsBreakdown": "{draft} draft · {submitted} submitted · {assessed} assessed · {acknowledged} acknowledged",
+    "countsBreakdown": "{draft} draft · {submitted} submitted · {assessed} completed",
     "fields": {
       "name": "Name",
       "ranges": "Periods",
@@ -128,7 +126,7 @@
     },
     "statusDialog": {
       "closeTitle": "Close this period?",
-      "closeQuestion": "Closing <b>{name}</b> stops new appraisals and all editing. Acknowledged appraisals stay as they are.",
+      "closeQuestion": "Closing <b>{name}</b> stops new appraisals and all editing. Completed appraisals stay as they are.",
       "reopenTitle": "Reopen this period?",
       "reopenQuestion": "Reopening <b>{name}</b> lets employees and assessors continue their appraisals."
     },
@@ -169,9 +167,7 @@
     "readOnly": {
       "periodClosed": "This period is closed, so the appraisal can no longer be edited.",
       "viewer": "You are viewing this appraisal; it cannot be edited here.",
-      "completed": "This appraisal is complete and acknowledged.",
-      "awaitingAcknowledge": "Your assessor has completed the assessment. Review the result, then confirm it.",
-      "assessed": "The assessment is complete and waits for the employee's confirmation.",
+      "completed": "This appraisal has been completed by the assessor.",
       "awaitingAssessment": "Sent to your assessor. You can edit again only if it is returned to you.",
       "awaitingSubmission": "The employee has not sent this appraisal yet."
     },
@@ -223,21 +219,16 @@
       "submit": "Send to assessor",
       "return": "Return",
       "assess": "Complete assessment",
-      "acknowledge": "Confirm result",
       "pdf": "Download PDF"
     },
     "confirm": {
       "submit": {
         "title": "Send to your assessor?",
-        "description": "Your answers are saved first. After sending you cannot edit them unless your assessor returns the appraisal."
+        "description": "Your answers are saved first. After sending you cannot edit them unless your assessor returns the appraisal. Your signature from Home is attached to the report."
       },
       "assess": {
         "title": "Complete the assessment?",
-        "description": "Your answers are saved first. The employee then sees the final ratings and confirms the result."
-      },
-      "acknowledge": {
-        "title": "Confirm the result?",
-        "description": "This replaces your signature on the form and completes the appraisal."
+        "description": "Your answers are saved first. Once completed, the appraisal can no longer be changed and HR can download the report. Your signature from Home is attached."
       }
     },
     "returnDialog": {
@@ -253,8 +244,6 @@
       "submitFailed": "Could not send the appraisal",
       "assessDone": "Assessment completed.",
       "assessFailed": "Could not complete the assessment",
-      "acknowledgeDone": "Result confirmed.",
-      "acknowledgeFailed": "Could not confirm the result",
       "returned": "Appraisal returned to the employee.",
       "returnFailed": "Could not return the appraisal",
       "fixErrors": "{count, plural, one {# answer needs} other {# answers need}} attention."
@@ -271,7 +260,6 @@
     "save": "Could not save the answers.",
     "submit": "Could not send the appraisal.",
     "assess": "Could not complete the assessment.",
-    "acknowledge": "Could not confirm the result.",
     "return": "Could not return the appraisal.",
     "start": "Could not start the appraisal.",
     "formDataEmpty": "Nothing was sent.",

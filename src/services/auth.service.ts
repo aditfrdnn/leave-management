@@ -1,6 +1,7 @@
 import axios from "axios";
 
-import { me, signIn, signOut } from "@/constants/endpoint-constant";
+import { environment } from "@/configs/environment";
+import { me, meBackend, signIn, signOut } from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
 import type { TApiResponse } from "@/types/api";
 import type { TLoginData, TUser } from "@/types/auth";
@@ -12,6 +13,19 @@ export const authService = {
    */
   async me() {
     const { data } = await axios.get<TApiResponse<TUser>>(me);
+
+    return data;
+  },
+
+  /**
+   * `GET /api/me` for a token that is not in the cookie yet (the sign-in action, before it decides
+   * where to go). Server-side only.
+   */
+  async meWithToken(token: string) {
+    const { data } = await axios.get<TApiResponse<TUser>>(`${environment.DEV_URL || environment.PROD_URL}${meBackend}`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      timeout: 15 * 1000,
+    });
 
     return data;
   },

@@ -78,7 +78,6 @@ export const periodColumns = ({
                 draft: counts.draft,
                 submitted: counts.submitted,
                 assessed: counts.assessed,
-                acknowledged: counts.acknowledged,
               })}
             </span>
           </div>

@@ -39,6 +39,8 @@ const holidayCalendar = `${holidays}/calendar`;
 
 // Profile (§11)
 const myProfile = "/api/me/profile";
+/** GET / POST (multipart `signature`) / DELETE: the signed-in user's image signature. */
+const mySignature = "/api/me/signature";
 
 // Appraisal (docs/appraisal-module.md)
 const appraisalTemplates = "/api/appraisal-templates";
@@ -51,7 +53,7 @@ const appraisalPeriodReopen = (id: number | string) => `${appraisalPeriods}/${id
 const appraisals = "/api/appraisals";
 const appraisal = (id: number | string) => `${appraisals}/${id}`;
 const appraisalAnswers = (id: number | string) => `${appraisals}/${id}/answers`;
-const appraisalAction = (id: number | string, action: "submit" | "return" | "assess" | "acknowledge") => `${appraisals}/${id}/${action}`;
+const appraisalAction = (id: number | string, action: "submit" | "return" | "assess") => `${appraisals}/${id}/${action}`;
 /** The leave API's PDF endpoint, called by the same-origin route handler `app/api/appraisals/[id]/pdf`. */
 const appraisalPdfBackend = (id: number | string) => `${appraisals}/${id}/pdf`;
 /** Same-origin route handler (token cookie → Bearer); what the browser downloads. */
@@ -95,6 +97,7 @@ export {
   holiday,
   holidayCalendar,
   myProfile,
+  mySignature,
   appraisalTemplates,
   appraisalTemplate,
   appraisalTemplateDuplicate,

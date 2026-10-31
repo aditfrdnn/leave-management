@@ -21,7 +21,7 @@ import { APPRAISAL_LIST_QUERY_KEY } from "../../_components/query-keys";
 import { usePeriodOptions } from "../../_components/use-period-options";
 
 const ALL = "all";
-const STATUSES: TAppraisalStatus[] = ["draft", "submitted", "assessed", "acknowledged"];
+const STATUSES: TAppraisalStatus[] = ["draft", "submitted", "assessed"];
 
 /** Every appraisal of one period (scope=all), newest period first, with the PDF per row. */
 export default function AppraisalReportTable() {

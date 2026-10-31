@@ -43,6 +43,29 @@
       "inactive": "Nonaktif"
     }
   },
+  "signature": {
+    "title": "Tanda tangan",
+    "description": "Dilampirkan otomatis pada laporan appraisal saat Anda mengirim penilaian atau menyelesaikan penilaian anggota tim.",
+    "empty": "Belum ada tanda tangan. Laporan akan menampilkan kotak tanda tangan kosong.",
+    "preview": "Tanda tangan Anda",
+    "upload": "Unggah tanda tangan",
+    "replace": "Ganti",
+    "remove": "Hapus",
+    "hint": "PNG atau JPG, maksimal 2 MB. Pakai latar putih atau transparan, dan potong rapat di sekitar tanda tangan.",
+    "saved": "Tanda tangan tersimpan.",
+    "removed": "Tanda tangan dihapus.",
+    "saveFailed": "Tanda tangan gagal disimpan",
+    "removeFailed": "Tanda tangan gagal dihapus",
+    "errors": {
+      "load": "Tanda tangan gagal dimuat.",
+      "required": "Pilih gambar tanda tangan.",
+      "type": "Tanda tangan harus berupa gambar PNG atau JPG.",
+      "size": "Ukuran gambar maksimal 2 MB.",
+      "read": "Gambar tidak dapat dibaca. Coba file lain.",
+      "save": "Tanda tangan gagal disimpan.",
+      "delete": "Tanda tangan gagal dihapus."
+    }
+  },
   "team": {
     "title": "Melapor ke Anda ({count})"
   },

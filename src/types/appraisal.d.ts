@@ -20,7 +20,16 @@ export type TRatingItem = {
 export type TTextField = { key: string; label: string; filled_by: "employee" | "assessor" | "both" };
 
 export type TTemplateSection =
-  | { key: string; kind: "rating"; title: string; instructions: string; scale: TScaleLevel[]; items: TRatingItem[] }
+  | {
+      key: string;
+      kind: "rating";
+      title: string;
+      instructions: string;
+      /** Optional heading of the item column in the PDF, e.g. "Key Behavior Definition". */
+      item_heading?: string;
+      scale: TScaleLevel[];
+      items: TRatingItem[];
+    }
   | { key: string; kind: "kpi_review"; title: string; instructions: string; scale: TScaleLevel[]; min_rows: number; max_rows: number }
   | { key: string; kind: "kpi_target"; title: string; instructions: string; min_rows: number; max_rows: number }
   | { key: string; kind: "text"; title: string; instructions: string; fields: TTextField[] };
@@ -51,7 +60,8 @@ export type TAppraisalTemplatePayload = {
 
 export type TAppraisalPeriodStatus = "open" | "closed";
 
-export type TAppraisalStatus = "draft" | "submitted" | "assessed" | "acknowledged";
+/** `assessed` is final: the assessor's assessment closes the appraisal. */
+export type TAppraisalStatus = "draft" | "submitted" | "assessed";
 
 export type TAppraisalPeriod = {
   id: number;
@@ -104,7 +114,6 @@ export type TAppraisalItem = {
   assessor: { id: number; name: string } | null;
   submitted_at: string | null;
   assessed_at: string | null;
-  acknowledged_at: string | null;
   updated_at: string;
 };
 
@@ -125,7 +134,6 @@ export type TAppraisalDetail = Omit<TAppraisalItem, "period"> & {
   can_submit: boolean;
   can_return: boolean;
   can_assess: boolean;
-  can_acknowledge: boolean;
 };
 
 export type TAppraisalScope = "mine" | "team" | "all";

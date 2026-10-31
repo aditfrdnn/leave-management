@@ -12,6 +12,7 @@ import { getInitials } from "@/lib/get-initials";
 import { cn, dateFormatter } from "@/lib/utils/utils";
 import type { TMyEmployee, TMyProfile } from "@/types/profile";
 import { GetMyProfile } from "../action";
+import SignatureCard from "./signature-card";
 
 export const MY_PROFILE_QUERY_KEY = ["home", "profile"] as const;
 
@@ -86,9 +87,12 @@ function Profile({ profile }: { profile: TMyProfile }) {
       </Card>
 
       {!employee ? (
-        <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">{t("noEmployee")}</CardContent>
-        </Card>
+        <div className="grid min-w-0 gap-4 lg:grid-cols-3">
+          <Card className="lg:col-span-2">
+            <CardContent className="py-8 text-center text-sm text-muted-foreground">{t("noEmployee")}</CardContent>
+          </Card>
+          <SignatureCard />
+        </div>
       ) : (
         <div className="grid min-w-0 gap-4 lg:grid-cols-3">
           <Card className="min-w-0 lg:col-span-2">
@@ -161,6 +165,8 @@ function Profile({ profile }: { profile: TMyProfile }) {
                 </dl>
               </CardContent>
             </Card>
+
+            <SignatureCard />
           </div>
 
           {employee.careers?.length > 0 && <CareerTimeline careers={employee.careers} />}

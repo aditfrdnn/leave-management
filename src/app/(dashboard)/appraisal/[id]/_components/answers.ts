@@ -18,9 +18,9 @@ export type TKpiTargetSection = Extract<TTemplateSection, { kind: "kpi_target" }
 export type TTextSection = Extract<TTemplateSection, { kind: "text" }>;
 export type TKpiRow = TKpiReviewRow | TKpiTargetRow;
 
-const STATUS_RANK: Record<TAppraisalStatus, number> = { draft: 0, submitted: 1, assessed: 2, acknowledged: 3 };
+const STATUS_RANK: Record<TAppraisalStatus, number> = { draft: 0, submitted: 1, assessed: 2 };
 
-/** True once the appraisal reached `status` (draft < submitted < assessed < acknowledged). */
+/** True once the appraisal reached `status` (draft < submitted < assessed). */
 export const hasReached = (current: TAppraisalStatus, status: TAppraisalStatus) => STATUS_RANK[current] >= STATUS_RANK[status];
 
 export const isApplicable = (item: TRatingItem, isLeader: boolean) => item.audience !== "leaders" || isLeader;

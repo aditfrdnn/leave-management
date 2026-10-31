@@ -63,6 +63,25 @@ export function isHrefActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/**
+ * Whether a user holding `titles` may open `path`: the menu that owns the path must be visible to
+ * them, and a path inside a module (e.g. `/appraisal/12`) needs at least one visible menu of it.
+ * Paths outside every module (`/`) are open. Used to vet the sign-in `callback`.
+ */
+export function canOpenPath(path: string, titles: string[]) {
+  const pathname = path.split(/[?#]/)[0];
+  const appModule = appModules.find((module) => module.basePaths.some((base) => isHrefActive(pathname, base)));
+  if (!appModule) return true;
+
+  const allowed = (permission?: string) => !permission || titles.includes(permission);
+  if (!appModule.menus.some((menu) => allowed(menu.permission))) return false;
+
+  const href = getActiveMenuHref(pathname, appModule.menus.map((menu) => menu.href));
+  const menu = appModule.menus.find((item) => item.href === href);
+
+  return allowed(menu?.permission);
+}
+
 /** The active sidebar menu: the longest matching href. */
 export function getActiveMenuHref(pathname: string, hrefs: string[]) {
   return hrefs.filter((href) => isHrefActive(pathname, href)).sort((a, b) => b.length - a.length)[0];

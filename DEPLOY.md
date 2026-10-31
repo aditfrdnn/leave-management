@@ -53,8 +53,10 @@ Catat rollout yang sedang live **sebelum** membuat yang baru, untuk rollback.
 - [ ] Login sebagai karyawan biasa → hanya modul Beranda, Cuti dan Appraisal (Appraisal Saya) yang tampil.
 - [ ] Ajukan satu cuti uji → muncul di **Cuti Saya**; approver-nya melihatnya di tab **Perlu persetujuan saya** → setujui → status berubah.
 - [ ] Batalkan / hapus data uji itu setelahnya.
-- [ ] **Appraisal:** HR/Lead/Division Manager membuka periode di **Appraisal → Periode**; karyawan uji mengisi, atasan menilai, karyawan mengonfirmasi, HR mengunduh PDF di **Appraisal → Laporan**.
-- [ ] **Pengaturan → Template Appraisal** menampilkan F-HR-10 Rev.2 (aktif).
+- [ ] **Appraisal:** HR/Lead/Division Manager membuka periode di **Appraisal → Periode**; karyawan uji mengisi dan mengirim, atasan menyelesaikan penilaian (tanpa konfirmasi karyawan), HR mengunduh PDF di **Appraisal → Laporan**. PDF berlogo Control Systems dan memuat tanda tangan.
+- [ ] **Beranda → Tanda tangan:** unggah gambar tanda tangan, pratinjau muncul.
+- [ ] Tab PDF dan tab aplikasi memakai ikon HR Lite (bukan logo lama). Kalau masih lama, kosongkan cache browser.
+- [ ] **Appraisal → Template Appraisal** menampilkan F-HR-10 Rev.2 (aktif).
 
 Kalau setelah login muncul sesi lama yang aneh, logout lalu login lagi (cookie lama dari LVR System).
 

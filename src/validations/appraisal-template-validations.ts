@@ -21,6 +21,7 @@ const KEY_PATTERN = /^[a-z][a-z0-9_]*$/;
 const keySchema = z.string().trim().min(1, `${V}.keyRequired`).max(50, `${V}.keyMax`).regex(KEY_PATTERN, `${V}.keyFormat`);
 const titleSchema = z.string().trim().min(1, `${V}.titleRequired`).max(255, `${V}.titleMax`);
 const instructionsSchema = z.string().max(5000, `${V}.instructionsMax`);
+const itemHeadingSchema = z.string().max(100, `${V}.itemHeadingMax`);
 
 const rowsSchema = z
   .number({ error: `${V}.rowsNumber` })
@@ -86,6 +87,7 @@ const ratingSectionSchema = z
     kind: z.literal("rating"),
     title: titleSchema,
     instructions: instructionsSchema,
+    item_heading: itemHeadingSchema,
     scale: scaleSchema,
     items: z.array(ratingItemSchema).min(1, `${V}.itemsMin`),
   })
@@ -171,6 +173,7 @@ export function toAppraisalTemplatePayload(values: AppraisalTemplateSchemaType):
             return {
               ...base,
               kind: "rating",
+              ...(section.item_heading.trim() ? { item_heading: section.item_heading.trim() } : {}),
               scale: section.scale.map((level, index) => ({ value: index + 1, label: level.label.trim() })),
               items: section.items.map((item) => ({
                 key: item.key.trim(),

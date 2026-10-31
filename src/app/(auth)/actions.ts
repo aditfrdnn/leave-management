@@ -4,7 +4,8 @@ import axios from "axios";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 
-import { removeTokenCookie, setTokenCookie } from "@/lib/cookies";
+import { canOpenPath } from "@/constants/app-module-constant";
+import { getLastUserCookie, removeTokenCookie, setLastUserCookie, setTokenCookie } from "@/lib/cookies";
 import { authService } from "@/services";
 import type { AuthFormState } from "@/types/auth";
 import { signInSchema } from "@/validations/auth-validations";
@@ -34,14 +35,28 @@ export async function SignIn(prevState: AuthFormState, formData: FormData | null
       return { status: "error", errors: { _form: [result.message ?? t("missingAuthData")] } };
     }
 
-    await setTokenCookie(token);
-
     const callbackUrl = formData?.get("callbackUrl") as string;
-    const redirect = callbackUrl && isValidCallbackUrl(callbackUrl) ? callbackUrl : "/dashboard";
+    const lastUserId = await getLastUserCookie();
+    // The full identity (with permissions) decides whether the callback page is open to this user.
+    const identity = await authService
+      .meWithToken(token)
+      .then((response) => response.data)
+      .catch(() => undefined);
+
+    await setTokenCookie(token);
+    await setLastUserCookie(String(user.id));
+
+    // `callback` is the page the previous session was on. Another account, or one that may not
+    // open that page (any more), starts at `/` instead.
+    const isSameUser = !lastUserId || lastUserId === String(user.id);
+    const redirect =
+      callbackUrl && isValidCallbackUrl(callbackUrl) && isSameUser && canOpenPath(callbackUrl, identity?.permissions ?? [])
+        ? callbackUrl
+        : "/";
 
     revalidatePath("/", "layout");
 
-    return { status: "success", redirect, user };
+    return { status: "success", redirect, user: identity ?? user };
   } catch (error: unknown) {
     const status = axios.isAxiosError(error) ? error.response?.status : undefined;
 

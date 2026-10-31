@@ -532,6 +532,8 @@
           "title": "Title",
           "key": "Section key",
           "instructions": "Instructions",
+          "itemHeading": "Item column heading",
+          "itemHeadingHint": "Shown in the PDF report as the heading of the item column. Leave empty to use \"Definition\".",
           "minRows": "Minimum rows",
           "maxRows": "Maximum rows"
         }
@@ -684,7 +686,8 @@
       "labelMax": "A label can be at most 255 characters.",
       "itemsMin": "Add at least one item.",
       "fieldsMin": "Add at least one field.",
-      "sectionsMin": "Add at least one section."
+      "sectionsMin": "Add at least one section.",
+      "itemHeadingMax": "The column heading can be at most 100 characters."
     }
   }
 }

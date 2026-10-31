@@ -129,9 +129,4 @@ export const appraisalService = {
     return data;
   },
 
-  async acknowledgeAppraisal(id: number | string) {
-    const { data } = await instance.post<TApiResponse<TAppraisalDetail>>(appraisalAction(id, "acknowledge"));
-
-    return data;
-  },
 };

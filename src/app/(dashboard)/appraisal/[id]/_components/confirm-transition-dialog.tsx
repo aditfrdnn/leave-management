@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { TAppraisalTransition } from "@/validations/appraisal-validations";
 
-/** Asks once before a step that cannot be undone from this side (submit, assess, acknowledge). */
+/** Asks once before a step that cannot be undone from this side (submit, assess). */
 export default function ConfirmTransitionDialog({
   transition,
   isPending,

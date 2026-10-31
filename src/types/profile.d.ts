@@ -31,3 +31,6 @@ export type TMyEmployee = {
   /** Newest `effective_date` first (§14). */
   careers: TEmployeeCareer[];
 };
+
+/** `GET /api/me/signature`: a `data:image/...` URI, or null when none is uploaded. */
+export type TMySignature = { signature: string | null };

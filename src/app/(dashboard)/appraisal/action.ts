@@ -64,7 +64,7 @@ export async function SaveAppraisalAnswers(id: number, answers: TAppraisalAnswer
   }
 }
 
-/** submit (employee) · assess (assessor) · acknowledge (employee). A 422 carries `errors["answers.…"]`. */
+/** submit (employee) · assess (assessor, final). A 422 carries `errors["answers.…"]`. */
 export async function TransitionAppraisal(id: number, transition: TAppraisalTransition): Promise<AppraisalActionState> {
   const t = await getTranslations("appraisal");
   const parsed = appraisalIdSchema.safeParse({ id });
@@ -75,11 +75,7 @@ export async function TransitionAppraisal(id: number, transition: TAppraisalTran
 
   try {
     const result =
-      transition === "submit"
-        ? await appraisalService.submitAppraisal(parsed.data.id)
-        : transition === "assess"
-          ? await appraisalService.assessAppraisal(parsed.data.id)
-          : await appraisalService.acknowledgeAppraisal(parsed.data.id);
+      transition === "submit" ? await appraisalService.submitAppraisal(parsed.data.id) : await appraisalService.assessAppraisal(parsed.data.id);
 
     return { status: "success", message: result.message, data: result.data };
   } catch (error) {

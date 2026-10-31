@@ -65,6 +65,7 @@ function toFormValues(template: TAppraisalTemplate): AppraisalTemplateSchemaType
         return {
           ...base,
           kind: "rating",
+          item_heading: section.item_heading ?? "",
           scale: toScale(section.scale),
           items: (section.items ?? []).map((item) => ({
             key: item.key ?? "",
@@ -248,6 +249,7 @@ function TemplateForm({ template }: { template: TAppraisalTemplate }) {
       rating: {
         ...base,
         kind: "rating",
+        item_heading: "",
         scale,
         items: [{ key: "", code: "", title: "", points: [], levels: Array.from({ length: SCALE_LENGTH }, () => ""), audience: "all" }],
       },

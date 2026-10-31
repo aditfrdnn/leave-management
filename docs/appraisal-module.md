@@ -17,8 +17,7 @@ Envelope, errors, pagination and permission middleware are the ones in `docs/int
 | Start my appraisal in an open period, fill self ratings, KPI review rows, proposed targets | the employee (`appraisal.fill`) | `draft` |
 | Submit to my assessor | the employee | `submitted` |
 | Return it for changes (with a note) | the assessor | `draft` (note shown) |
-| Give final ratings, adjust targets, write the individual review, then confirm | the assessor | `assessed` |
-| Acknowledge the result (replaces the employee signature) | the employee | `acknowledged` |
+| Give final ratings, adjust targets, write the individual review, then complete it. **This is final**: the employee does not confirm afterwards | the assessor | `assessed` |
 | List every appraisal of a period, download the PDF | HR, Administrator (`appraisal.view_all`) | — |
 | Close / reopen a period | `appraisal.manage_periods` | period `closed` / `open` |
 
@@ -31,9 +30,14 @@ Envelope, errors, pagination and permission middleware are the ones in `docs/int
   only to them.
 - **Ratings are side by side:** the employee gives `self`, the assessor gives `final`, for every rating item
   (Bagian I–III) and every KPI review row (Bagian IV.A). No overall total; a KPI row shows `weight × final`.
-- **Prefill:** a new appraisal copies the KPI *target* rows of the employee's previous acknowledged appraisal
+- **Prefill:** a new appraisal copies the KPI *target* rows of the employee's previous assessed appraisal
   into its KPI *review* rows (that is how IV.B of last year becomes IV.A of this year).
-- Closing a period stops new appraisals and editing; acknowledged ones are untouched.
+- Closing a period stops new appraisals and editing; assessed ones are untouched.
+- **Signatures:** each user may upload one PNG/JPG signature on Home (`/api/me/signature`). Submitting copies
+  the employee's into `appraisals.employee_signature_path`, assessing copies the assessor's into
+  `assessor_signature_path` (private `local` disk), so a later change does not alter a finished report. No
+  signature → the PDF box stays empty; no wet signature is required. (Until 2026-11-01 the employee confirmed
+  the result after the assessment; that `acknowledged` step was removed and old rows became `assessed`.)
 
 ## 2. Template (editable without code)
 
@@ -52,6 +56,7 @@ TScaleLevel = { value: number, label: string }      // value 1..5, label "Poor P
 
 TTemplateSection =
   | { key: string, kind: "rating", title: string, instructions: string,
+      item_heading?: string,                         // PDF item column, e.g. "Key Behavior Definition"
       scale: TScaleLevel[],                          // 5 levels
       items: TRatingItem[] }
   | { key: string, kind: "kpi_review", title: string, instructions: string,
@@ -94,10 +99,10 @@ Defaults when creating: review = 1 Aug (Y-1) … 31 Jul (Y), target = 1 Aug (Y) 
 ## 4. Appraisals
 
 `appraisals`: `id`, `period_id`, `employee_id`, `assessor_user_id`, `status`
-(`draft`,`submitted`,`assessed`,`acknowledged`), `answers` JSON, `return_note` nullable,
+(`draft`,`submitted`,`assessed`; `assessed` is final), `answers` JSON, `return_note` nullable,
 `snapshot` JSON (employee name / number / position / department; assessor name / position — refreshed on
 submit and on assess, so the PDF shows who it was at the time), `submitted_at`, `assessed_at`,
-`acknowledged_at`, timestamps. Unique (`period_id`, `employee_id`).
+`employee_signature_path`, `assessor_signature_path` (nullable copies, §1), timestamps. Unique (`period_id`, `employee_id`).
 
 ```ts
 TAppraisalAnswers = Record<sectionKey,
@@ -147,23 +152,23 @@ with `errors["answers.<sectionKey>.<itemKey|index>.<field>"]` and a summary `mes
 | POST | `/api/appraisals/{id}/submit` | owner, from `draft` | completeness check |
 | POST | `/api/appraisals/{id}/return` | assessor, from `submitted` | `{ note }` required |
 | POST | `/api/appraisals/{id}/assess` | assessor, from `submitted` | completeness check |
-| POST | `/api/appraisals/{id}/acknowledge` | owner, from `assessed` | |
-| GET | `/api/appraisals/{id}/pdf` | owner, assessor, `appraisal.view_all` | `application/pdf`, landscape A4, F-HR-10 layout: final rating ✓ in the level column, self rating noted; header with snapshot names; footer "Confidential" |
+| GET | `/api/appraisals/{id}/pdf` | owner, assessor, `appraisal.view_all` | `application/pdf`, landscape A4, laid out like the paper F-HR-10: company logo + title + identity block, "Form No" and the part heading at the top of every page, final rating ✓ beside the level number, KPI rows with the final rating number and `w × p`, review boxes, "Tanggal" and two signature boxes with the stamped images; footer "Confidential". Self ratings are not printed (the paper form has one rating) |
+| GET / POST / DELETE | `/api/me/signature` | signed-in user | `{ signature: dataUri \| null }`; POST multipart `signature` (PNG/JPG, ≤ 2 MB, re-encoded to PNG, width ≤ 900 px) |
 
 ```ts
 TAppraisalPeriod = { id, name, review_start, review_end, target_start, target_end, due_date, status,
   template: { id, code, name, revision }, closed_at, created_at,
-  counts?: { total, draft, submitted, assessed, acknowledged } }
+  counts?: { total, draft, submitted, assessed } }
 TAppraisalItem = { id, status, period: { id, name, status }, employee: { id, name, employee_number, position,
   department: { id, name, alias } | null }, assessor: { id, name } | null,
-  submitted_at, assessed_at, acknowledged_at, updated_at }
+  submitted_at, assessed_at, updated_at }
 TAppraisalDetail = TAppraisalItem & {
   answers: TAppraisalAnswers, return_note: string | null, snapshot,
   template: { id, code, name, revision, schema: TAppraisalTemplateSchema },
   period: TAppraisalPeriod,
   is_leader: boolean,                     // leader-only items apply
   my_role: "employee" | "assessor" | "viewer",
-  can_edit: boolean, can_submit: boolean, can_return: boolean, can_assess: boolean, can_acknowledge: boolean,
+  can_edit: boolean, can_submit: boolean, can_return: boolean, can_assess: boolean,
 }
 ```
 
