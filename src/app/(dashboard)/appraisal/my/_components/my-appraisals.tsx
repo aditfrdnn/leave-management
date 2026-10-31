@@ -60,7 +60,7 @@ export default function MyAppraisals() {
   const startable = allMine ? (periods ?? []).filter((period) => period.status === "open" && !startedPeriodIds.has(period.id)) : [];
 
   const { mutate: start, isPending: isStarting, variables: startingId } = useMutation({
-    mutationFn: async (periodId: number) => {
+    mutationFn: async (periodId: string) => {
       const state = await StartAppraisal(periodId);
 
       if (state.status === "error") throw state;

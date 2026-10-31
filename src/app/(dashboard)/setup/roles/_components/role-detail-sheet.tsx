@@ -8,15 +8,15 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { GetRole } from "../action";
 
 export const ROLE_DETAIL_PREFIX = ["setup", "role"] as const;
-export const ROLE_DETAIL_QUERY_KEY = (id: number) => [...ROLE_DETAIL_PREFIX, id] as const;
+export const ROLE_DETAIL_QUERY_KEY = (id: string) => [...ROLE_DETAIL_PREFIX, id] as const;
 
 /** One role: what it grants and who holds it. */
-export default function RoleDetailSheet({ roleId, onOpenChange }: { roleId: number | null; onOpenChange: (open: boolean) => void }) {
+export default function RoleDetailSheet({ roleId, onOpenChange }: { roleId: string | null; onOpenChange: (open: boolean) => void }) {
   const t = useTranslations("setup");
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ROLE_DETAIL_QUERY_KEY(roleId ?? 0),
-    queryFn: () => GetRole(roleId as number),
+    queryKey: ROLE_DETAIL_QUERY_KEY(roleId ?? ""),
+    queryFn: () => GetRole(roleId as string),
     enabled: roleId !== null,
   });
 

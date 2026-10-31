@@ -39,7 +39,7 @@ export type TTemplateSectionKind = TTemplateSection["kind"];
 export type TAppraisalTemplateSchema = { title: string; sections: TTemplateSection[] };
 
 export type TAppraisalTemplateItem = {
-  id: number;
+  id: string;
   code: string;
   name: string;
   revision: string;
@@ -64,7 +64,7 @@ export type TAppraisalPeriodStatus = "open" | "closed";
 export type TAppraisalStatus = "draft" | "submitted" | "assessed";
 
 export type TAppraisalPeriod = {
-  id: number;
+  id: string;
   name: string;
   /** `YYYY-MM-DD` */
   review_start: string;
@@ -73,7 +73,7 @@ export type TAppraisalPeriod = {
   target_end: string;
   due_date: string | null;
   status: TAppraisalPeriodStatus;
-  template: { id: number; code: string; name: string; revision: string };
+  template: { id: string; code: string; name: string; revision: string };
   closed_at: string | null;
   created_at: string;
   /** Only for `appraisal.view_all` / `appraisal.manage_periods`. */
@@ -87,7 +87,7 @@ export type TAppraisalPeriodPayload = {
   target_start: string;
   target_end: string;
   due_date: string | null;
-  template_id: number;
+  template_id: string;
 };
 
 export type TRatingAnswer = { self: number | null; final: number | null };
@@ -101,17 +101,17 @@ export type TAppraisalAnswers = Record<
 >;
 
 export type TAppraisalItem = {
-  id: number;
+  id: string;
   status: TAppraisalStatus;
-  period: { id: number; name: string; status: TAppraisalPeriodStatus };
+  period: { id: string; name: string; status: TAppraisalPeriodStatus };
   employee: {
-    id: number;
+    id: string;
     name: string;
     employee_number: string;
     position: string | null;
-    department: { id: number; name: string; alias: string } | null;
+    department: { id: string; name: string; alias: string } | null;
   };
-  assessor: { id: number; name: string } | null;
+  assessor: { id: string; name: string } | null;
   submitted_at: string | null;
   assessed_at: string | null;
   updated_at: string;
@@ -128,7 +128,7 @@ export type TAppraisalDetail = Omit<TAppraisalItem, "period"> & {
   answers: TAppraisalAnswers;
   return_note: string | null;
   snapshot: TAppraisalSnapshot | null;
-  template: { id: number; code: string; name: string; revision: string; schema: TAppraisalTemplateSchema };
+  template: { id: string; code: string; name: string; revision: string; schema: TAppraisalTemplateSchema };
   period: TAppraisalPeriod;
   is_leader: boolean;
   my_role: "employee" | "assessor" | "viewer";

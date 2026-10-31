@@ -17,7 +17,7 @@ export async function GetLeaveBalances(params: TLeaveBalanceListParams): Promise
   }
 }
 
-export async function GetLeaveBalanceEntries(employeeId: number, page: number): Promise<TApiPaginated<TLeaveBalanceEntry>> {
+export async function GetLeaveBalanceEntries(employeeId: string, page: number): Promise<TApiPaginated<TLeaveBalanceEntry>> {
   try {
     return await setupService.getLeaveBalanceEntries(employeeId, { page, per_page: 20 });
   } catch (error) {
@@ -38,7 +38,7 @@ export async function GetDepartmentOptions(): Promise<TDepartmentOption[]> {
 /** Sets the absolute balance; the API records the difference with the note. */
 export async function SetLeaveBalance(
   prevState: ActionState<TLeaveBalanceItem>,
-  values: { employee_id: number; balance: number; note: string } | null,
+  values: { employee_id: string; balance: number; note: string } | null,
 ): Promise<ActionState<TLeaveBalanceItem>> {
   const t = await getTranslations("setup");
 

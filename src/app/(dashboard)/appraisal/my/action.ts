@@ -9,7 +9,7 @@ import type { TAppraisalDetail } from "@/types/appraisal";
 import { appraisalIdSchema } from "@/validations/appraisal-validations";
 
 /** Starts my appraisal in an open period (409 when it exists, 422 when closed or I have no assessor). */
-export async function StartAppraisal(periodId: number): Promise<ActionState<TAppraisalDetail>> {
+export async function StartAppraisal(periodId: string): Promise<ActionState<TAppraisalDetail>> {
   const t = await getTranslations("appraisal");
   const parsed = appraisalIdSchema.safeParse({ id: periodId });
 

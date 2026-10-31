@@ -2,6 +2,8 @@
 
 import { getTranslations } from "next-intl/server";
 
+import { uuidSchema } from "@/validations/id-validations";
+
 import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { appraisalTemplateService, type TAppraisalTemplateListParams } from "@/services";
 import type { ActionState } from "@/types/action-state";
@@ -26,7 +28,7 @@ export async function GetAppraisalTemplates(params: TAppraisalTemplateListParams
   }
 }
 
-export async function GetAppraisalTemplate(id: number): Promise<TAppraisalTemplate> {
+export async function GetAppraisalTemplate(id: string): Promise<TAppraisalTemplate> {
   try {
     const response = await appraisalTemplateService.getAppraisalTemplate(id);
 
@@ -128,10 +130,10 @@ export async function CreateAppraisalTemplateDraft(): Promise<TemplateActionStat
   }
 }
 
-export async function DuplicateAppraisalTemplate(id: number): Promise<TemplateActionState> {
+export async function DuplicateAppraisalTemplate(id: string): Promise<TemplateActionState> {
   const t = await getTranslations("setup");
 
-  if (!Number.isInteger(id) || id <= 0) {
+  if (!uuidSchema.safeParse(id).success) {
     return toFormErrorState(t("shared.errors.missingId"));
   }
 

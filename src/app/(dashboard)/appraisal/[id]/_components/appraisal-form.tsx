@@ -42,7 +42,7 @@ import TextSection from "./text-section";
 type TPending = "save" | TAppraisalTransition | null;
 
 /** Loads the appraisal; the API decides access, so a 403 lands in the error state. */
-export default function AppraisalForm({ id }: { id: number }) {
+export default function AppraisalForm({ id }: { id: string }) {
   const t = useTranslations("appraisal");
   const tGate = useTranslations("common.permissionGate");
   const router = useRouter();

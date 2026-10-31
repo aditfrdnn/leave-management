@@ -68,7 +68,7 @@ export const setupService = {
     return data;
   },
 
-  async getUser(id: number | string) {
+  async getUser(id: string) {
     const { data } = await instance.get<TApiResponse<TUserItem>>(user(id));
 
     return data;
@@ -80,13 +80,13 @@ export const setupService = {
     return data;
   },
 
-  async updateUser(id: number | string, payload: TUserPayload) {
+  async updateUser(id: string, payload: TUserPayload) {
     const { data } = await instance.put<TApiResponse<TUserItem>>(user(id), payload);
 
     return data;
   },
 
-  async deleteUser(id: number | string) {
+  async deleteUser(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(user(id));
 
     return data;
@@ -100,7 +100,7 @@ export const setupService = {
     return data;
   },
 
-  async getEmployee(id: number | string) {
+  async getEmployee(id: string) {
     const { data } = await instance.get<TApiResponse<TEmployeeItem>>(employee(id));
 
     return data;
@@ -112,13 +112,13 @@ export const setupService = {
     return data;
   },
 
-  async updateEmployee(id: number | string, payload: TEmployeePayload) {
+  async updateEmployee(id: string, payload: TEmployeePayload) {
     const { data } = await instance.put<TApiResponse<TEmployeeItem>>(employee(id), payload);
 
     return data;
   },
 
-  async deleteEmployee(id: number | string) {
+  async deleteEmployee(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(employee(id));
 
     return data;
@@ -126,26 +126,26 @@ export const setupService = {
 
   /* ---------------------------- Career history ---------------------------- */
 
-  async getEmployeeCareers(employeeId: number | string) {
+  async getEmployeeCareers(employeeId: string) {
     const { data } = await instance.get<TApiResponse<TEmployeeCareer[]>>(employeeCareers(employeeId));
 
     return data;
   },
 
-  async createEmployeeCareer(employeeId: number | string, payload: TEmployeeCareerPayload) {
+  async createEmployeeCareer(employeeId: string, payload: TEmployeeCareerPayload) {
     const { data } = await instance.post<TApiResponse<TEmployeeCareerResult>>(employeeCareers(employeeId), payload);
 
     return data;
   },
 
-  async updateEmployeeCareer(employeeId: number | string, careerId: number | string, payload: TEmployeeCareerPayload) {
+  async updateEmployeeCareer(employeeId: string, careerId: string, payload: TEmployeeCareerPayload) {
     const { data } = await instance.put<TApiResponse<TEmployeeCareerResult>>(employeeCareer(employeeId, careerId), payload);
 
     return data;
   },
 
   /** 409 when it is the employee's only career row. */
-  async deleteEmployeeCareer(employeeId: number | string, careerId: number | string) {
+  async deleteEmployeeCareer(employeeId: string, careerId: string) {
     const { data } = await instance.delete<TApiResponse<null>>(employeeCareer(employeeId, careerId));
 
     return data;
@@ -159,7 +159,7 @@ export const setupService = {
     return data;
   },
 
-  async getLeaveBalanceEntries(employeeId: number | string, params: { page?: number; per_page?: number }) {
+  async getLeaveBalanceEntries(employeeId: string, params: { page?: number; per_page?: number }) {
     const { data } = await instance.get<TApiPaginated<TLeaveBalanceEntry>>(leaveBalanceEntries(employeeId), {
       params: toQueryParams(params),
     });
@@ -167,7 +167,7 @@ export const setupService = {
     return data;
   },
 
-  async setLeaveBalance(employeeId: number | string, payload: TLeaveBalancePayload) {
+  async setLeaveBalance(employeeId: string, payload: TLeaveBalancePayload) {
     const { data } = await instance.put<TApiResponse<TLeaveBalanceItem>>(leaveBalance(employeeId), payload);
 
     return data;
@@ -187,13 +187,13 @@ export const setupService = {
     return data;
   },
 
-  async updateHoliday(id: number | string, payload: THolidayPayload) {
+  async updateHoliday(id: string, payload: THolidayPayload) {
     const { data } = await instance.put<TApiResponse<THolidayItem>>(holiday(id), payload);
 
     return data;
   },
 
-  async deleteHoliday(id: number | string) {
+  async deleteHoliday(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(holiday(id));
 
     return data;
@@ -207,7 +207,7 @@ export const setupService = {
     return data;
   },
 
-  async getDepartment(id: number | string) {
+  async getDepartment(id: string) {
     const { data } = await instance.get<TApiResponse<TDepartmentItem>>(department(id));
 
     return data;
@@ -219,13 +219,13 @@ export const setupService = {
     return data;
   },
 
-  async updateDepartment(id: number | string, payload: TDepartmentPayload) {
+  async updateDepartment(id: string, payload: TDepartmentPayload) {
     const { data } = await instance.put<TApiResponse<TDepartmentItem>>(department(id), payload);
 
     return data;
   },
 
-  async deleteDepartment(id: number | string) {
+  async deleteDepartment(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(department(id));
 
     return data;
@@ -239,7 +239,7 @@ export const setupService = {
     return data;
   },
 
-  async getRole(id: number | string) {
+  async getRole(id: string) {
     const { data } = await instance.get<TApiResponse<TRoleDetail>>(role(id));
 
     return data;
@@ -251,13 +251,13 @@ export const setupService = {
     return data;
   },
 
-  async updateRole(id: number | string, payload: TRolePayload) {
+  async updateRole(id: string, payload: TRolePayload) {
     const { data } = await instance.put<TApiResponse<TRoleItem>>(role(id), payload);
 
     return data;
   },
 
-  async deleteRole(id: number | string) {
+  async deleteRole(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(role(id));
 
     return data;
@@ -283,13 +283,13 @@ export const setupService = {
     return data;
   },
 
-  async updatePermission(id: number | string, payload: TPermissionPayload) {
+  async updatePermission(id: string, payload: TPermissionPayload) {
     const { data } = await instance.put<TApiResponse<TPermissionItem>>(permission(id), payload);
 
     return data;
   },
 
-  async deletePermission(id: number | string) {
+  async deletePermission(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(permission(id));
 
     return data;

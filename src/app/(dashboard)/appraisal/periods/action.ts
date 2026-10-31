@@ -40,7 +40,7 @@ export async function SaveAppraisalPeriod(prevState: PeriodActionState, values: 
   }
 
   const { id, due_date, template_id, ...rest } = parsed.data;
-  const payload = { ...rest, due_date: due_date || null, template_id: Number(template_id) };
+  const payload = { ...rest, due_date: due_date || null, template_id };
 
   try {
     const result = id ? await appraisalService.updatePeriod(id, payload) : await appraisalService.createPeriod(payload);
@@ -52,7 +52,7 @@ export async function SaveAppraisalPeriod(prevState: PeriodActionState, values: 
 }
 
 /** Close stops new appraisals and editing; reopen undoes it. */
-export async function SetAppraisalPeriodStatus(id: number, status: "close" | "reopen"): Promise<PeriodActionState> {
+export async function SetAppraisalPeriodStatus(id: string, status: "close" | "reopen"): Promise<PeriodActionState> {
   const t = await getTranslations("appraisal");
   const parsed = appraisalIdSchema.safeParse({ id });
 

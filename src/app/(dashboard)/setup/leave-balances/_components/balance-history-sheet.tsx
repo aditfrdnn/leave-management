@@ -12,7 +12,7 @@ import type { TLeaveBalanceItem } from "@/types/setup";
 import { GetLeaveBalanceEntries } from "../action";
 import { formatDays, formatPeriod } from "./format";
 
-export const LEAVE_BALANCE_HISTORY_KEY = (employeeId: number) => ["setup", "leave-balances", "history", employeeId] as const;
+export const LEAVE_BALANCE_HISTORY_KEY = (employeeId: string) => ["setup", "leave-balances", "history", employeeId] as const;
 
 /** Every change to one employee's balance, newest first: HR settings, monthly accruals, approved leave. */
 export default function BalanceHistorySheet({
@@ -25,7 +25,7 @@ export default function BalanceHistorySheet({
   const t = useTranslations("setup.leaveBalances");
   const locale = useLocale();
   const [page, setPage] = useState(1);
-  const employeeId = item?.employee.id ?? 0;
+  const employeeId = item?.employee.id ?? "";
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: [...LEAVE_BALANCE_HISTORY_KEY(employeeId), page],

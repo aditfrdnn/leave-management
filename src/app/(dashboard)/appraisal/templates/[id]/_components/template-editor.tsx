@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { uuidSchema } from "@/validations/id-validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -46,7 +47,7 @@ import TemplatePreview from "./template-preview";
 const LIST_HREF = "/appraisal/templates";
 /** Same key as the list page's table, so a save or duplicate refreshes it. */
 const APPRAISAL_TEMPLATES_QUERY_KEY = ["setup", "appraisal-templates"] as const;
-export const APPRAISAL_TEMPLATE_QUERY_KEY = (id: number) => ["setup", "appraisal-template", id] as const;
+export const APPRAISAL_TEMPLATE_QUERY_KEY = (id: string) => ["setup", "appraisal-template", id] as const;
 
 type TSectionValues = AppraisalTemplateSchemaType["schema"]["sections"][number];
 type TScale = { value: number; label: string }[];
@@ -104,9 +105,9 @@ function toFormErrorPath(field: string) {
   return /^schema\.sections(\.\d+\.(items|fields))?$/.test(path) ? `${path}.root` : path;
 }
 
-export default function TemplateEditor({ id }: { id: number }) {
+export default function TemplateEditor({ id }: { id: string }) {
   const t = useTranslations("setup.appraisalTemplates");
-  const validId = Number.isInteger(id) && id > 0;
+  const validId = uuidSchema.safeParse(id).success;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: APPRAISAL_TEMPLATE_QUERY_KEY(id),

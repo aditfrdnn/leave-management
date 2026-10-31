@@ -23,7 +23,7 @@ export default function ReturnDialog({
   onOpenChange,
   onSuccess,
 }: {
-  appraisalId: number;
+  appraisalId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;

@@ -4,7 +4,7 @@ export type TLeaveStatus = (typeof LEAVE_STATUS)[keyof typeof LEAVE_STATUS];
 
 /** `GET /api/leave-request` row. */
 export type TLeave = {
-  id: number;
+  id: string;
   subject: string;
   start_date: string;
   end_date: string;
@@ -23,15 +23,15 @@ export type TLeave = {
   created_at: string;
   updated_at?: string;
   user: {
-    id: number;
+    id: string;
     name: string;
-    department_id: number;
-    department: { id: number; name: string; alias: string };
+    department_id: string;
+    department: { id: string; name: string; alias: string };
   };
-  leave_type: { id: number; code: string; name: string };
+  leave_type: { id: string; code: string; name: string };
   leave_request_days: {
-    id: number;
-    leave_request_id: number;
+    id: string;
+    leave_request_id: string;
     date: string;
     portion: string;
     is_counted: number;
@@ -44,7 +44,7 @@ export type TLeave = {
 
 /** `/api/dropdown/users` row (approvers). */
 export type TApprover = {
-  id: number;
+  id: string;
   name: string;
   email?: string;
 };
@@ -68,12 +68,12 @@ export type TLeaveRequestPayload = {
 export type TApprovalAction = 0 | 1 | 2;
 
 export type TLeaveApproval = {
-  id: number;
+  id: string;
   approval_level: number;
   approval_action: TApprovalAction | number;
   notes: string | null;
   approved_at: string | null;
-  approval_by?: { id: number; name: string; email: string } | null;
+  approval_by?: { id: string; name: string; email: string } | null;
 };
 
 

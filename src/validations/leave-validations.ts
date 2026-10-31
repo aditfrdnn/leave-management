@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+import { requiredUuidSchema, uuidSchema } from "./id-validations";
+
 export const leaveRequestSchema = z.object({
   subject: z.string().trim().min(1, "leave.validation.subjectRequired"),
   leave_date: z.array(z.string()).min(1, "leave.validation.leaveDateRequired"),
-  approval_user: z.string().min(1, "leave.validation.approverRequired"),
+  approval_user: requiredUuidSchema("leave.validation.approverRequired"),
   reason: z.string().trim().min(10, "leave.validation.reasonMin").max(200, "leave.validation.reasonMax"),
   location_during_leave: z.string().trim().min(2, "leave.validation.locationMin"),
   return_to_office: z.string().min(1, "leave.validation.returnRequired"),
@@ -16,7 +18,7 @@ export type LeaveRequestSchemaType = z.infer<typeof leaveRequestSchema>;
 
 export const approvalDecisionSchema = z
   .object({
-    id: z.number().int().positive(),
+    id: uuidSchema,
     decision: z.enum(["approve", "reject"]),
     notes: z.string().trim().max(500, "leave.approvals.validation.notesMax"),
   })
@@ -28,5 +30,5 @@ export const approvalDecisionSchema = z
 export type ApprovalDecisionSchemaType = z.infer<typeof approvalDecisionSchema>;
 
 export const cancelLeaveSchema = z.object({
-  id: z.coerce.number().int().positive(),
+  id: uuidSchema,
 });

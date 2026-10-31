@@ -112,6 +112,11 @@ Contract: `docs/appraisal-module.md` — templates (JSON schema, locked once a p
 side-by-side self/final ratings, the draft → submitted → assessed flow (assessed is final), image signatures, and the F-HR-10 PDF rendered
 by leave-service (dompdf).
 
+## 6c. Ids
+
+All record ids are UUID strings (docs/setup-module.md §16), including `leave_request_id` in the WhatsApp
+callback (`POST /api/whatsapp/leave-request/approval`) and `leaveId` in `/send-approval`.
+
 ## 7. Where the frontend grows next (needs the API first)
 
 - Notifications in the header (no endpoint).

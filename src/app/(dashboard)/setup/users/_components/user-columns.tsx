@@ -25,7 +25,7 @@ export const userColumns = ({
   current_page: number;
   per_page: number;
   /** The signed-in user: their own row has no delete. */
-  currentUserId: number | undefined;
+  currentUserId: string | undefined;
   onClickEdit: (item: TUserItem) => void;
   onClickDelete: (item: TUserItem) => void;
 }): ColumnDef<TUserItem>[] => [

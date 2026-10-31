@@ -5,13 +5,13 @@ export type TPermission = (typeof PERMISSIONS_CONSTANT)[keyof typeof PERMISSIONS
 export type TPermissions = Record<TPermission, boolean>;
 
 export type TUser = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone_number?: string | null;
   status?: string;
   department?: {
-    id: number;
+    id: string;
     name: string;
     alias: string;
   } | null;

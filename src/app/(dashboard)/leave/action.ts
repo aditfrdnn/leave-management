@@ -15,7 +15,7 @@ function getText(formData: FormData, key: string) {
 }
 
 /** One request with every approval step; read by the detail sheet on both leave pages. */
-export async function GetLeaveRequest(id: number | string): Promise<TLeaveDetail> {
+export async function GetLeaveRequest(id: string): Promise<TLeaveDetail> {
   try {
     const response = await leaveService.getLeaveRequest(id);
 
@@ -52,7 +52,7 @@ export async function DecideLeaveRequest(prevState: ActionState<TLeave>, formDat
   }
 
   const parsed = approvalDecisionSchema.safeParse({
-    id: Number(getText(formData, "id")),
+    id: getText(formData, "id"),
     decision: getText(formData, "decision"),
     notes: getText(formData, "notes"),
   });

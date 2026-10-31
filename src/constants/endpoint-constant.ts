@@ -10,12 +10,12 @@ const meBackend = "/api/me";
 
 // Leave requests
 const leaveRequests = "/api/leave-request";
-const leaveRequest = (id: number | string) => `${leaveRequests}/${id}`;
-const leaveRequestCancel = (id: number | string) => `${leaveRequests}/${id}/cancel`;
+const leaveRequest = (id: string) => `${leaveRequests}/${id}`;
+const leaveRequestCancel = (id: string) => `${leaveRequests}/${id}/cancel`;
 
 // Approvals (the signed-in user as approver)
-const leaveApprove = (id: number | string) => `${leaveRequests}/${id}/approve`;
-const leaveReject = (id: number | string) => `${leaveRequests}/${id}/reject`;
+const leaveApprove = (id: string) => `${leaveRequests}/${id}/approve`;
+const leaveReject = (id: string) => `${leaveRequests}/${id}/reject`;
 
 // Dropdowns
 const approvers = "/api/dropdown/users";
@@ -28,13 +28,13 @@ const dashboard = "/api/dashboard";
 
 // Annual leave balance (docs/setup-module.md §10)
 const leaveBalances = "/api/leave-balances";
-const leaveBalance = (employeeId: number | string) => `${leaveBalances}/${employeeId}`;
-const leaveBalanceEntries = (employeeId: number | string) => `${leaveBalances}/${employeeId}/entries`;
+const leaveBalance = (employeeId: string) => `${leaveBalances}/${employeeId}`;
+const leaveBalanceEntries = (employeeId: string) => `${leaveBalances}/${employeeId}/entries`;
 const myLeaveBalance = "/api/leave-balance/me";
 
 // Holidays (docs/setup-module.md §12)
 const holidays = "/api/holidays";
-const holiday = (id: number | string) => `${holidays}/${id}`;
+const holiday = (id: string) => `${holidays}/${id}`;
 const holidayCalendar = `${holidays}/calendar`;
 
 // Profile (§11)
@@ -44,34 +44,34 @@ const mySignature = "/api/me/signature";
 
 // Appraisal (docs/appraisal-module.md)
 const appraisalTemplates = "/api/appraisal-templates";
-const appraisalTemplate = (id: number | string) => `${appraisalTemplates}/${id}`;
-const appraisalTemplateDuplicate = (id: number | string) => `${appraisalTemplates}/${id}/duplicate`;
+const appraisalTemplate = (id: string) => `${appraisalTemplates}/${id}`;
+const appraisalTemplateDuplicate = (id: string) => `${appraisalTemplates}/${id}/duplicate`;
 const appraisalPeriods = "/api/appraisal-periods";
-const appraisalPeriod = (id: number | string) => `${appraisalPeriods}/${id}`;
-const appraisalPeriodClose = (id: number | string) => `${appraisalPeriods}/${id}/close`;
-const appraisalPeriodReopen = (id: number | string) => `${appraisalPeriods}/${id}/reopen`;
+const appraisalPeriod = (id: string) => `${appraisalPeriods}/${id}`;
+const appraisalPeriodClose = (id: string) => `${appraisalPeriods}/${id}/close`;
+const appraisalPeriodReopen = (id: string) => `${appraisalPeriods}/${id}/reopen`;
 const appraisals = "/api/appraisals";
-const appraisal = (id: number | string) => `${appraisals}/${id}`;
-const appraisalAnswers = (id: number | string) => `${appraisals}/${id}/answers`;
-const appraisalAction = (id: number | string, action: "submit" | "return" | "assess") => `${appraisals}/${id}/${action}`;
+const appraisal = (id: string) => `${appraisals}/${id}`;
+const appraisalAnswers = (id: string) => `${appraisals}/${id}/answers`;
+const appraisalAction = (id: string, action: "submit" | "return" | "assess") => `${appraisals}/${id}/${action}`;
 /** The leave API's PDF endpoint, called by the same-origin route handler `app/api/appraisals/[id]/pdf`. */
-const appraisalPdfBackend = (id: number | string) => `${appraisals}/${id}/pdf`;
+const appraisalPdfBackend = (id: string) => `${appraisals}/${id}/pdf`;
 /** Same-origin route handler (token cookie → Bearer); what the browser downloads. */
-const appraisalPdf = (id: number | string) => `/api/appraisals/${id}/pdf`;
+const appraisalPdf = (id: string) => `/api/appraisals/${id}/pdf`;
 
 // Setup (docs/setup-module.md)
 const users = "/api/users";
-const user = (id: number | string) => `${users}/${id}`;
+const user = (id: string) => `${users}/${id}`;
 const employees = "/api/employees";
-const employee = (id: number | string) => `${employees}/${id}`;
-const employeeCareers = (id: number | string) => `${employees}/${id}/careers`;
-const employeeCareer = (id: number | string, careerId: number | string) => `${employees}/${id}/careers/${careerId}`;
+const employee = (id: string) => `${employees}/${id}`;
+const employeeCareers = (id: string) => `${employees}/${id}/careers`;
+const employeeCareer = (id: string, careerId: string) => `${employees}/${id}/careers/${careerId}`;
 const departments = "/api/departments";
-const department = (id: number | string) => `${departments}/${id}`;
+const department = (id: string) => `${departments}/${id}`;
 const roles = "/api/roles";
-const role = (id: number | string) => `${roles}/${id}`;
+const role = (id: string) => `${roles}/${id}`;
 const permissions = "/api/permissions";
-const permission = (id: number | string) => `${permissions}/${id}`;
+const permission = (id: string) => `${permissions}/${id}`;
 const permissionGroups = `${permissions}/groups`;
 
 export {

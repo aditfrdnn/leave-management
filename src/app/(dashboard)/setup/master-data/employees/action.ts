@@ -32,7 +32,9 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-const toNullableId = (value: string) => (value ? Number(value) : null);
+/** "" = none. Ids stay UUID strings; the grade is a number. */
+const toNullableId = (value: string) => value || null;
+const toNullableGrade = (value: string) => (value ? Number(value) : null);
 
 export async function GetEmployees(params: TEmployeeListParams): Promise<TApiPaginated<TEmployeeItem>> {
   try {
@@ -112,7 +114,7 @@ async function saveEmployee(formData: FormData | null, isUpdate: boolean): Promi
     payload.position = values.position || null;
     payload.department_id = toNullableId(values.department_id);
     payload.employment_type = values.employment_type;
-    payload.grade = toNullableId(values.grade);
+    payload.grade = toNullableGrade(values.grade);
   }
 
   try {
@@ -155,7 +157,7 @@ export async function DeleteEmployee(prevState: ActionState, formData: FormData)
 type EmployeeCareerActionState = ActionState<TEmployeeCareerResult>;
 
 /** Newest `effective_date` first. */
-export async function GetEmployeeCareers(employeeId: number): Promise<TEmployeeCareer[]> {
+export async function GetEmployeeCareers(employeeId: string): Promise<TEmployeeCareer[]> {
   try {
     const response = await setupService.getEmployeeCareers(employeeId);
 
@@ -196,7 +198,7 @@ async function saveEmployeeCareer(formData: FormData | null, isUpdate: boolean):
   const payload: TEmployeeCareerPayload = {
     effective_date: values.effective_date,
     employment_type: values.employment_type,
-    grade: toNullableId(values.grade),
+    grade: toNullableGrade(values.grade),
     position: values.position,
     department_id: toNullableId(values.department_id),
     note: values.note || null,

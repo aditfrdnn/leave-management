@@ -20,7 +20,7 @@ import { useRefreshAfterChange } from "@/lib/refresh-after-change";
 type DeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  id: number | string
+  id: string
   name: string
   action: ActionFn
   onSuccess?: () => void

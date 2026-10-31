@@ -1,4 +1,6 @@
 import axios from "axios";
+
+import { uuidSchema } from "@/validations/id-validations";
 import { NextResponse } from "next/server";
 
 import { environment } from "@/configs/environment";
@@ -15,7 +17,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   const token = await getTokenCookie();
   const backendUrl = environment.DEV_URL || environment.PROD_URL;
 
-  if (!token || !backendUrl || !/^\d+$/.test(id)) {
+  if (!token || !backendUrl || !uuidSchema.safeParse(id).success) {
     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
   }
 

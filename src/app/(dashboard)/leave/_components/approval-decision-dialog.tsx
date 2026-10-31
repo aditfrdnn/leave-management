@@ -37,8 +37,8 @@ export default function ApprovalDecisionDialog({
 
   const form = useForm<ApprovalDecisionSchemaType>({
     resolver: zodResolver(approvalDecisionSchema),
-    defaultValues: { id: 0, decision, notes: "" },
-    values: { id: item?.id ?? 0, decision, notes: "" },
+    defaultValues: { id: "", decision, notes: "" },
+    values: { id: item?.id ?? "", decision, notes: "" },
   });
 
   const { mutate, isPending } = useMutation({

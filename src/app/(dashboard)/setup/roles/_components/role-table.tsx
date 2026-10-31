@@ -31,7 +31,7 @@ export default function RoleTable() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<TRoleItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<TRoleItem | null>(null);
-  const [detailId, setDetailId] = useState<number | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const params: TRoleListParams = { page, per_page: perPage, search };
 

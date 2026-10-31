@@ -10,7 +10,7 @@ export type TEmploymentType = "permanent" | "contract" | "probation" | "intern";
 
 /** `/api/dropdown/*` row: `{ id, text }` plus the extras each endpoint adds. */
 export type TOption<TExtra extends object = object> = {
-  id: number;
+  id: string;
   text: string;
 } & TExtra;
 
@@ -19,21 +19,21 @@ export type TDepartmentOption = TOption<{ alias?: string | null }>;
 /** `email` is not in the contract's extras; it is used to prefill the user form when the API sends it. */
 export type TEmployeeOption = TOption<{ employee_number?: string; email?: string | null }>;
 
-export type TDepartmentRef = { id: number; name: string; alias: string };
+export type TDepartmentRef = { id: string; name: string; alias: string };
 
-export type TRoleRef = { id: number; title: string };
+export type TRoleRef = { id: string; title: string };
 
 /* --------------------------------- Users --------------------------------- */
 
 export type TUserItem = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   status: TActiveStatus;
   created_at: string;
   role: TRoleRef | null;
   employee: {
-    id: number;
+    id: string;
     employee_number: string;
     name: string;
     position: string | null;
@@ -58,15 +58,15 @@ export type TUserPayload = {
   email: string;
   /** Required on create; omitted on update to keep the current password. */
   password?: string;
-  role_id: number;
-  employee_id: number | null;
+  role_id: string;
+  employee_id: string | null;
   status: TActiveStatus;
 };
 
 /* ------------------------------- Employees ------------------------------- */
 
 export type TEmployeeItem = {
-  id: number;
+  id: string;
   employee_number: string;
   name: string;
   email: string | null;
@@ -79,8 +79,8 @@ export type TEmployeeItem = {
   status: TActiveStatus;
   created_at: string;
   department: TDepartmentRef | null;
-  supervisor: { id: number; name: string; employee_number: string } | null;
-  user: { id: number; email: string; role: TRoleRef | null } | null;
+  supervisor: { id: string; name: string; employee_number: string } | null;
+  user: { id: string; email: string; role: TRoleRef | null } | null;
 };
 
 export type TEmployeeSortKey = "name" | "employee_number" | "join_date" | "created_at";
@@ -104,19 +104,19 @@ export type TEmployeePayload = {
   name: string;
   email: string | null;
   phone_number: string | null;
-  supervisor_id: number | null;
+  supervisor_id: string | null;
   /** `Y-m-d`. */
   join_date: string | null;
   status: TActiveStatus;
   position?: string | null;
-  department_id?: number | null;
+  department_id?: string | null;
   employment_type?: TEmploymentType;
   grade?: number | null;
 };
 
 /** `GET /api/employees/{id}/careers` row (docs/setup-module.md §14), newest `effective_date` first. */
 export type TEmployeeCareer = {
-  id: number;
+  id: string;
   /** `YYYY-MM-DD` */
   effective_date: string;
   employment_type: TEmploymentType;
@@ -126,7 +126,7 @@ export type TEmployeeCareer = {
   note: string | null;
   /** The row the employee's current values come from (latest `effective_date` ≤ today). */
   is_current: boolean;
-  created_by: { id: number; name: string } | null;
+  created_by: { id: string; name: string } | null;
   created_at: string;
 };
 
@@ -137,7 +137,7 @@ export type TEmployeeCareerPayload = {
   employment_type: TEmploymentType;
   grade: number | null;
   position: string;
-  department_id: number | null;
+  department_id: string | null;
   note: string | null;
 };
 
@@ -148,14 +148,14 @@ export type TEmployeeOptionParams = {
   search?: string;
   /** `1` hides employees that already have a user, except `include_id`. */
   unlinked?: 0 | 1;
-  include_id?: number;
-  exclude_id?: number;
+  include_id?: string;
+  exclude_id?: string;
 };
 
 /* ------------------------------ Departments ------------------------------ */
 
 export type TDepartmentItem = {
-  id: number;
+  id: string;
   name: string;
   alias: string;
   employees_count: number;
@@ -180,17 +180,17 @@ export type TDepartmentPayload = {
 /* --------------------------------- Roles --------------------------------- */
 
 export type TRoleItem = {
-  id: number;
+  id: string;
   title: string;
   description: string | null;
   users_count: number;
-  permission_ids: number[];
-  permissions: { id: number; title: string; label: string }[];
+  permission_ids: string[];
+  permissions: { id: string; title: string; label: string }[];
   created_at: string;
 };
 
 export type TRoleDetail = TRoleItem & {
-  users: { id: number; name: string; email: string }[];
+  users: { id: string; name: string; email: string }[];
 };
 
 export type TRoleListParams = {
@@ -202,13 +202,13 @@ export type TRoleListParams = {
 export type TRolePayload = {
   title: string;
   description: string | null;
-  permission_ids: number[];
+  permission_ids: string[];
 };
 
 /* ------------------------------ Permissions ------------------------------ */
 
 export type TPermissionItem = {
-  id: number;
+  id: string;
   title: string;
   label: string;
   group_name: string;
@@ -240,11 +240,11 @@ export type TPermissionPayload = {
 /** `GET /api/leave-balances` row (docs/setup-module.md §10). */
 export type TLeaveBalanceItem = {
   employee: {
-    id: number;
+    id: string;
     employee_number: string;
     name: string;
     position: string | null;
-    department: { id: number; name: string; alias: string } | null;
+    department: { id: string; name: string; alias: string } | null;
   };
   balance: number;
   /** HR has set this employee's balance at least once. */
@@ -271,15 +271,15 @@ export type TLeaveBalanceListParams = {
 export type TLeaveBalanceEntryType = "set" | "accrual" | "leave";
 
 export type TLeaveBalanceEntry = {
-  id: number;
+  id: string;
   type: TLeaveBalanceEntryType;
   amount: number;
   balance_after: number;
   period: string | null;
   note: string | null;
   created_at: string;
-  leave_request: { id: number; subject: string; start_date: string; end_date: string } | null;
-  created_by: { id: number; name: string } | null;
+  leave_request: { id: string; subject: string; start_date: string; end_date: string } | null;
+  created_by: { id: string; name: string } | null;
 };
 
 export type TLeaveBalancePayload = {
@@ -300,7 +300,7 @@ export type TMyLeaveBalance = {
 
 /** `GET /api/holidays` row (docs/setup-module.md §12). */
 export type THolidayItem = {
-  id: number;
+  id: string;
   /** `YYYY-MM-DD` */
   date: string;
   name: string;

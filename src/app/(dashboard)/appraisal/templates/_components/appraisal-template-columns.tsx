@@ -25,7 +25,7 @@ export const appraisalTemplateColumns = ({
   current_page: number;
   per_page: number;
   /** The row whose duplicate is in flight; its buttons are disabled. */
-  busyId: number | null;
+  busyId: string | null;
   onClickEdit: (item: TAppraisalTemplateItem) => void;
   onClickDuplicate: (item: TAppraisalTemplateItem) => void;
   onClickDelete: (item: TAppraisalTemplateItem) => void;

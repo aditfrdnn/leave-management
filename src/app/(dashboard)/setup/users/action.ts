@@ -81,8 +81,8 @@ async function saveUser(formData: FormData | null, isUpdate: boolean): Promise<U
   const payload: TUserPayload = {
     name,
     email,
-    role_id: Number(role_id),
-    employee_id: employee_id ? Number(employee_id) : null,
+    role_id,
+    employee_id: employee_id || null,
     status: is_active ? "active" : "inactive",
     ...(password ? { password } : {}),
   };

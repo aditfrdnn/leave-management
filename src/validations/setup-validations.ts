@@ -1,19 +1,21 @@
 import { z } from "zod";
 
+import { optionalUuidSchema, requiredUuidSchema, uuidSchema } from "./id-validations";
+
 /**
  * Setup module schemas (docs/setup-module.md §3–§6). Each drives both the dialog's `zodResolver`
- * and the action's `safeParse`; ids travel as strings ("" = none / create).
+ * and the action's `safeParse`; ids are UUID strings ("" = none / create).
  */
 
 export const ACTIVE_STATUSES = ["active", "inactive"] as const;
 export const EMPLOYMENT_TYPES = ["permanent", "contract", "probation", "intern"] as const;
 
-const optionalId = z.string().regex(/^\d*$/);
+const optionalId = optionalUuidSchema;
 /** Company grade, 1–99; "" = none. */
 const optionalGrade = z.string().trim().regex(/^([1-9]\d?)?$/, "setup.employees.validation.gradeRange");
 
 export const setupDeleteSchema = z.object({
-  id: z.coerce.number().int().positive(),
+  id: uuidSchema,
 });
 
 /* --------------------------------- Users --------------------------------- */
@@ -25,7 +27,7 @@ export const userSchema = z
     email: z.string().trim().min(1, "setup.users.validation.emailRequired").pipe(z.email("setup.users.validation.emailInvalid")),
     password: z.string(),
     password_confirmation: z.string(),
-    role_id: z.string().min(1, "setup.users.validation.roleRequired"),
+    role_id: requiredUuidSchema("setup.users.validation.roleRequired"),
     employee_id: optionalId,
     is_active: z.boolean(),
   })
@@ -83,7 +85,7 @@ export type EmployeeSchemaType = z.infer<typeof employeeSchema>;
 /** One career row (docs/setup-module.md §14); the effective date may be past or future. */
 export const employeeCareerSchema = z.object({
   id: optionalId,
-  employee_id: z.string().regex(/^\d+$/, "setup.shared.errors.missingId"),
+  employee_id: requiredUuidSchema("setup.shared.errors.missingId"),
   effective_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "setup.employees.careers.validation.effectiveDateRequired"),
   employment_type: z.enum(EMPLOYMENT_TYPES, "setup.employees.validation.employmentTypeRequired"),
   grade: optionalGrade,
@@ -99,8 +101,8 @@ export const employeeCareerSchema = z.object({
 export type EmployeeCareerSchemaType = z.infer<typeof employeeCareerSchema>;
 
 export const employeeCareerDeleteSchema = z.object({
-  id: z.coerce.number().int().positive(),
-  employee_id: z.coerce.number().int().positive(),
+  id: uuidSchema,
+  employee_id: uuidSchema,
 });
 
 /* ------------------------------ Departments ------------------------------ */
@@ -119,7 +121,7 @@ export const roleSchema = z.object({
   id: optionalId,
   title: z.string().trim().min(1, "setup.roles.validation.titleRequired").max(100, "setup.roles.validation.titleMax"),
   description: z.string().trim().max(255, "setup.roles.validation.descriptionMax"),
-  permission_ids: z.array(z.number().int().positive()).min(1, "setup.roles.validation.permissionsRequired"),
+  permission_ids: z.array(uuidSchema).min(1, "setup.roles.validation.permissionsRequired"),
 });
 
 export type RoleSchemaType = z.infer<typeof roleSchema>;
@@ -146,7 +148,7 @@ export type PermissionSchemaType = z.infer<typeof permissionSchema>;
 /* --------------------------- Annual leave balance -------------------------- */
 
 export const leaveBalanceSchema = z.object({
-  employee_id: z.number().int().positive(),
+  employee_id: uuidSchema,
   balance: z
     .number({ message: "setup.leaveBalances.validation.balanceRequired" })
     .min(-365, "setup.leaveBalances.validation.balanceRange")

@@ -47,7 +47,7 @@ export default function LeaveRequestTable() {
   // Until /api/me answers we do not know whether to show approver tabs; wait instead of flashing "mine".
   const { allowed: canApprove, loading: isPermissionLoading } = usePermission(PERMISSIONS_CONSTANT.LEAVE_APPROVE);
 
-  const [detailId, setDetailId] = useState<number | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -59,7 +59,7 @@ export default function LeaveRequestTable() {
     setIsFormOpen(open);
     if (!open && openedFromLink) router.replace(pathname, { scroll: false });
   };
-  const [cancelTarget, setCancelTarget] = useState<{ id: number; subject: string } | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<{ id: string; subject: string } | null>(null);
   const [decision, setDecision] = useState<{ item: TLeave; decision: "approve" | "reject" } | null>(null);
 
   // One list: my own requests and, for approvers, the ones I decide on. Requester and status are header filters.

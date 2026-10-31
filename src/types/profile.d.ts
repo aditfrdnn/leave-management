@@ -3,18 +3,18 @@ import type { TEmployeeCareer } from "./setup";
 /** `GET /api/me/profile` (docs/setup-module.md §11). */
 export type TMyProfile = {
   user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
     status: "active" | "inactive";
     created_at: string;
-    role: { id: number; title: string } | null;
+    role: { id: string; title: string } | null;
   };
   employee: TMyEmployee | null;
 };
 
 export type TMyEmployee = {
-  id: number;
+  id: string;
   employee_number: string;
   name: string;
   email: string | null;
@@ -25,9 +25,9 @@ export type TMyEmployee = {
   employment_type: "permanent" | "contract" | "probation" | "intern";
   grade: number | null;
   status: "active" | "inactive";
-  department: { id: number; name: string; alias: string } | null;
-  supervisor: { id: number; name: string; employee_number: string; position: string | null } | null;
-  subordinates: { id: number; name: string; position: string | null }[];
+  department: { id: string; name: string; alias: string } | null;
+  supervisor: { id: string; name: string; employee_number: string; position: string | null } | null;
+  subordinates: { id: string; name: string; position: string | null }[];
   /** Newest `effective_date` first (§14). */
   careers: TEmployeeCareer[];
 };

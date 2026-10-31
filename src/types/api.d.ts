@@ -36,6 +36,6 @@ export type TValidationErrorBody = {
 
 /** select2-style option returned by the `/api/dropdown/*` endpoints. */
 export type TDropdownOption = {
-  id: number;
+  id: string;
   text: string;
 };

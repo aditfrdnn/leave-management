@@ -13,7 +13,7 @@ import { CheckmarkCircle02Icon, Cancel01Icon, Clock01Icon } from "@hugeicons/cor
 import { GetLeaveRequest } from "../action";
 import LeaveStatusBadge from "./leave-status-badge";
 
-export const LEAVE_DETAIL_QUERY_KEY = (id: number) => ["leave", "detail", id] as const;
+export const LEAVE_DETAIL_QUERY_KEY = (id: string) => ["leave", "detail", id] as const;
 
 function approvalIcon(action: number) {
   if (action === 1) return { icon: CheckmarkCircle02Icon, className: "text-green-strong" };
@@ -30,7 +30,7 @@ export default function LeaveDetailSheet({
   onOpenChange,
   footer,
 }: {
-  leaveId: number | null;
+  leaveId: string | null;
   onOpenChange: (open: boolean) => void;
   footer?: (detail: TLeaveDetail) => React.ReactNode;
 }) {
@@ -39,8 +39,8 @@ export default function LeaveDetailSheet({
   const locale = useLocale();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: LEAVE_DETAIL_QUERY_KEY(leaveId ?? 0),
-    queryFn: () => GetLeaveRequest(leaveId as number),
+    queryKey: LEAVE_DETAIL_QUERY_KEY(leaveId ?? ""),
+    queryFn: () => GetLeaveRequest(leaveId as string),
     enabled: leaveId !== null,
   });
 

@@ -44,7 +44,7 @@ export const leaveService = {
     return data;
   },
 
-  async getLeaveRequest(id: number | string) {
+  async getLeaveRequest(id: string) {
     const { data } = await instance.get<TApiResponse<TLeaveDetail>>(leaveRequest(id));
 
     return data;
@@ -57,7 +57,7 @@ export const leaveService = {
   },
 
   /** Only while the request is still pending. */
-  async cancelLeaveRequest(id: number | string) {
+  async cancelLeaveRequest(id: string) {
     const { data } = await instance.patch<TApiResponse<TLeave>>(leaveRequestCancel(id));
 
     return data;
@@ -66,13 +66,13 @@ export const leaveService = {
   /* ------------------------------- Approvals ------------------------------- */
 
 
-  async approveLeaveRequest(id: number | string, payload: TApprovalDecisionPayload) {
+  async approveLeaveRequest(id: string, payload: TApprovalDecisionPayload) {
     const { data } = await instance.patch<TApiResponse<TLeave>>(leaveApprove(id), payload);
 
     return data;
   },
 
-  async rejectLeaveRequest(id: number | string, payload: TApprovalDecisionPayload) {
+  async rejectLeaveRequest(id: string, payload: TApprovalDecisionPayload) {
     const { data } = await instance.patch<TApiResponse<TLeave>>(leaveReject(id), payload);
 
     return data;

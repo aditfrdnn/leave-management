@@ -16,7 +16,7 @@ import { Add01Icon, Delete02Icon, PencilEdit02Icon } from "@hugeicons/core-free-
 import { DeleteEmployeeCareer, GetEmployeeCareers } from "../action";
 
 /** Under `["setup", "employees"]`, so refreshing the employee list refetches the open history too. */
-export const EMPLOYEE_CAREERS_QUERY_KEY = (employeeId: number) => ["setup", "employees", "careers", employeeId] as const;
+export const EMPLOYEE_CAREERS_QUERY_KEY = (employeeId: string) => ["setup", "employees", "careers", employeeId] as const;
 
 /** One employee's position, employment type, grade and department over time, newest first. */
 export default function CareerHistorySheet({
@@ -36,7 +36,7 @@ export default function CareerHistorySheet({
   const t = useTranslations("setup");
   const locale = useLocale();
   const [deleted, setDeleted] = useState<TEmployeeCareer | null>(null);
-  const employeeId = employee?.id ?? 0;
+  const employeeId = employee?.id ?? "";
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: EMPLOYEE_CAREERS_QUERY_KEY(employeeId),

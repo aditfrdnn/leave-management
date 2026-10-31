@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { optionalUuidSchema, requiredUuidSchema, uuidSchema } from "./id-validations";
+
 /**
  * Appraisal schemas (docs/appraisal-module.md §3–§5). The period schema drives the dialog's
  * `zodResolver` and the action's `safeParse`; messages are keys under `appraisal.*.validation.*`.
@@ -8,21 +10,21 @@ import { z } from "zod";
 const isoDate = (message: string) => z.string().regex(/^\d{4}-\d{2}-\d{2}$/, message);
 
 export const appraisalIdSchema = z.object({
-  id: z.coerce.number().int().positive(),
+  id: uuidSchema,
 });
 
 /* -------------------------------- Periods -------------------------------- */
 
 export const appraisalPeriodSchema = z
   .object({
-    id: z.string().regex(/^\d*$/),
+    id: optionalUuidSchema,
     name: z.string().trim().min(1, "appraisal.periods.validation.nameRequired").max(100, "appraisal.periods.validation.nameMax"),
     review_start: isoDate("appraisal.periods.validation.dateRequired"),
     review_end: isoDate("appraisal.periods.validation.dateRequired"),
     target_start: isoDate("appraisal.periods.validation.dateRequired"),
     target_end: isoDate("appraisal.periods.validation.dateRequired"),
     due_date: z.union([z.literal(""), isoDate("appraisal.periods.validation.dateInvalid")]),
-    template_id: z.string().regex(/^\d+$/, "appraisal.periods.validation.templateRequired"),
+    template_id: requiredUuidSchema("appraisal.periods.validation.templateRequired"),
   })
   // ISO dates compare correctly as strings.
   .refine((value) => value.review_end >= value.review_start, {
@@ -43,7 +45,7 @@ export type AppraisalPeriodSchemaType = z.infer<typeof appraisalPeriodSchema>;
 /* ------------------------------- Appraisals ------------------------------ */
 
 export const appraisalReturnSchema = z.object({
-  id: z.number().int().positive(),
+  id: uuidSchema,
   note: z.string().trim().min(1, "appraisal.form.validation.noteRequired").max(1000, "appraisal.form.validation.noteMax"),
 });
 

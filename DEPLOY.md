@@ -9,6 +9,8 @@ detail/batal cuti, riwayat berpaginasi, dan modul Setup (karyawan, departemen, u
 2. **leave-service** (API) — `DEPLOY.md` di repo itu, termasuk menunjuk Administrator pertama.
 3. **leave-management** (dokumen ini) — **langsung setelah API selesai**. Frontend baru tidak bisa
    jalan dengan API lama, dan sebaliknya.
+   Sejak perubahan ID ke UUID (2026-11-02) hal ini wajib: frontend lama mengirim ID angka yang ditolak API
+   baru.
 
 Hosting: Firebase App Hosting (`apphosting.yaml`), build dari branch `main`.
 

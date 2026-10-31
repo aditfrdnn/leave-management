@@ -19,7 +19,7 @@ export default function CancelLeaveDialog({
   onOpenChange,
   onSuccess,
 }: {
-  leaveId: number;
+  leaveId: string;
   subject: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;

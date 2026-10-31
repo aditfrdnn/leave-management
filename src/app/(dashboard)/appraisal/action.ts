@@ -37,7 +37,7 @@ export async function GetAppraisalPeriods(params: TAppraisalPeriodListParams): P
 }
 
 /** `null` when the appraisal does not exist or is not mine to see (403/404): the page then goes home. */
-export async function GetAppraisal(id: number | string): Promise<TAppraisalDetail | null> {
+export async function GetAppraisal(id: string): Promise<TAppraisalDetail | null> {
   try {
     const response = await appraisalService.getAppraisal(id);
 
@@ -51,7 +51,7 @@ export async function GetAppraisal(id: number | string): Promise<TAppraisalDetai
 }
 
 /** Saves the draft answers; the API keeps only what my role may write and answers with the fresh detail. */
-export async function SaveAppraisalAnswers(id: number, answers: TAppraisalAnswers): Promise<AppraisalActionState> {
+export async function SaveAppraisalAnswers(id: string, answers: TAppraisalAnswers): Promise<AppraisalActionState> {
   const t = await getTranslations("appraisal");
   const parsedId = appraisalIdSchema.safeParse({ id });
   const parsedAnswers = appraisalAnswersSchema.safeParse(answers);
@@ -69,7 +69,7 @@ export async function SaveAppraisalAnswers(id: number, answers: TAppraisalAnswer
 }
 
 /** submit (employee) · assess (assessor, final). A 422 carries `errors["answers.…"]`. */
-export async function TransitionAppraisal(id: number, transition: TAppraisalTransition): Promise<AppraisalActionState> {
+export async function TransitionAppraisal(id: string, transition: TAppraisalTransition): Promise<AppraisalActionState> {
   const t = await getTranslations("appraisal");
   const parsed = appraisalIdSchema.safeParse({ id });
 

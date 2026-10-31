@@ -51,26 +51,26 @@ export const appraisalService = {
   },
 
   /** The template can change only while the period has no appraisals. */
-  async updatePeriod(id: number | string, payload: TAppraisalPeriodPayload) {
+  async updatePeriod(id: string, payload: TAppraisalPeriodPayload) {
     const { data } = await instance.put<TApiResponse<TAppraisalPeriod>>(appraisalPeriod(id), payload);
 
     return data;
   },
 
-  async closePeriod(id: number | string) {
+  async closePeriod(id: string) {
     const { data } = await instance.patch<TApiResponse<TAppraisalPeriod>>(appraisalPeriodClose(id));
 
     return data;
   },
 
-  async reopenPeriod(id: number | string) {
+  async reopenPeriod(id: string) {
     const { data } = await instance.patch<TApiResponse<TAppraisalPeriod>>(appraisalPeriodReopen(id));
 
     return data;
   },
 
   /** 409 when the period has appraisals. */
-  async deletePeriod(id: number | string) {
+  async deletePeriod(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(appraisalPeriod(id));
 
     return data;
@@ -95,38 +95,38 @@ export const appraisalService = {
   },
 
   /** Starts my appraisal in an open period, prefilled from last year's targets. */
-  async createAppraisal(periodId: number) {
+  async createAppraisal(periodId: string) {
     const { data } = await instance.post<TApiResponse<TAppraisalDetail>>(appraisals, { period_id: periodId });
 
     return data;
   },
 
-  async getAppraisal(id: number | string) {
+  async getAppraisal(id: string) {
     const { data } = await instance.get<TApiResponse<TAppraisalDetail>>(appraisal(id));
 
     return data;
   },
 
   /** Partial answers; the API merges only the keys my role may write (§4). */
-  async saveAnswers(id: number | string, answers: TAppraisalAnswers) {
+  async saveAnswers(id: string, answers: TAppraisalAnswers) {
     const { data } = await instance.put<TApiResponse<TAppraisalDetail>>(appraisalAnswers(id), { answers });
 
     return data;
   },
 
-  async submitAppraisal(id: number | string) {
+  async submitAppraisal(id: string) {
     const { data } = await instance.post<TApiResponse<TAppraisalDetail>>(appraisalAction(id, "submit"));
 
     return data;
   },
 
-  async returnAppraisal(id: number | string, payload: { note: string }) {
+  async returnAppraisal(id: string, payload: { note: string }) {
     const { data } = await instance.post<TApiResponse<TAppraisalDetail>>(appraisalAction(id, "return"), payload);
 
     return data;
   },
 
-  async assessAppraisal(id: number | string) {
+  async assessAppraisal(id: string) {
     const { data } = await instance.post<TApiResponse<TAppraisalDetail>>(appraisalAction(id, "assess"));
 
     return data;

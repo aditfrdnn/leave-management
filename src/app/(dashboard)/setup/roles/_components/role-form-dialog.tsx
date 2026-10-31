@@ -97,12 +97,12 @@ export default function RoleFormDialog({
       .filter((group) => group.permissions.length > 0);
   }, [groups, permissionSearch]);
 
-  const setPermissions = (next: number[]) => form.setValue("permission_ids", next, { shouldDirty: true, shouldValidate: true });
+  const setPermissions = (next: string[]) => form.setValue("permission_ids", next, { shouldDirty: true, shouldValidate: true });
 
-  const togglePermission = (id: number, checked: boolean) =>
+  const togglePermission = (id: string, checked: boolean) =>
     setPermissions(checked ? Array.from(new Set([...selected, id])) : selected.filter((value) => value !== id));
 
-  const toggleGroup = (ids: number[], checked: boolean) =>
+  const toggleGroup = (ids: string[], checked: boolean) =>
     setPermissions(checked ? Array.from(new Set([...selected, ...ids])) : selected.filter((value) => !ids.includes(value)));
 
   const { mutate, isPending } = useMutation({

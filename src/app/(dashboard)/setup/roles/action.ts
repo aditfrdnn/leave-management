@@ -26,7 +26,7 @@ export async function GetRoles(params: TRoleListParams): Promise<TApiPaginated<T
 }
 
 /** The role with its permissions and the users holding it, for the detail sheet. */
-export async function GetRole(id: number): Promise<TRoleDetail> {
+export async function GetRole(id: string): Promise<TRoleDetail> {
   try {
     const response = await setupService.getRole(id);
 
@@ -59,7 +59,7 @@ async function saveRole(formData: FormData | null, isUpdate: boolean): Promise<R
     id: getText(formData, "id"),
     title: getText(formData, "title"),
     description: getText(formData, "description"),
-    permission_ids: formData.getAll("permission_ids").map(Number),
+    permission_ids: formData.getAll("permission_ids").map(String),
   });
 
   if (!parsed.success) {

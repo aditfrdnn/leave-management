@@ -401,3 +401,17 @@ Since 2026-11-01 nobody stays on a page they may not open. `RouteGuard` in the d
 permission; either one sends the browser to `/` with a short notice. An appraisal the user may not see
 (API 403/404) does the same. The API keeps enforcing every permission on its own. Roles and permissions no
 longer have a "system" flag: an administrator can rename or delete any of them.
+
+## 16. Record ids are UUIDs
+
+Since 2026-11-02 every table's primary key is a UUID v7 (time-ordered) instead of an auto-increment
+number, and every reference follows (`*_id`, `created_by`, `approval_by`, the polymorphic `*_id` columns,
+Sanctum tokens, sessions). The API returns and accepts ids as strings; validation uses `uuid`, routes
+`whereUuid`. The conversion migration (`leave-service/database/migrations/2026_11_02_100000_convert_ids_to_uuid.php`)
+keeps every relation of existing data and cannot be reversed (restore a backup instead).
+
+- Frontend: every `id` / `*_id` type is `string`; forms use `uuidSchema` / `optionalUuidSchema`
+  (`src/validations/id-validations.ts`), "" means none.
+- Ordering by id still follows creation time (UUID v7). The leave balance ledger orders by `seq`
+  (auto-increment) so "latest entry" is exact even within one millisecond.
+- WhatsApp: `leave_request_id` in the bridge's callback is the UUID; the bridge passes it through unchanged.

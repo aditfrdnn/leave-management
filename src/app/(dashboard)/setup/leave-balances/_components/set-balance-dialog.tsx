@@ -46,7 +46,7 @@ export default function SetBalanceDialog({
 
   const form = useForm<LeaveBalanceSchemaType>({
     resolver: zodResolver(leaveBalanceSchema),
-    defaultValues: { employee_id: 0, balance: 0, note: "" },
+    defaultValues: { employee_id: "", balance: 0, note: "" },
   });
 
   // A fresh form per employee; the note is kept so a batch can reuse one reason.

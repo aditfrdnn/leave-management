@@ -22,8 +22,8 @@ export type TDashboardApprover = {
 };
 
 export type TOnLeaveToday = {
-  id: number;
-  user: { id: number; name: string; department?: { id: number; name: string; alias: string } | null };
+  id: string;
+  user: { id: string; name: string; department?: { id: string; name: string; alias: string } | null };
   leave_type: { name: string } | null;
   start_date: string;
   end_date: string;

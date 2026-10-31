@@ -23,7 +23,7 @@ export const appraisalTemplateService = {
     return data;
   },
 
-  async getAppraisalTemplate(id: number | string) {
+  async getAppraisalTemplate(id: string) {
     const { data } = await instance.get<TApiResponse<TAppraisalTemplate>>(appraisalTemplate(id));
 
     return data;
@@ -35,20 +35,20 @@ export const appraisalTemplateService = {
     return data;
   },
 
-  async updateAppraisalTemplate(id: number | string, payload: TAppraisalTemplatePayload) {
+  async updateAppraisalTemplate(id: string, payload: TAppraisalTemplatePayload) {
     const { data } = await instance.put<TApiResponse<TAppraisalTemplate>>(appraisalTemplate(id), payload);
 
     return data;
   },
 
   /** A new inactive copy; the API suggests the next revision (`Rev.N+1`). */
-  async duplicateAppraisalTemplate(id: number | string) {
+  async duplicateAppraisalTemplate(id: string) {
     const { data } = await instance.post<TApiResponse<TAppraisalTemplate>>(appraisalTemplateDuplicate(id));
 
     return data;
   },
 
-  async deleteAppraisalTemplate(id: number | string) {
+  async deleteAppraisalTemplate(id: string) {
     const { data } = await instance.delete<TApiResponse<null>>(appraisalTemplate(id));
 
     return data;
