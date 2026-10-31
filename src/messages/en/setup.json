@@ -12,9 +12,6 @@
       "editItem": "Edit {name}",
       "deleteItem": "Delete {name}"
     },
-    "filters": {
-      "allStatuses": "All statuses"
-    },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
@@ -66,10 +63,6 @@
       "contract": "Contract",
       "probation": "Probation",
       "intern": "Intern"
-    },
-    "filters": {
-      "allDepartments": "All departments",
-      "allEmploymentTypes": "All employment types"
     },
     "form": {
       "createTitle": "Add Employee",
@@ -221,9 +214,6 @@
       "noRole": "No role",
       "noEmployee": "Not linked"
     },
-    "filters": {
-      "allRoles": "All roles"
-    },
     "form": {
       "createTitle": "Add User",
       "updateTitle": "Edit User",
@@ -338,9 +328,6 @@
       "roles": "Roles",
       "roleCount": "{count, plural, =0 {Unused} one {# role} other {# roles}}"
     },
-    "filters": {
-      "allGroups": "All groups"
-    },
     "form": {
       "createTitle": "Add Permission",
       "updateTitle": "Edit Permission",
@@ -379,7 +366,6 @@
     },
     "howItWorks": "Set each employee's current remaining annual leave once. After that it moves by itself: +1 day on the 1st of every month, and approved annual leave is deducted.",
     "searchPlaceholder": "Search name or NIK",
-    "allDepartments": "All departments",
     "empty": "No active employees yet",
     "emptySearch": "No employee matches the filter",
     "notSet": "Not set",
@@ -448,8 +434,7 @@
     "empty": "No holidays recorded for {year} yet",
     "emptySearch": "No holiday matches the filter",
     "filters": {
-      "year": "Year",
-      "allTypes": "All types"
+      "year": "Year"
     },
     "types": {
       "public": "Public holiday",

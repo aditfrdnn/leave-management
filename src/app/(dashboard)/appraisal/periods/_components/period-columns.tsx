@@ -29,6 +29,7 @@ export const periodColumns = ({
     {
       accessorKey: "name",
       header: t("periods.fields.name"),
+      meta: { sortKey: "name" },
       cell: ({ row }) => (
         <div className="flex min-w-40 flex-col">
           <span className="font-medium">{row.original.name}</span>
@@ -87,6 +88,7 @@ export const periodColumns = ({
     {
       id: "status",
       header: t("periods.fields.status"),
+      meta: { filterKey: "status", filterLabel: (value) => t(`periodStatus.${value}` as "periodStatus.open") },
       cell: ({ row }) => <PeriodStatusBadge status={row.original.status} />,
     },
     {

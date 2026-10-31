@@ -48,6 +48,7 @@ export const leaveBalanceColumns = ({
     id: "department",
     accessorFn: (row) => row.employee.department?.alias ?? "",
     header: t("leaveBalances.columns.department"),
+    meta: { filterKey: "department" },
     cell: ({ row }) => (
       <div className="flex flex-col">
         <span className="whitespace-nowrap">{row.original.employee.department?.alias ?? "-"}</span>

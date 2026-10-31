@@ -47,10 +47,10 @@ export type TUserListParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  status?: TActiveStatus;
-  role_id?: number | string;
   sort_by?: TUserSortKey;
   sort_dir?: TSortDirection;
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 export type TUserPayload = {
@@ -89,11 +89,10 @@ export type TEmployeeListParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  department_id?: number | string;
-  status?: TActiveStatus;
-  employment_type?: TEmploymentType;
   sort_by?: TEmployeeSortKey;
   sort_dir?: TSortDirection;
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 /**
@@ -228,7 +227,8 @@ export type TPermissionListParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  group_name?: string;
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 export type TPermissionPayload = {
@@ -263,10 +263,11 @@ export type TLeaveBalanceListParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  department_id?: string;
   status?: TActiveStatus;
   sort_by?: TLeaveBalanceSortKey;
   sort_dir?: TSortDirection;
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 export type TLeaveBalanceEntryType = "set" | "accrual" | "leave";
@@ -316,11 +317,11 @@ export type THolidayType = "public" | "mass_leave";
 export type THolidayListParams = {
   page?: number;
   per_page?: number;
-  year?: number;
   search?: string;
-  type?: THolidayType;
   sort_by?: "date" | "name";
   sort_dir?: TSortDirection;
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 export type THolidayPayload = {

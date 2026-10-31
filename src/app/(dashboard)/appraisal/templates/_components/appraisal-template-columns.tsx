@@ -39,21 +39,25 @@ export const appraisalTemplateColumns = ({
   {
     accessorKey: "code",
     header: t("appraisalTemplates.fields.code"),
+    meta: { sortKey: "code" },
     cell: ({ row }) => <span className="font-mono text-xs whitespace-nowrap">{row.original.code}</span>,
   },
   {
     accessorKey: "name",
     header: t("appraisalTemplates.fields.name"),
+    meta: { sortKey: "name" },
     cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
   },
   {
     accessorKey: "revision",
     header: t("appraisalTemplates.fields.revision"),
+    meta: { sortKey: "revision" },
     cell: ({ row }) => <span className="whitespace-nowrap">{row.original.revision}</span>,
   },
   {
     accessorKey: "is_active",
     header: t("shared.columns.status"),
+    meta: { filterKey: "status", filterLabel: (value) => t(`shared.status.${value}` as "shared.status.active") },
     cell: ({ row }) => {
       const active = row.original.is_active;
 
@@ -81,6 +85,7 @@ export const appraisalTemplateColumns = ({
   {
     accessorKey: "updated_at",
     header: t("appraisalTemplates.columns.updatedAt"),
+    meta: { sortKey: "updated_at" },
     cell: ({ row }) => <span className="whitespace-nowrap tabular-nums">{dateFormatter(row.original.updated_at, locale)}</span>,
   },
   {

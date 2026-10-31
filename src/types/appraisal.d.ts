@@ -146,14 +146,16 @@ export type TAppraisalListParams = {
   scope?: TAppraisalScope;
   page?: number;
   per_page?: number;
-  period_id?: number;
-  status?: TAppraisalStatus;
   search?: string;
+  sort_by?: "updated_at" | "submitted_at" | "status";
+  sort_dir?: "asc" | "desc";
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 export type TAppraisalListResponse = {
   success: boolean;
   message: string;
   data: TAppraisalItem[];
-  meta: { pagination: import("./api").TApiPagination; awaiting_my_assessment?: number };
+  meta: { pagination: import("./api").TApiPagination; awaiting_my_assessment?: number; facets?: import("./table").TTableFacets };
 };

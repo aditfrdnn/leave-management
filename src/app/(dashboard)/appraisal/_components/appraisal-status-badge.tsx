@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { cn } from "@/lib/utils/utils";
 import type { TAppraisalPeriodStatus, TAppraisalStatus } from "@/types/appraisal";
-import { CheckmarkBadge01Icon, CheckmarkCircle02Icon, Clock01Icon, File02Icon, SquareLock02Icon, SquareUnlock02Icon } from "@hugeicons/core-free-icons";
+import { CheckmarkBadge01Icon, Clock01Icon, File02Icon, SquareLock02Icon, SquareUnlock02Icon } from "@hugeicons/core-free-icons";
 
 const APPRAISAL_STATUS_TONE = {
   draft: { className: "bg-muted text-muted-foreground", icon: File02Icon },

@@ -70,15 +70,8 @@
     "searchPlaceholder": "Search LVR no. or reason…",
     "emptySearch": "No request matches the filter",
     "view": "View details",
-    "scopes": {
-      "all": "All",
-      "mine": "My requests",
-      "approvals": "Awaiting my decision",
-      "label": "Show"
-    },
     "approve": "Approve",
     "reject": "Reject",
-    "emptyApprovals": "Nothing waits for your decision",
     "you": "You",
     "titles": {
       "mine": "My Leave History",
@@ -89,7 +82,8 @@
       "mine": "Every request you sent, newest first.",
       "all": "Your own requests and the ones you approve.",
       "approvals": "Requests where you are the approver. Approve or reject the pending ones."
-    }
+    },
+    "awaitingCount": "{count, plural, one {# request waits} other {# requests wait}} for your decision"
   },
   "status": {
     "pending": "Pending",

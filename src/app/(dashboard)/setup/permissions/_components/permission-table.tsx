@@ -10,28 +10,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
 import type { TPermissionItem, TPermissionListParams } from "@/types/setup";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
-import { DeletePermission, GetPermissionGroups, GetPermissions } from "../action";
-import { permissionColumns, permissionGroupLabel } from "./permission-columns";
+import { DeletePermission, GetPermissions } from "../action";
+import { permissionColumns } from "./permission-columns";
 import PermissionFormDialog from "./permission-form-dialog";
 
 export const PERMISSIONS_QUERY_KEY = ["setup", "permissions"] as const;
 export const PERMISSION_GROUPS_QUERY_KEY = ["setup", "permission-groups"] as const;
 
-const ALL = "all";
 
 export default function PermissionTable() {
   const t = useTranslations("setup");
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, resetPage } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
-  const [groupName, setGroupName] = useState(ALL);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<TPermissionItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<TPermissionItem | null>(null);
@@ -40,18 +37,13 @@ export default function PermissionTable() {
     page,
     per_page: perPage,
     search,
-    group_name: groupName === ALL ? undefined : groupName,
+    columns: table.params.columns,
   };
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...PERMISSIONS_QUERY_KEY, params],
     queryFn: () => GetPermissions(params),
     placeholderData: keepPreviousData,
-  });
-
-  const { data: groups } = useQuery({
-    queryKey: PERMISSION_GROUPS_QUERY_KEY,
-    queryFn: () => GetPermissionGroups(),
   });
 
   const pagination = data?.meta?.pagination;
@@ -93,25 +85,6 @@ export default function PermissionTable() {
               }}
             />
           </div>
-          <Select
-            value={groupName}
-            onValueChange={(value) => {
-              setGroupName(value);
-              resetPage();
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg sm:w-48" aria-label={t("permissions.fields.group")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("permissions.filters.allGroups")}</SelectItem>
-              {(groups ?? []).map((group) => (
-                <SelectItem key={group.group_name} value={group.group_name}>
-                  {permissionGroupLabel(t, group.group_name)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
         <Button
           size="sm"
@@ -132,13 +105,15 @@ export default function PermissionTable() {
           columns={columns}
           data={data?.data ?? []}
           isLoading={isLoading}
-          noResultMessage={search || params.group_name ? t("permissions.emptySearch") : t("permissions.empty")}
+          noResultMessage={search || params.columns ? t("permissions.emptySearch") : t("permissions.empty")}
           page={page}
           onPageChanged={(nextPage) => setPage(Number(nextPage))}
           limit={perPage}
           onLimitChanged={(nextLimit) => onLimitChange(Number(nextLimit))}
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
+          {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <PermissionFormDialog

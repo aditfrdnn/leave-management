@@ -7,6 +7,9 @@ export type TTableFacet = {
     count: number;
 };
 
+/** `meta.facets` of a list response: filter key → its values. */
+export type TTableFacets = Partial<Record<string, TTableFacet[]>>;
+
 export type TTableSortDirection = "asc" | "desc";
 
 export type TTableSort = { key: string; direction: TTableSortDirection } | null;

@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
-import type { THolidayItem, THolidayListParams, THolidayType } from "@/types/setup";
+import type { THolidayItem, THolidayListParams } from "@/types/setup";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { DeleteHoliday, GetHolidays } from "../action";
 import { holidayColumns } from "./holiday-columns";
@@ -22,19 +21,16 @@ import HolidayFormDialog from "./holiday-form-dialog";
 
 export const HOLIDAYS_QUERY_KEY = ["setup", "holidays"] as const;
 
-const ALL = "all";
-const THIS_YEAR = new Date().getFullYear();
-const YEARS = [THIS_YEAR + 1, THIS_YEAR, THIS_YEAR - 1];
+/** The list opens on this year's holidays; the date column's filter picks other years. */
+const THIS_YEAR = String(new Date().getFullYear());
 
 export default function HolidayTable() {
   const t = useTranslations("setup");
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table, resetPage } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams({ defaultFilters: { year: [THIS_YEAR] } });
 
-  const [year, setYear] = useState(THIS_YEAR);
-  const [type, setType] = useState<THolidayType | typeof ALL>(ALL);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<THolidayItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<THolidayItem | null>(null);
@@ -42,9 +38,8 @@ export default function HolidayTable() {
   const params: THolidayListParams = {
     page,
     per_page: perPage,
-    year,
     search,
-    type: type === ALL ? undefined : type,
+    columns: table.params.columns,
     sort_by: table.params.sort as THolidayListParams["sort_by"],
     sort_dir: table.params.direction,
   };
@@ -93,40 +88,6 @@ export default function HolidayTable() {
               }}
             />
           </div>
-          <Select
-            value={String(year)}
-            onValueChange={(value) => {
-              setYear(Number(value));
-              resetPage();
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg sm:w-28" aria-label={t("holidays.filters.year")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {YEARS.map((option) => (
-                <SelectItem key={option} value={String(option)}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={type}
-            onValueChange={(value) => {
-              setType(value as THolidayType | typeof ALL);
-              resetPage();
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg sm:w-44" aria-label={t("holidays.fields.type")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("holidays.filters.allTypes")}</SelectItem>
-              <SelectItem value="public">{t("holidays.types.public")}</SelectItem>
-              <SelectItem value="mass_leave">{t("holidays.types.mass_leave")}</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         <Button
           size="sm"
@@ -147,7 +108,11 @@ export default function HolidayTable() {
           columns={columns}
           data={data?.data ?? []}
           isLoading={isLoading}
-          noResultMessage={search || type !== ALL ? t("holidays.emptySearch") : t("holidays.empty", { year })}
+          noResultMessage={
+            search || (params.columns?.type?.length ?? 0) > 0 || (params.columns?.year?.length ?? 0) !== 1
+              ? t("holidays.emptySearch")
+              : t("holidays.empty", { year: params.columns?.year?.[0] ?? THIS_YEAR })
+          }
           page={page}
           onPageChanged={(nextPage) => setPage(Number(nextPage))}
           limit={perPage}
@@ -155,6 +120,7 @@ export default function HolidayTable() {
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
           {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <HolidayFormDialog

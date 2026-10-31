@@ -41,11 +41,18 @@ export default function AppraisalTemplateTable() {
   const debounce = useDebounce();
   const queryClient = useQueryClient();
   const translateMessage = useTranslateMessage();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
   const [deletedItem, setDeletedItem] = useState<TAppraisalTemplateItem | null>(null);
 
-  const params: TAppraisalTemplateListParams = { page, per_page: perPage, search };
+  const params: TAppraisalTemplateListParams = {
+    page,
+    per_page: perPage,
+    search,
+    sort_by: table.params.sort,
+    sort_dir: table.params.direction,
+    columns: table.params.columns,
+  };
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_TEMPLATES_QUERY_KEY, params],
@@ -136,6 +143,8 @@ export default function AppraisalTemplateTable() {
           onLimitChanged={(nextLimit) => onLimitChange(Number(nextLimit))}
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
+          {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <DeleteDialog

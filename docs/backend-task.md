@@ -97,10 +97,9 @@ tes otomatis.
 
 ## P2 — Samakan kontrak dengan next-prm / laravel-tailwind
 
-10. **Sort, filter, facets** (`docs/data-table.md`): port `App\Support\Table\TableQuery` +
-    `TableFilter` dari `laravel-tailwind`; param `sort`, `direction`, `columns[key][]`; respons
-    `facets`. Whitelist untuk leave-request: sort `subject, start_date, submitted_at`; filter
-    `leave_type_id, status`.
+10. ~~**Sort, filter, facets**~~ — selesai 2026-11-01: semua list memakai `columns[key][]` +
+    `meta.facets` lewat `App\Support\Table\ColumnFilters` (lihat `docs/data-table.md`). Sort tetap
+    `sort_by` / `sort_dir` per endpoint.
 11. **Tanggal ISO**: terima/kembalikan `YYYY-MM-DD` alih-alih `d-m-Y` (frontend mengubah
     `LEAVE_DATE_FORMAT` di satu tempat).
 12. **`X-Locale`**: frontend mengirim header ini di tiap request; pasang middleware `setLocale`

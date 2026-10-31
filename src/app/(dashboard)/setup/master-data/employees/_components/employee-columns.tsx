@@ -73,6 +73,7 @@ export const employeeColumns = ({
     id: "department",
     accessorFn: (row) => row.department?.name ?? "",
     header: t("employees.fields.department"),
+    meta: { filterKey: "department" },
     cell: ({ row }) =>
       row.original.department ? (
         <span className="whitespace-nowrap" title={row.original.department.name}>
@@ -86,16 +87,19 @@ export const employeeColumns = ({
     id: "supervisor",
     accessorFn: (row) => row.supervisor?.name ?? "",
     header: t("employees.fields.supervisor"),
+    meta: { filterKey: "supervisor" },
     cell: ({ row }) => <p className="whitespace-nowrap">{row.original.supervisor?.name ?? "-"}</p>,
   },
   {
     accessorKey: "employment_type",
     header: t("employees.fields.employmentType"),
+    meta: { filterKey: "employment_type", filterLabel: (value) => t(`employees.employmentTypes.${value}` as "employees.employmentTypes.permanent") },
     cell: ({ row }) => <Badge variant="secondary">{t(`employees.employmentTypes.${row.original.employment_type}`)}</Badge>,
   },
   {
     accessorKey: "grade",
     header: t("employees.fields.grade"),
+    meta: { filterKey: "grade", filterLabel: (value) => t("employees.careers.grade", { grade: value }) },
     cell: ({ row }) =>
       row.original.grade != null ? (
         <span className="whitespace-nowrap tabular-nums">{t("employees.careers.grade", { grade: row.original.grade })}</span>
@@ -112,6 +116,7 @@ export const employeeColumns = ({
   {
     accessorKey: "status",
     header: t("shared.columns.status"),
+    meta: { filterKey: "status", filterLabel: (value) => t(`shared.status.${value}` as "shared.status.active") },
     cell: ({ row }) => <StatusBadge t={t} status={row.original.status} />,
   },
   {

@@ -22,14 +22,15 @@ export const holidayColumns = ({
   onClickDelete: (item: THolidayItem) => void;
 }): ColumnDef<THolidayItem>[] => {
   const intl = locale === "id" ? "id-ID" : "en-GB";
-  const dayMonth = new Intl.DateTimeFormat(intl, { day: "numeric", month: "short" });
+  // The year filter can show several years at once, so the date carries its year.
+  const dayMonth = new Intl.DateTimeFormat(intl, { day: "numeric", month: "short", year: "numeric" });
   const weekday = new Intl.DateTimeFormat(intl, { weekday: "long" });
 
   return [
     {
       accessorKey: "date",
       header: t("holidays.fields.date"),
-      meta: { sortKey: "date" },
+      meta: { sortKey: "date", filterKey: "year" },
       cell: ({ row }) => {
         const date = parse(row.original.date, "yyyy-MM-dd", new Date());
 
@@ -55,6 +56,7 @@ export const holidayColumns = ({
     {
       id: "type",
       header: t("holidays.fields.type"),
+      meta: { filterKey: "type", filterLabel: (value) => t(`holidays.types.${value}` as "holidays.types.public") },
       cell: ({ row }) =>
         row.original.is_mass_leave ? (
           <Badge variant="outline" className="border-none bg-yellow/12 text-yellow-strong">

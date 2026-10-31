@@ -24,7 +24,8 @@ export type TApiPaginated<TItem> = {
   success: boolean;
   message: string;
   data: TItem[];
-  meta: { pagination: TApiPagination };
+  /** `facets`: header filter values with counts (docs/data-table.md). */
+  meta: { pagination: TApiPagination; facets?: import("./table").TTableFacets };
 };
 
 /** Laravel's own 422 body — note the missing `success` key. */

@@ -12,9 +12,6 @@
       "editItem": "Ubah {name}",
       "deleteItem": "Hapus {name}"
     },
-    "filters": {
-      "allStatuses": "Semua status"
-    },
     "status": {
       "active": "Aktif",
       "inactive": "Nonaktif"
@@ -66,10 +63,6 @@
       "contract": "Kontrak",
       "probation": "Masa Percobaan",
       "intern": "Magang"
-    },
-    "filters": {
-      "allDepartments": "Semua departemen",
-      "allEmploymentTypes": "Semua status kepegawaian"
     },
     "form": {
       "createTitle": "Tambah Karyawan",
@@ -221,9 +214,6 @@
       "noRole": "Tanpa role",
       "noEmployee": "Belum tertaut"
     },
-    "filters": {
-      "allRoles": "Semua role"
-    },
     "form": {
       "createTitle": "Tambah User",
       "updateTitle": "Ubah User",
@@ -338,9 +328,6 @@
       "roles": "Role",
       "roleCount": "{count, plural, =0 {Belum dipakai} other {# role}}"
     },
-    "filters": {
-      "allGroups": "Semua grup"
-    },
     "form": {
       "createTitle": "Tambah Izin",
       "updateTitle": "Ubah Izin",
@@ -379,7 +366,6 @@
     },
     "howItWorks": "Isi sisa cuti tahunan setiap karyawan sekali saja. Setelah itu saldonya bergerak sendiri: bertambah 1 hari setiap tanggal 1, dan berkurang saat cuti tahunan disetujui.",
     "searchPlaceholder": "Cari nama atau NIK",
-    "allDepartments": "Semua departemen",
     "empty": "Belum ada karyawan aktif",
     "emptySearch": "Tidak ada karyawan yang cocok",
     "notSet": "Belum diatur",
@@ -448,8 +434,7 @@
     "empty": "Belum ada hari libur untuk tahun {year}",
     "emptySearch": "Tidak ada hari libur yang cocok",
     "filters": {
-      "year": "Tahun",
-      "allTypes": "Semua jenis"
+      "year": "Tahun"
     },
     "types": {
       "public": "Libur nasional",

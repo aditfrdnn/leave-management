@@ -8,29 +8,26 @@ import { DataTable } from "@/components/common/data-table";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
 import type { TLeaveBalanceItem, TLeaveBalanceListParams, TLeaveBalanceSortKey } from "@/types/setup";
 import { InformationCircleIcon, Search01Icon } from "@hugeicons/core-free-icons";
-import { GetDepartmentOptions, GetLeaveBalances } from "../action";
+import { GetLeaveBalances } from "../action";
 import BalanceHistorySheet, { LEAVE_BALANCE_HISTORY_KEY } from "./balance-history-sheet";
 import { leaveBalanceColumns } from "./leave-balance-columns";
 import SetBalanceDialog from "./set-balance-dialog";
 
 export const LEAVE_BALANCES_QUERY_KEY = ["setup", "leave-balances"] as const;
 
-const ALL = "all";
 
 export default function LeaveBalanceTable() {
   const t = useTranslations("setup");
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table, resetPage } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
-  const [departmentId, setDepartmentId] = useState(ALL);
   const [editedItem, setEditedItem] = useState<TLeaveBalanceItem | null>(null);
   const [historyItem, setHistoryItem] = useState<TLeaveBalanceItem | null>(null);
 
@@ -38,7 +35,7 @@ export default function LeaveBalanceTable() {
     page,
     per_page: perPage,
     search,
-    department_id: departmentId === ALL ? undefined : departmentId,
+    columns: table.params.columns,
     sort_by: table.params.sort as TLeaveBalanceSortKey | undefined,
     sort_dir: table.params.direction,
   };
@@ -47,11 +44,6 @@ export default function LeaveBalanceTable() {
     queryKey: [...LEAVE_BALANCES_QUERY_KEY, params],
     queryFn: () => GetLeaveBalances(params),
     placeholderData: keepPreviousData,
-  });
-
-  const { data: departments } = useQuery({
-    queryKey: ["setup", "options", "departments"],
-    queryFn: () => GetDepartmentOptions(),
   });
 
   const rows = useMemo(() => data?.data ?? [], [data]);
@@ -104,25 +96,6 @@ export default function LeaveBalanceTable() {
               }}
             />
           </div>
-          <Select
-            value={departmentId}
-            onValueChange={(value) => {
-              setDepartmentId(value);
-              resetPage();
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg sm:w-48" aria-label={t("leaveBalances.columns.department")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("leaveBalances.allDepartments")}</SelectItem>
-              {(departments ?? []).map((department) => (
-                <SelectItem key={department.id} value={String(department.id)}>
-                  {department.text}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <CardContent className="flex flex-col gap-4 overflow-auto">
@@ -131,7 +104,7 @@ export default function LeaveBalanceTable() {
             columns={columns}
             data={rows}
             isLoading={isLoading}
-            noResultMessage={search || departmentId !== ALL ? t("leaveBalances.emptySearch") : t("leaveBalances.empty")}
+            noResultMessage={search || params.columns ? t("leaveBalances.emptySearch") : t("leaveBalances.empty")}
             page={page}
             onPageChanged={(nextPage) => setPage(Number(nextPage))}
             limit={perPage}
@@ -139,6 +112,7 @@ export default function LeaveBalanceTable() {
             currentPage={pagination?.current_page ?? 1}
             lastPage={pagination?.last_page ?? 1}
             {...table.tableProps}
+          facets={data?.meta?.facets}
           />
         </CardContent>
       </Card>

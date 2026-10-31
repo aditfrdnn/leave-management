@@ -9,6 +9,7 @@ import {
   appraisals,
   appraisalTemplates,
 } from "@/constants/endpoint-constant";
+import type { TTableColumnFilters } from "@/types/table";
 import instance from "@/lib/axios/instance";
 import type { TApiPaginated, TApiResponse } from "@/types/api";
 import type {
@@ -18,7 +19,6 @@ import type {
   TAppraisalListResponse,
   TAppraisalPeriod,
   TAppraisalPeriodPayload,
-  TAppraisalPeriodStatus,
   TAppraisalTemplateItem,
 } from "@/types/appraisal";
 import { toQueryParams } from "./to-query-params";
@@ -27,8 +27,11 @@ import { toQueryParams } from "./to-query-params";
 export type TAppraisalPeriodListParams = {
   page?: number;
   per_page?: number;
-  status?: TAppraisalPeriodStatus;
   search?: string;
+  sort_by?: string;
+  sort_dir?: "asc" | "desc";
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: TTableColumnFilters;
 };
 
 /** Appraisal periods and appraisals (docs/appraisal-module.md §3–§5). Templates live in `appraisal-template.service.ts`. */

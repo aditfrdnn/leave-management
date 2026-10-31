@@ -330,9 +330,11 @@ is_mine: boolean,                                   // the signed-in user submit
 my_approval: { id, approval_level, approval_action, notes, approved_at } | null,  // my approval row, if any
 ```
 
-`search` also matches the requester's name when `scope` is not `mine`. `status`, `sort_by`, `sort_dir`, `page`,
-`per_page` work as before. `meta.awaiting_my_decision` (int) is always present: pending requests (leave status 0)
-whose `my_approval.approval_action` is 0 — it feeds the tab badge.
+`search` also matches the requester's name when `scope` is not `mine`. Header filters `columns[status][]` and
+`columns[requester][]` (user ids) with `meta.facets` (docs/data-table.md); `sort_by`, `sort_dir`, `page`, `per_page`
+as before. `meta.awaiting_my_decision` (int) is always present: pending requests (leave status 0) whose
+`my_approval.approval_action` is 0 — the list shows it as a line above the table. The frontend uses `all` for
+approvers and `mine` for everyone else; there are no scope tabs.
 
 Decisions keep using `PATCH /api/leave-request/{id}/approve|reject`. `GET /api/leave-request/approvals` stays for
 compatibility but the frontend no longer calls it.

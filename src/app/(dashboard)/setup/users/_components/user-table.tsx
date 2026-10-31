@@ -10,21 +10,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import { useAuth } from "@/hooks/use-auth";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
-import type { TActiveStatus, TUserItem, TUserListParams, TUserSortKey } from "@/types/setup";
-import { ACTIVE_STATUSES } from "@/validations/setup-validations";
+import type { TUserItem, TUserListParams, TUserSortKey } from "@/types/setup";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
-import { DeleteUser, GetRoleOptions, GetUsers } from "../action";
+import { DeleteUser, GetUsers } from "../action";
 import { userColumns } from "./user-columns";
-import UserFormDialog, { ROLE_OPTIONS_QUERY_KEY } from "./user-form-dialog";
+import UserFormDialog from "./user-form-dialog";
 
 export const USERS_QUERY_KEY = ["setup", "users"] as const;
 
-const ALL = "all";
 
 export default function UserTable() {
   const t = useTranslations("setup");
@@ -32,10 +29,8 @@ export default function UserTable() {
   const debounce = useDebounce();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, resetPage, table } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
-  const [status, setStatus] = useState(ALL);
-  const [roleId, setRoleId] = useState(ALL);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<TUserItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<TUserItem | null>(null);
@@ -44,8 +39,7 @@ export default function UserTable() {
     page,
     per_page: perPage,
     search,
-    status: status === ALL ? undefined : (status as TActiveStatus),
-    role_id: roleId === ALL ? undefined : roleId,
+    columns: table.params.columns,
     sort_by: table.params.sort as TUserSortKey | undefined,
     sort_dir: table.params.direction,
   };
@@ -56,13 +50,8 @@ export default function UserTable() {
     placeholderData: keepPreviousData,
   });
 
-  const { data: roles } = useQuery({
-    queryKey: ROLE_OPTIONS_QUERY_KEY,
-    queryFn: () => GetRoleOptions(),
-  });
-
   const pagination = data?.meta?.pagination;
-  const isFiltered = !!(search || params.status || params.role_id);
+  const isFiltered = !!(search || params.columns);
 
   const columns = useMemo(
     () =>
@@ -88,11 +77,6 @@ export default function UserTable() {
     queryClient.invalidateQueries({ queryKey: ["setup", "employees"] });
   };
 
-  const filterChange = (setter: (value: string) => void) => (value: string) => {
-    setter(value);
-    resetPage();
-  };
-
   return (
     <Card className="flex flex-col">
       <div className="flex w-full flex-col gap-2 px-6 lg:flex-row lg:items-start lg:justify-between">
@@ -110,33 +94,7 @@ export default function UserTable() {
             />
           </div>
 
-          <Select value={status} onValueChange={filterChange(setStatus)}>
-            <SelectTrigger className="w-full rounded-lg sm:w-40" aria-label={t("shared.columns.status")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("shared.filters.allStatuses")}</SelectItem>
-              {ACTIVE_STATUSES.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`shared.status.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
 
-          <Select value={roleId} onValueChange={filterChange(setRoleId)}>
-            <SelectTrigger className="w-full rounded-lg sm:w-44" aria-label={t("users.fields.role")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("users.filters.allRoles")}</SelectItem>
-              {(roles ?? []).map((role) => (
-                <SelectItem key={role.id} value={String(role.id)}>
-                  {role.text}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <Button
@@ -166,6 +124,7 @@ export default function UserTable() {
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
           {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <UserFormDialog

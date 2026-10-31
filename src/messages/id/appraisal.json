@@ -10,7 +10,7 @@
     },
     "reports": {
       "title": "Laporan penilaian",
-      "description": "Seluruh penilaian dalam satu periode, lengkap dengan PDF-nya."
+      "description": "Seluruh penilaian karyawan, lengkap dengan PDF-nya. Saring per kolom."
     },
     "periods": {
       "title": "Periode penilaian",
@@ -46,9 +46,6 @@
     "searchPlaceholder": "Cari nama atau NIK karyawan",
     "periodLabel": "Periode",
     "periodPlaceholder": "Pilih periode",
-    "allPeriods": "Semua periode",
-    "statusLabel": "Status",
-    "allStatuses": "Semua status",
     "emptySearch": "Tidak ada penilaian yang cocok dengan filter ini.",
     "view": "Lihat",
     "viewFor": "Lihat penilaian {name}",
@@ -68,26 +65,17 @@
     "empty": "Anda belum memiliki penilaian."
   },
   "team": {
-    "tabs": {
-      "label": "Saring menurut status",
-      "submitted": "Perlu dinilai",
-      "all": "Semua",
-      "draft": "Draf",
-      "assessed": "Selesai"
-    },
     "awaitingCount": "{count} penilaian menunggu Anda",
-    "emptyAwaiting": "Tidak ada penilaian yang menunggu Anda.",
-    "empty": "Belum ada penilaian dari tim Anda."
+    "empty": "Belum ada penilaian dari tim Anda.",
+    "noneAwaiting": "Tidak ada penilaian yang menunggu Anda."
   },
   "reports": {
     "total": "Total",
-    "empty": "Belum ada penilaian pada periode ini.",
-    "noPeriods": "Belum ada periode penilaian."
+    "empty": "Belum ada penilaian pada periode ini."
   },
   "periods": {
     "createLabel": "Periode baru",
     "searchPlaceholder": "Cari nama periode",
-    "allStatuses": "Semua status",
     "empty": "Belum ada periode penilaian.",
     "emptySearch": "Tidak ada periode yang cocok dengan filter ini.",
     "noDueDate": "Tanpa batas waktu",

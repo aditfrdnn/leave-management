@@ -12,14 +12,17 @@ import type { TTableColumnFilters, TTableQueryParams, TTableSort } from "@/types
  */
 export function useTableQuery({
     defaultSort = null,
+    defaultFilters = {},
     onChange,
 }: {
     defaultSort?: TTableSort;
+    /** Filters the table opens with, e.g. the current year; the user can clear them. */
+    defaultFilters?: TTableColumnFilters;
     /** Called after the sort or a filter changes, e.g. to go back to page 1. */
     onChange?: () => void;
 } = {}) {
     const [sort, setSort] = useState<TTableSort>(defaultSort);
-    const [columnFilters, setColumnFilters] = useState<TTableColumnFilters>({});
+    const [columnFilters, setColumnFilters] = useState<TTableColumnFilters>(defaultFilters);
 
     // Ascending, then descending, then back to the default order.
     const toggleSort = useCallback(

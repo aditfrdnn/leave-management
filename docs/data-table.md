@@ -46,28 +46,44 @@ Columns opt in through `meta`:
 - `filterLabel` translates the values in the filter list, like the cell does.
 - Request params: `sort`, `direction`, `columns[key][]`. An empty cell is the value `__blank__`.
 
-## Backend (leave API) — not implemented yet
+## No tabs or filter dropdowns
 
-The leave API does not accept `sort`/`direction`/`columns[key][]` and returns no `facets` today; the request contract below is what the frontend already sends and what `docs/backend-task.md` asks the API to adopt (the reference implementation lives in the `laravel-tailwind` repository as `App\Support\Table\TableQuery`). Until then `GET /api/leave-request` returns the whole list, so `LeaveRequestTable` runs `DataTable` in client mode: `meta.sortKey` and `meta.filterKey` sort and filter the loaded rows and the facets are counted from them.
+Lists do not get tab bars or toolbar dropdowns for status, department, role, period and the like:
+those are header filters on the column that shows the value. The toolbar keeps only the search box and
+the primary action. A list that should open narrowed passes `useListParams({ defaultFilters })`
+(holidays open on the current year; `?scope=approvals` links open leave on "pending").
 
-`App\Support\Table\TableQuery` with `TableFilter` gives every list endpoint the same contract:
+## Backend (leave API)
+
+Every list endpoint reads `columns[key][]` and answers `meta.facets` through
+`App\Support\Table\ColumnFilters` + `ColumnFilter`:
 
 ```php
-$table = new TableQuery($request,
-    sortable: ['name' => 'name', 'updated_at' => 'updated_at'],
-    filterable: [
-        'status' => TableFilter::options('status', ['draft' => 'Draft', 'published' => 'Published']),
-        'company' => TableFilter::column('company_id', fn ($ids) => Company::whereIn('id', $ids)->pluck('name', 'id')->all()),
-    ],
-);
-$base = fn () => Thing::query()->when($search, ...);       // search and non-column filters
+$columns = new ColumnFilters($request, [
+    'department' => ColumnFilter::column('department_id', fn (array $ids) => Department::whereIn('id', $ids)->pluck('name', 'id')->all()),
+    'status'     => ColumnFilter::column('status'),                    // label = value; the frontend translates
+    'year'       => ColumnFilter::custom($apply, $facets),             // computed values
+]);
+$base = fn () => Employee::query()->when($search, ...);               // search and scope, no filters
 
-$page = $table->filter($table->sort($base(), 'updated_at', 'desc'))->paginate($limit);
+$page = $columns->apply($base()->with(...))->orderBy(...)->paginate($limit);
 
-return response()->json([... 'data' => ..., 'meta' => ..., 'facets' => $table->facets($base)]);
+return $this->sendPaginated($page, null, $message, ['facets' => $columns->facets($base)]);
 ```
 
-- Only whitelisted keys are sorted or filtered; anything else is ignored.
-- Filters are OR within a column and AND across columns. A column's facet counts rows under the other columns' filters, so its own list stays complete.
-- Relations: filter on the foreign key and label through `TableFilter::column(..., $labels)`; anything more complex uses `TableFilter::custom($apply, $facet)`.
-- Lists built in PHP (computed statuses) apply the same params to the collection and return `facets` in the same shape.
+- Only the keys listed are filtered; anything else is ignored.
+- Filters are OR within a column and AND across columns. A column's facet counts rows under the other
+  columns' filters, so its own list stays complete. An empty cell is `__blank__`.
+- Sorting still uses each endpoint's `sort_by` / `sort_dir` whitelist.
+
+| List | Header filters |
+| --- | --- |
+| Employees | department, supervisor, employment_type, grade, status |
+| Users | role, status |
+| Permissions | group |
+| Holidays | year (date column), type |
+| Leave balances | department |
+| Leave requests | requester (approvers), status |
+| Appraisals (my / team / reports) | employee, period, assessor, status |
+| Appraisal periods | status |
+| Appraisal templates | status |

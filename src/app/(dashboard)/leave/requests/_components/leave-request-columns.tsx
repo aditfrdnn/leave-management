@@ -42,6 +42,7 @@ export const leaveRequestColumns = ({
           id: "requester",
           accessorFn: (row: TLeave) => row.user?.name ?? "",
           header: t("history.columns.requester"),
+          meta: { filterKey: "requester" },
           cell: ({ row }: { row: { original: TLeave } }) => (
             <div className="flex flex-col">
               <span className="font-medium whitespace-nowrap">{row.original.is_mine ? t("history.you") : (row.original.user?.name ?? "-")}</span>

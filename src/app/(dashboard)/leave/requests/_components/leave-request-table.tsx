@@ -7,11 +7,9 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { DataTable } from "@/components/common/data-table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LEAVE_STATUS } from "@/constants/leave-constant";
 import { DELAY } from "@/constants/params-constant";
 import { PERMISSIONS_CONSTANT } from "@/constants/permission-constant";
@@ -20,7 +18,6 @@ import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
 import { usePermission } from "@/lib/permission";
 import type { TLeave, TLeaveScope, TLeaveSortKey } from "@/types/leave";
-import type { TTableFacet } from "@/types/table";
 import { Add01Icon, Cancel01Icon, CheckmarkCircle02Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import ApprovalDecisionDialog from "../../_components/approval-decision-dialog";
 import CancelLeaveDialog from "../../_components/cancel-leave-dialog";
@@ -30,12 +27,6 @@ import { leaveRequestColumns } from "./leave-request-columns";
 import LeaveRequestFormDialog from "./leave-request-form-dialog";
 
 export const LEAVE_REQUESTS_QUERY_KEY = ["leave", "requests"] as const;
-
-/** The status filter offers every status the API can store; labels come from the column's `filterLabel`. */
-const STATUS_FACETS: TTableFacet[] = Object.values(LEAVE_STATUS).map((value) => ({ value: String(value), label: String(value), count: 0 }));
-
-const SCOPES: TLeaveScope[] = ["all", "mine", "approvals"];
-const isScope = (value: string | null): value is TLeaveScope => SCOPES.includes(value as TLeaveScope);
 
 /**
  * One table for the leave I asked for and, for approvers, the leave I decide on (docs/setup-module.md §13).
@@ -47,13 +38,16 @@ export default function LeaveRequestTable() {
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table, resetPage } = useListParams();
+  const searchParams = useSearchParams();
+  // Links for approvers (email, dashboard) arrive as ?scope=approvals: open on what still waits for a decision.
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams({
+    defaultFilters: searchParams.get("scope") === "approvals" ? { status: [String(LEAVE_STATUS.PENDING)] } : {},
+  });
   const { user } = useAuth();
   // Until /api/me answers we do not know whether to show approver tabs; wait instead of flashing "mine".
   const { allowed: canApprove, loading: isPermissionLoading } = usePermission(PERMISSIONS_CONSTANT.LEAVE_APPROVE);
 
   const [detailId, setDetailId] = useState<number | null>(null);
-  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -68,17 +62,15 @@ export default function LeaveRequestTable() {
   const [cancelTarget, setCancelTarget] = useState<{ id: number; subject: string } | null>(null);
   const [decision, setDecision] = useState<{ item: TLeave; decision: "approve" | "reject" } | null>(null);
 
-  // ?scope= comes from the email / dashboard links; approvers start on "all", everyone else sees only their own.
-  const linkScope = searchParams.get("scope");
-  const [pickedScope, setPickedScope] = useState<TLeaveScope | null>(null);
-  const scope: TLeaveScope = canApprove ? (pickedScope ?? (isScope(linkScope) ? linkScope : "all")) : "mine";
+  // One list: my own requests and, for approvers, the ones I decide on. Requester and status are header filters.
+  const scope: TLeaveScope = canApprove ? "all" : "mine";
 
   const params = {
     scope,
     page,
     per_page: perPage,
     search,
-    status: table.params.columns?.status?.join(","),
+    columns: table.params.columns,
     sort_by: table.params.sort as TLeaveSortKey | undefined,
     sort_dir: table.params.direction,
   };
@@ -128,31 +120,13 @@ export default function LeaveRequestTable() {
       </CardHeader>
 
       <div className="flex w-full flex-col gap-2 px-6 lg:flex-row lg:items-center lg:justify-between">
-        {canApprove ? (
-          <Tabs
-            value={scope}
-            onValueChange={(value) => {
-              setPickedScope(value as TLeaveScope);
-              resetPage();
-            }}
-            className="min-w-0 max-w-full overflow-x-auto"
-          >
-            <TabsList aria-label={t("history.scopes.label")}>
-              {SCOPES.map((value) => (
-                <TabsTrigger key={value} value={value} className="gap-1.5">
-                  {t(`history.scopes.${value}`)}
-                  {value === "approvals" && awaitingMyDecision > 0 && (
-                    <Badge className="h-4.5 min-w-4.5 rounded-full px-1 text-2xs tabular-nums">{awaitingMyDecision}</Badge>
-                  )}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            {pagination ? t("history.count", { count: pagination.total }) : ""}
-          </p>
-        )}
+        <p className="text-xs text-muted-foreground" aria-live="polite">
+          {canApprove && awaitingMyDecision > 0
+            ? t("history.awaitingCount", { count: awaitingMyDecision })
+            : pagination
+              ? t("history.count", { count: pagination.total })
+              : ""}
+        </p>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
         <div className="relative w-full sm:w-72">
           <HugeiconsIcon icon={Search01Icon} className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -180,7 +154,7 @@ export default function LeaveRequestTable() {
           data={data?.data ?? []}
           isLoading={isLoading || isPermissionLoading}
           noResultMessage={
-            search || params.status ? t("history.emptySearch") : scope === "approvals" ? t("history.emptyApprovals") : t("history.empty")
+            search || params.columns ? t("history.emptySearch") : t("history.empty")
           }
           page={page}
           onPageChanged={(nextPage) => setPage(Number(nextPage))}
@@ -189,7 +163,7 @@ export default function LeaveRequestTable() {
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
           {...table.tableProps}
-          facets={{ status: STATUS_FACETS }}
+          facets={data?.meta?.facets}
         />
 
         <LeaveDetailSheet

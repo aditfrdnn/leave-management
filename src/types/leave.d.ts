@@ -92,9 +92,10 @@ export type TLeaveListParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  status?: string;
   sort_by?: TLeaveSortKey;
   sort_dir?: "asc" | "desc";
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: import("./table").TTableColumnFilters;
 };
 
 
@@ -116,5 +117,5 @@ export type TLeaveListResponse = {
   success: boolean;
   message: string;
   data: TLeave[];
-  meta: { pagination: import("./api").TApiPagination; awaiting_my_decision?: number };
+  meta: { pagination: import("./api").TApiPagination; awaiting_my_decision?: number; facets?: import("./table").TTableFacets };
 };

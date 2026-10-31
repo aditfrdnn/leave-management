@@ -70,15 +70,8 @@
     "searchPlaceholder": "Cari no. LVR atau alasan…",
     "emptySearch": "Tidak ada pengajuan yang cocok dengan filter",
     "view": "Lihat detail",
-    "scopes": {
-      "all": "Semua",
-      "mine": "Pengajuan saya",
-      "approvals": "Perlu persetujuan saya",
-      "label": "Tampilkan"
-    },
     "approve": "Setujui",
     "reject": "Tolak",
-    "emptyApprovals": "Tidak ada yang menunggu keputusan Anda",
     "you": "Anda",
     "titles": {
       "mine": "Riwayat Cuti Saya",
@@ -89,7 +82,8 @@
       "mine": "Semua pengajuan Anda, terbaru di atas.",
       "all": "Pengajuan Anda sendiri dan pengajuan yang Anda setujui.",
       "approvals": "Pengajuan dengan Anda sebagai approver. Setujui atau tolak yang masih menunggu."
-    }
+    },
+    "awaitingCount": "{count} pengajuan menunggu persetujuan Anda"
   },
   "status": {
     "pending": "Menunggu",

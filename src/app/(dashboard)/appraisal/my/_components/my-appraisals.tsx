@@ -34,9 +34,16 @@ export default function MyAppraisals() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const translateMessage = useTranslateMessage();
-  const { page, setPage, perPage, onLimitChange } = useListParams();
+  const { page, setPage, perPage, onLimitChange, table } = useListParams();
 
-  const params: TAppraisalListParams = { scope: "mine", page, per_page: perPage };
+  const params: TAppraisalListParams = {
+    scope: "mine",
+    page,
+    per_page: perPage,
+    sort_by: table.params.sort as TAppraisalListParams["sort_by"],
+    sort_dir: table.params.direction,
+    columns: table.params.columns,
+  };
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_LIST_QUERY_KEY, params],
@@ -153,6 +160,8 @@ export default function MyAppraisals() {
             onLimitChanged={(nextLimit) => onLimitChange(Number(nextLimit))}
             currentPage={pagination?.current_page ?? 1}
             lastPage={pagination?.last_page ?? 1}
+            {...table.tableProps}
+            facets={data?.meta?.facets}
           />
         </CardContent>
       </Card>

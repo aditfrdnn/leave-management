@@ -59,6 +59,7 @@ export const permissionColumns = ({
   {
     accessorKey: "group_name",
     header: t("permissions.fields.group"),
+    meta: { filterKey: "group", filterLabel: (value) => permissionGroupLabel(t, value) },
     cell: ({ row }) => <Badge variant="secondary">{permissionGroupLabel(t, row.original.group_name)}</Badge>,
   },
   {

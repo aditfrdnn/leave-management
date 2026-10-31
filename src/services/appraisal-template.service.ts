@@ -1,4 +1,5 @@
 import { appraisalTemplate, appraisalTemplateDuplicate, appraisalTemplates } from "@/constants/endpoint-constant";
+import type { TTableColumnFilters } from "@/types/table";
 import instance from "@/lib/axios/instance";
 import type { TApiPaginated, TApiResponse } from "@/types/api";
 import type { TAppraisalTemplate, TAppraisalTemplateItem, TAppraisalTemplatePayload } from "@/types/appraisal";
@@ -8,6 +9,10 @@ export type TAppraisalTemplateListParams = {
   page?: number;
   per_page?: number;
   search?: string;
+  sort_by?: string;
+  sort_dir?: "asc" | "desc";
+  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
+  columns?: TTableColumnFilters;
 };
 
 /** Appraisal template endpoints (docs/appraisal-module.md §2, §5). Locked templates answer 409 on PUT/DELETE. */

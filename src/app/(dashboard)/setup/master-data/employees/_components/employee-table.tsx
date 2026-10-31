@@ -10,33 +10,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
-import type { TActiveStatus, TEmployeeCareer, TEmployeeItem, TEmployeeListParams, TEmployeeSortKey, TEmploymentType } from "@/types/setup";
-import { ACTIVE_STATUSES, EMPLOYMENT_TYPES } from "@/validations/setup-validations";
+import type { TEmployeeCareer, TEmployeeItem, TEmployeeListParams, TEmployeeSortKey } from "@/types/setup";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
-import { DeleteEmployee, GetDepartmentOptions, GetEmployees } from "../action";
+import { DeleteEmployee, GetEmployees } from "../action";
 import CareerFormDialog, { type TCareerFormTarget } from "./career-form-dialog";
 import CareerHistorySheet from "./career-history-sheet";
 import { employeeColumns } from "./employee-columns";
-import EmployeeFormDialog, { DEPARTMENT_OPTIONS_QUERY_KEY } from "./employee-form-dialog";
+import EmployeeFormDialog from "./employee-form-dialog";
 
 export const EMPLOYEES_QUERY_KEY = ["setup", "employees"] as const;
-
-const ALL = "all";
 
 export default function EmployeeTable() {
   const t = useTranslations("setup");
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, resetPage, table } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
-  const [departmentId, setDepartmentId] = useState(ALL);
-  const [status, setStatus] = useState(ALL);
-  const [employmentType, setEmploymentType] = useState(ALL);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editedItem, setEditedItem] = useState<TEmployeeItem | null>(null);
   const [deletedItem, setDeletedItem] = useState<TEmployeeItem | null>(null);
@@ -47,9 +40,7 @@ export default function EmployeeTable() {
     page,
     per_page: perPage,
     search,
-    department_id: departmentId === ALL ? undefined : departmentId,
-    status: status === ALL ? undefined : (status as TActiveStatus),
-    employment_type: employmentType === ALL ? undefined : (employmentType as TEmploymentType),
+    columns: table.params.columns,
     sort_by: table.params.sort as TEmployeeSortKey | undefined,
     sort_dir: table.params.direction,
   };
@@ -60,13 +51,8 @@ export default function EmployeeTable() {
     placeholderData: keepPreviousData,
   });
 
-  const { data: departments } = useQuery({
-    queryKey: DEPARTMENT_OPTIONS_QUERY_KEY,
-    queryFn: () => GetDepartmentOptions(),
-  });
-
   const pagination = data?.meta?.pagination;
-  const isFiltered = !!(search || params.department_id || params.status || params.employment_type);
+  const isFiltered = !!(search || params.columns);
 
   const columns = useMemo(
     () =>
@@ -103,10 +89,6 @@ export default function EmployeeTable() {
     setCareerEmployee((current) => (current?.id === employee.id ? employee : current));
   };
 
-  const filterChange = (setter: (value: string) => void) => (value: string) => {
-    setter(value);
-    resetPage();
-  };
 
   return (
     <Card className="flex flex-col">
@@ -125,47 +107,6 @@ export default function EmployeeTable() {
             />
           </div>
 
-          <Select value={departmentId} onValueChange={filterChange(setDepartmentId)}>
-            <SelectTrigger className="w-full rounded-lg sm:w-48" aria-label={t("employees.fields.department")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("employees.filters.allDepartments")}</SelectItem>
-              {(departments ?? []).map((department) => (
-                <SelectItem key={department.id} value={String(department.id)}>
-                  {department.text}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={status} onValueChange={filterChange(setStatus)}>
-            <SelectTrigger className="w-full rounded-lg sm:w-40" aria-label={t("shared.columns.status")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("shared.filters.allStatuses")}</SelectItem>
-              {ACTIVE_STATUSES.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`shared.status.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={employmentType} onValueChange={filterChange(setEmploymentType)}>
-            <SelectTrigger className="w-full rounded-lg sm:w-44" aria-label={t("employees.fields.employmentType")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("employees.filters.allEmploymentTypes")}</SelectItem>
-              {EMPLOYMENT_TYPES.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`employees.employmentTypes.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <Button
@@ -195,6 +136,7 @@ export default function EmployeeTable() {
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
           {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <EmployeeFormDialog

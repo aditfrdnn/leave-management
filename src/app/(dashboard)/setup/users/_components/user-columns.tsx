@@ -56,6 +56,7 @@ export const userColumns = ({
     id: "role",
     accessorFn: (row) => row.role?.title ?? "",
     header: t("users.fields.role"),
+    meta: { filterKey: "role", blankLabel: t("users.columns.noRole") },
     cell: ({ row }) =>
       row.original.role ? (
         <Badge variant="secondary">{row.original.role.title}</Badge>
@@ -85,6 +86,7 @@ export const userColumns = ({
   {
     accessorKey: "status",
     header: t("shared.columns.status"),
+    meta: { filterKey: "status", filterLabel: (value) => t(`shared.status.${value}` as "shared.status.active") },
     cell: ({ row }) => {
       const active = row.original.status === "active";
 

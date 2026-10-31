@@ -10,7 +10,7 @@
     },
     "reports": {
       "title": "Appraisal reports",
-      "description": "Every appraisal of a period, with its PDF."
+      "description": "Every appraisal, with its PDF. Filter by column."
     },
     "periods": {
       "title": "Appraisal periods",
@@ -46,9 +46,6 @@
     "searchPlaceholder": "Search employee name or number",
     "periodLabel": "Period",
     "periodPlaceholder": "Choose a period",
-    "allPeriods": "All periods",
-    "statusLabel": "Status",
-    "allStatuses": "All statuses",
     "emptySearch": "No appraisals match these filters.",
     "view": "View",
     "viewFor": "View the appraisal of {name}",
@@ -68,26 +65,17 @@
     "empty": "You have no appraisals yet."
   },
   "team": {
-    "tabs": {
-      "label": "Filter by status",
-      "submitted": "Needs assessment",
-      "all": "All",
-      "draft": "Draft",
-      "assessed": "Completed"
-    },
     "awaitingCount": "{count, plural, one {# appraisal waits} other {# appraisals wait}} for your assessment",
-    "emptyAwaiting": "Nothing waits for your assessment.",
-    "empty": "No appraisals of your team yet."
+    "empty": "No appraisals of your team yet.",
+    "noneAwaiting": "Nothing is waiting for your assessment."
   },
   "reports": {
     "total": "Total",
-    "empty": "No appraisals in this period yet.",
-    "noPeriods": "No appraisal period exists yet."
+    "empty": "No appraisals in this period yet."
   },
   "periods": {
     "createLabel": "New period",
     "searchPlaceholder": "Search period name",
-    "allStatuses": "All statuses",
     "empty": "No appraisal periods yet.",
     "emptySearch": "No periods match these filters.",
     "noDueDate": "No due date",

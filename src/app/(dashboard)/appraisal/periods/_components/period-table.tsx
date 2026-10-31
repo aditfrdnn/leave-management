@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
 import { useListParams } from "@/hooks/use-list-params";
-import type { TAppraisalPeriod, TAppraisalPeriodStatus } from "@/types/appraisal";
+import type { TAppraisalPeriod } from "@/types/appraisal";
 import type { TAppraisalPeriodListParams } from "@/services";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { GetAppraisalPeriods } from "../../action";
@@ -24,16 +23,14 @@ import { periodColumns } from "./period-columns";
 import PeriodFormDialog from "./period-form-dialog";
 import PeriodStatusDialog from "./period-status-dialog";
 
-const ALL = "all";
 
 export default function PeriodTable() {
   const t = useTranslations("appraisal");
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
-  const { page, setPage, perPage, onLimitChange, search, onSearchChange, resetPage } = useListParams();
+  const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
-  const [status, setStatus] = useState<TAppraisalPeriodStatus | typeof ALL>(ALL);
   const [isFormOpen, setIsFormOpen] = useState(false);
   // A fresh form per opening, so a create never starts from the last one's input.
   const [formKey, setFormKey] = useState(0);
@@ -41,7 +38,14 @@ export default function PeriodTable() {
   const [statusItem, setStatusItem] = useState<TAppraisalPeriod | null>(null);
   const [deletedItem, setDeletedItem] = useState<TAppraisalPeriod | null>(null);
 
-  const params: TAppraisalPeriodListParams = { page, per_page: perPage, search, status: status === ALL ? undefined : status };
+  const params: TAppraisalPeriodListParams = {
+    page,
+    per_page: perPage,
+    search,
+    sort_by: table.params.sort,
+    sort_dir: table.params.direction,
+    columns: table.params.columns,
+  };
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_PERIODS_QUERY_KEY, params],
@@ -90,22 +94,6 @@ export default function PeriodTable() {
               }}
             />
           </div>
-          <Select
-            value={status}
-            onValueChange={(value) => {
-              setStatus(value as TAppraisalPeriodStatus | typeof ALL);
-              resetPage();
-            }}
-          >
-            <SelectTrigger className="w-full rounded-lg sm:w-40" aria-label={t("periods.fields.status")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>{t("periods.allStatuses")}</SelectItem>
-              <SelectItem value="open">{t("periodStatus.open")}</SelectItem>
-              <SelectItem value="closed">{t("periodStatus.closed")}</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         <Button
           size="sm"
@@ -127,13 +115,15 @@ export default function PeriodTable() {
           columns={columns}
           data={data?.data ?? []}
           isLoading={isLoading}
-          noResultMessage={search || status !== ALL ? t("periods.emptySearch") : t("periods.empty")}
+          noResultMessage={search || params.columns ? t("periods.emptySearch") : t("periods.empty")}
           page={page}
           onPageChanged={(nextPage) => setPage(Number(nextPage))}
           limit={perPage}
           onLimitChanged={(nextLimit) => onLimitChange(Number(nextLimit))}
           currentPage={pagination?.current_page ?? 1}
           lastPage={pagination?.last_page ?? 1}
+          {...table.tableProps}
+          facets={data?.meta?.facets}
         />
 
         <PeriodFormDialog

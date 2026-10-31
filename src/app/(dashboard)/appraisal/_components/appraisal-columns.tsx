@@ -46,6 +46,7 @@ export const appraisalColumns = ({
     columns.push({
       id: "employee",
       header: t("columns.employee"),
+      meta: { filterKey: "employee", label: t("columns.employee") },
       cell: ({ row }) => {
         const { employee } = row.original;
 
@@ -64,6 +65,7 @@ export const appraisalColumns = ({
   columns.push({
     id: "period",
     header: t("columns.period"),
+    meta: { filterKey: "period" },
     cell: ({ row }) => <p className="font-medium whitespace-nowrap">{row.original.period.name}</p>,
   });
 
@@ -71,6 +73,7 @@ export const appraisalColumns = ({
     columns.push({
       id: "assessor",
       header: t("columns.assessor"),
+      meta: { filterKey: "assessor" },
       cell: ({ row }) => <p className="whitespace-nowrap">{row.original.assessor?.name ?? "-"}</p>,
     });
   }
@@ -79,11 +82,13 @@ export const appraisalColumns = ({
     {
       id: "status",
       header: t("columns.status"),
+      meta: { filterKey: "status", filterLabel: (value) => t(`status.${value}` as "status.draft") },
       cell: ({ row }) => <AppraisalStatusBadge status={row.original.status} />,
     },
     {
       id: "updated_at",
       header: t("columns.lastActivity"),
+      meta: { sortKey: "updated_at" },
       cell: ({ row }) => {
         const { assessed_at, submitted_at, updated_at } = row.original;
 
