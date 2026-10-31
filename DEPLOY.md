@@ -1,7 +1,8 @@
 # Deploy — leave-management (frontend HR Lite)
 
-Rilis ini mengganti "LVR System" lama dengan HR Lite: rebrand, dashboard, halaman approver,
-detail/batal cuti, riwayat berpaginasi, dan modul Setup (karyawan, departemen, user, role, permission).
+Rilis ini mengganti "LVR System" lama dengan HR Lite: rebrand, modul Cuti, modul Appraisal (PDF F-HR-10,
+tanda tangan gambar), modul Pengaturan (karyawan, departemen, hari libur, saldo cuti, user, role, permission),
+filter kolom di semua tabel, dan ID berbasis UUID.
 
 ## Urutan deploy ketiga project
 
@@ -51,14 +52,16 @@ Catat rollout yang sedang live **sebelum** membuat yang baru, untuk rollback.
 - [ ] `https://lvr.pdi-ptcs.com/` membuka halaman login HR Lite (logo H biru).
 - [ ] `https://lvr.pdi-ptcs.com/login` diarahkan ke `/sign-in` (bookmark lama tetap jalan).
 - [ ] Login sebagai Administrator → Beranda menampilkan profil; **Cuti → Beranda** menampilkan bagian **Organisasi**.
-- [ ] Menu **Setup → Users** tampil; atur role user lain (mis. HR) bila perlu.
+- [ ] Menu **Pengaturan → Pengguna** tampil; atur role user lain (mis. HR) bila perlu. Tabel memakai filter di header kolom (ikon corong), tidak ada tab.
 - [ ] Login sebagai karyawan biasa → hanya modul Beranda, Cuti dan Appraisal (Appraisal Saya) yang tampil.
-- [ ] Ajukan satu cuti uji → muncul di **Cuti Saya**; approver-nya melihatnya di tab **Perlu persetujuan saya** → setujui → status berubah.
+- [ ] Ajukan satu cuti uji → muncul di **Cuti Saya**; approver-nya melihatnya di **Cuti Saya** yang sama (filter kolom Status = Menunggu) → setujui → status berubah.
 - [ ] Batalkan / hapus data uji itu setelahnya.
 - [ ] **Appraisal:** HR/Lead/Division Manager membuka periode di **Appraisal → Periode**; karyawan uji mengisi dan mengirim, atasan menyelesaikan penilaian (tanpa konfirmasi karyawan), HR mengunduh PDF di **Appraisal → Laporan**. PDF berlogo Control Systems dan memuat tanda tangan.
 - [ ] **Beranda → Tanda tangan:** unggah gambar tanda tangan, pratinjau muncul.
 - [ ] Tab PDF dan tab aplikasi memakai ikon HR Lite (bukan logo lama). Kalau masih lama, kosongkan cache browser.
-- [ ] **Appraisal → Template Appraisal** menampilkan F-HR-10 Rev.2 (aktif).
+- [ ] **Appraisal → Template** menampilkan F-HR-10 Rev.2 (aktif).
+- [ ] Alamat halaman detail (mis. appraisal) memakai UUID, contoh `/appraisal/01a1…`, bukan angka.
+- [ ] Login sebagai karyawan, buka alamat menu yang tidak diizinkan (mis. `/setup/users`) → diarahkan ke Beranda dengan pesan biru.
 
 Kalau setelah login muncul sesi lama yang aneh, logout lalu login lagi (cookie lama dari LVR System).
 
