@@ -1,11 +1,9 @@
 // Every backend path lives here (see docs/RULES.md §6). Paths are relative to the leave API base URL.
 
-// Auth
-const signIn = "/api/auth/login";
-const signOut = "/api/auth/logout";
+// Auth (signing in and out happens at IAM)
 /** Same-origin Route Handler (`src/app/api/me/route.ts`), not the leave API. */
 const me = "/api/me";
-/** The leave API endpoint behind that handler (`GET /api/me`, auth:sanctum). */
+/** The leave API endpoint behind that handler (`GET /api/me`, IAM access token). */
 const meBackend = "/api/me";
 
 // Leave requests
@@ -20,7 +18,6 @@ const leaveReject = (id: string) => `${leaveRequests}/${id}/reject`;
 // Dropdowns
 const approvers = "/api/dropdown/users";
 const departmentOptions = "/api/dropdown/departments";
-const roleOptions = "/api/dropdown/roles";
 const employeeOptions = "/api/dropdown/employees";
 
 // Dashboard
@@ -60,23 +57,16 @@ const appraisalPdfBackend = (id: string) => `${appraisals}/${id}/pdf`;
 const appraisalPdf = (id: string) => `/api/appraisals/${id}/pdf`;
 
 // Setup (docs/setup-module.md)
-const users = "/api/users";
-const user = (id: string) => `${users}/${id}`;
 const employees = "/api/employees";
 const employee = (id: string) => `${employees}/${id}`;
 const employeeCareers = (id: string) => `${employees}/${id}/careers`;
 const employeeCareer = (id: string, careerId: string) => `${employees}/${id}/careers/${careerId}`;
+/** A fresh IAM activation link; the previous one stops working. */
+const employeeInvitation = (id: string) => `${employees}/${id}/invitation`;
 const departments = "/api/departments";
 const department = (id: string) => `${departments}/${id}`;
-const roles = "/api/roles";
-const role = (id: string) => `${roles}/${id}`;
-const permissions = "/api/permissions";
-const permission = (id: string) => `${permissions}/${id}`;
-const permissionGroups = `${permissions}/groups`;
 
 export {
-  signIn,
-  signOut,
   me,
   meBackend,
   leaveRequests,
@@ -86,7 +76,6 @@ export {
   leaveReject,
   approvers,
   departmentOptions,
-  roleOptions,
   employeeOptions,
   dashboard,
   leaveBalances,
@@ -111,17 +100,11 @@ export {
   appraisalAction,
   appraisalPdfBackend,
   appraisalPdf,
-  users,
-  user,
   employees,
   employee,
   employeeCareers,
   employeeCareer,
+  employeeInvitation,
   departments,
   department,
-  roles,
-  role,
-  permissions,
-  permission,
-  permissionGroups,
 };

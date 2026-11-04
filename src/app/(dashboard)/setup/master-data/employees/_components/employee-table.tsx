@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 import { DataTable } from "@/components/common/data-table";
 import DeleteDialog from "@/components/common/delete-dialog";
@@ -12,14 +13,16 @@ import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { Input } from "@/components/ui/input";
 import { DELAY } from "@/constants/params-constant";
 import useDebounce from "@/hooks/use-debounce";
+import { useTranslateMessage } from "@/hooks/use-translate-message";
 import { useListParams } from "@/hooks/use-list-params";
 import type { TEmployeeCareer, TEmployeeItem, TEmployeeListParams, TEmployeeSortKey } from "@/types/setup";
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons";
-import { DeleteEmployee, GetEmployees } from "../action";
+import { DeleteEmployee, GetEmployees, SendEmployeeInvitation } from "../action";
 import CareerFormDialog, { type TCareerFormTarget } from "./career-form-dialog";
 import CareerHistorySheet from "./career-history-sheet";
 import { employeeColumns } from "./employee-columns";
 import EmployeeFormDialog from "./employee-form-dialog";
+import InvitationDialog, { useAccountFeedback } from "./invitation-dialog";
 
 export const EMPLOYEES_QUERY_KEY = ["setup", "employees"] as const;
 
@@ -28,6 +31,8 @@ export default function EmployeeTable() {
   const locale = useLocale();
   const debounce = useDebounce();
   const queryClient = useQueryClient();
+  const translateMessage = useTranslateMessage();
+  const accountFeedback = useAccountFeedback();
   const { page, setPage, perPage, onLimitChange, search, onSearchChange, table } = useListParams();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -51,6 +56,23 @@ export default function EmployeeTable() {
     placeholderData: keepPreviousData,
   });
 
+  // Resending replaces the employee's activation link; the API sends it on WhatsApp when it can.
+  const { mutate: sendInvitation, variables: invitingItem, isPending: isInviting } = useMutation({
+    mutationFn: async (item: TEmployeeItem) => {
+      const state = await SendEmployeeInvitation(item.id);
+
+      if (state.status === "error") throw new Error(translateMessage(state.message) || t("employees.account.errors.invite"));
+
+      return state.data;
+    },
+    onSuccess: (account, item) => {
+      accountFeedback.notify(account, item.name);
+      queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
+    },
+    onError: (error) => toast.error(error.message || t("employees.account.errors.invite")),
+  });
+  const invitingId = isInviting && invitingItem ? invitingItem.id : null;
+
   const pagination = data?.meta?.pagination;
   const isFiltered = !!(search || params.columns);
 
@@ -67,8 +89,10 @@ export default function EmployeeTable() {
         },
         onClickCareers: (item) => setCareerEmployee(item),
         onClickDelete: (item) => setDeletedItem(item),
+        onClickInvite: (item) => sendInvitation(item),
+        invitingId,
       }),
-    [t, locale, pagination, perPage],
+    [t, locale, pagination, perPage, sendInvitation, invitingId],
   );
 
   // Saving an employee changes the supervisor and account pickers too.
@@ -160,6 +184,8 @@ export default function EmployeeTable() {
         />
 
         <CareerFormDialog target={careerTarget} onOpenChange={(open) => !open && setCareerTarget(null)} onSaved={onCareerSaved} />
+
+        <InvitationDialog target={accountFeedback.target} onClose={accountFeedback.close} />
 
         <DeleteDialog
           open={!!deletedItem}

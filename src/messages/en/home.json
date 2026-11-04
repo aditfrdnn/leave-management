@@ -4,7 +4,7 @@
     "greeting": "Welcome back",
     "noPosition": "No position recorded yet"
   },
-  "noEmployee": "Your account is not linked to an employee record yet. Ask HR to link it in Setup → Users.",
+  "noEmployee": "Your account is not linked to an employee record yet. Ask HR to add you in Setup → Employees with the same email as your account.",
   "employment": {
     "title": "Employment",
     "employeeNumber": "Employee no. (NIK)",

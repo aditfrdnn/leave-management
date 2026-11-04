@@ -8,6 +8,7 @@ import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
 import type {
   TDepartmentOption,
+  TEmployeeAccount,
   TEmployeeCareer,
   TEmployeeCareerPayload,
   TEmployeeCareerResult,
@@ -16,6 +17,7 @@ import type {
   TEmployeeOption,
   TEmployeeOptionParams,
   TEmployeePayload,
+  TEmployeeSaveResult,
 } from "@/types/setup";
 import {
   employeeCareerDeleteSchema,
@@ -24,7 +26,7 @@ import {
   setupDeleteSchema,
 } from "@/validations/setup-validations";
 
-type EmployeeActionState = ActionState<TEmployeeItem>;
+type EmployeeActionState = ActionState<TEmployeeSaveResult>;
 
 function getText(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -149,6 +151,26 @@ export async function DeleteEmployee(prevState: ActionState, formData: FormData)
     return { status: "success", message: result.message };
   } catch (error) {
     return toApiErrorState(error, t("employees.errors.delete"));
+  }
+}
+
+/**
+ * A fresh IAM activation link for the employee (the previous one stops working); the API sends it on
+ * WhatsApp when the employee has a phone number, otherwise HR copies `invitation.message`.
+ */
+export async function SendEmployeeInvitation(employeeId: string): Promise<ActionState<TEmployeeAccount>> {
+  const t = await getTranslations("setup");
+
+  if (!employeeId) {
+    return toFormErrorState(t("shared.errors.missingId"));
+  }
+
+  try {
+    const result = await setupService.sendEmployeeInvitation(employeeId);
+
+    return { status: "success", message: result.message, data: result.data };
+  } catch (error) {
+    return toApiErrorState(error, t("employees.account.errors.invite"));
   }
 }
 

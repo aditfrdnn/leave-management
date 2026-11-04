@@ -12,8 +12,6 @@ export const PERMISSIONS_CONSTANT = {
   EMPLOYEES_MANAGE: "employees.manage",
   DEPARTMENTS_MANAGE: "departments.manage",
   HOLIDAYS_MANAGE: "holidays.manage",
-  USERS_MANAGE: "users.manage",
-  ROLES_MANAGE: "roles.manage",
   APPRAISAL_FILL: "appraisal.fill",
   APPRAISAL_ASSESS: "appraisal.assess",
   APPRAISAL_MANAGE_PERIODS: "appraisal.manage_periods",

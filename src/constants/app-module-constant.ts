@@ -52,9 +52,6 @@ export const appModules: TAppModule[] = [
       { titleKey: "departments", href: "/setup/master-data/departments", disabled: false, permission: PERMISSIONS_CONSTANT.DEPARTMENTS_MANAGE },
       { titleKey: "holidays", href: "/setup/master-data/holidays", disabled: false, permission: PERMISSIONS_CONSTANT.HOLIDAYS_MANAGE },
       { titleKey: "leaveBalances", href: "/setup/leave-balances", disabled: false, permission: PERMISSIONS_CONSTANT.LEAVE_MANAGE_BALANCE },
-      { titleKey: "users", href: "/setup/users", disabled: false, permission: PERMISSIONS_CONSTANT.USERS_MANAGE },
-      { titleKey: "roles", href: "/setup/roles", disabled: false, permission: PERMISSIONS_CONSTANT.ROLES_MANAGE },
-      { titleKey: "permissions", href: "/setup/permissions", disabled: false, permission: PERMISSIONS_CONSTANT.ROLES_MANAGE },
     ],
   },
 ];
@@ -66,7 +63,7 @@ export function isHrefActive(pathname: string, href: string) {
 /**
  * Whether a user holding `titles` may open `path`: the menu that owns the path must be visible to
  * them, and a path inside a module (e.g. `/appraisal/12`) needs at least one visible menu of it.
- * Paths outside every module (`/`) are open. Used to vet the sign-in `callback`.
+ * Paths outside every module (`/`) are open.
  */
 export function canOpenPath(path: string, titles: string[]) {
   const pathname = path.split(/[?#]/)[0];

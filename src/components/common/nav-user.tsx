@@ -16,12 +16,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { clearModuleLastPaths } from "@/hooks/use-module-last-paths";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SignOut } from "@/app/(auth)/actions";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks";
-import Link from "next/link";
 import { useAuthStore } from "@/stores";
 import AvatarUser from "@/components/common/avatar-user";
 import { Login01Icon, Logout01Icon } from "@hugeicons/core-free-icons";
@@ -29,7 +28,6 @@ import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 
 function NavUserContent() {
   const t = useTranslations("common");
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const [_, startTransition] = useTransition();
@@ -45,15 +43,16 @@ function NavUserContent() {
     const id = toast.loading(t("navUser.loggingOut"));
     startTransition(async () => {
       try {
-        const { url } = await SignOut(currentUrl);
+        const { url } = await SignOut();
 
         if (url) {
           toast.success(t("navUser.logoutSuccess"), { id });
-          router.replace(url); // navigasi manual, tidak melempar NEXT_REDIRECT
           clear();
           // Cached lists and remembered pages belong to the account that just left.
           queryClient.clear();
           clearModuleLastPaths();
+          // IAM ends the single sign-on session too, then comes back to /signed-out.
+          window.location.assign(url);
         }
       } catch (e) {
         console.error(e);
@@ -108,7 +107,8 @@ function NavUserContent() {
   }
 
   return (
-    <Link href="/sign-in">
+    // A plain link: /auth/login hands over to IAM, which the client router cannot fetch.
+    <a href={`/auth/login?returnTo=${encodeURIComponent(currentUrl)}`}>
       <Button
         className="hidden sm:inline-flex"
         size="sm"
@@ -121,7 +121,7 @@ function NavUserContent() {
         <HugeiconsIcon icon={Login01Icon} />
         {t("navUser.signIn")}
       </Button>
-    </Link>
+    </a>
   );
 }
 

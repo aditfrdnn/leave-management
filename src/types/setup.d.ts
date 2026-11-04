@@ -23,46 +23,6 @@ export type TDepartmentRef = { id: string; name: string; alias: string };
 
 export type TRoleRef = { id: string; title: string };
 
-/* --------------------------------- Users --------------------------------- */
-
-export type TUserItem = {
-  id: string;
-  name: string;
-  email: string;
-  status: TActiveStatus;
-  created_at: string;
-  role: TRoleRef | null;
-  employee: {
-    id: string;
-    employee_number: string;
-    name: string;
-    position: string | null;
-    department: TDepartmentRef | null;
-  } | null;
-};
-
-export type TUserSortKey = "name" | "email" | "created_at";
-
-export type TUserListParams = {
-  page?: number;
-  per_page?: number;
-  search?: string;
-  sort_by?: TUserSortKey;
-  sort_dir?: TSortDirection;
-  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
-  columns?: import("./table").TTableColumnFilters;
-};
-
-export type TUserPayload = {
-  name: string;
-  email: string;
-  /** Required on create; omitted on update to keep the current password. */
-  password?: string;
-  role_id: string;
-  employee_id: string | null;
-  status: TActiveStatus;
-};
-
 /* ------------------------------- Employees ------------------------------- */
 
 export type TEmployeeItem = {
@@ -80,8 +40,37 @@ export type TEmployeeItem = {
   created_at: string;
   department: TDepartmentRef | null;
   supervisor: { id: string; name: string; employee_number: string } | null;
-  user: { id: string; email: string; role: TRoleRef | null } | null;
+  /** `linked`: the HR Lite account is linked to its IAM account. `role` is the first of `roles`. */
+  user: { id: string; email: string; linked: boolean; role: TRoleRef | null; roles: TRoleRef[] } | null;
 };
+
+/** A fresh IAM activation link; `message` is the ready-to-send WhatsApp text (Indonesian). */
+export type TEmployeeInvitation = {
+  url: string;
+  /** ISO 8601. */
+  expires_at: string;
+  message: string;
+  /** False when the employee has no phone number: HR sends `message` themselves. */
+  sent_on_whatsapp: boolean;
+};
+
+/**
+ * What happened to the employee's IAM account after a save or a resend.
+ * invited: new account + link · invited_earlier: an older link is still unaccepted · linked: active ·
+ * no_email: no account without an email · skipped: nothing to do · failed: IAM unreachable, the API retries.
+ */
+export type TEmployeeAccountStatus = "invited" | "invited_earlier" | "linked" | "no_email" | "skipped" | "failed";
+
+export type TEmployeeAccount = {
+  status: TEmployeeAccountStatus;
+  invitation: TEmployeeInvitation | null;
+};
+
+/**
+ * `POST/PUT /api/employees` result. `account` is null on an update that changed none of email,
+ * name, phone, NIK or status of an already-linked employee.
+ */
+export type TEmployeeSaveResult = TEmployeeItem & { account?: TEmployeeAccount | null };
 
 export type TEmployeeSortKey = "name" | "employee_number" | "join_date" | "created_at";
 
@@ -175,64 +164,6 @@ export type TDepartmentListParams = {
 export type TDepartmentPayload = {
   name: string;
   alias: string;
-};
-
-/* --------------------------------- Roles --------------------------------- */
-
-export type TRoleItem = {
-  id: string;
-  title: string;
-  description: string | null;
-  users_count: number;
-  permission_ids: string[];
-  permissions: { id: string; title: string; label: string }[];
-  created_at: string;
-};
-
-export type TRoleDetail = TRoleItem & {
-  users: { id: string; name: string; email: string }[];
-};
-
-export type TRoleListParams = {
-  page?: number;
-  per_page?: number;
-  search?: string;
-};
-
-export type TRolePayload = {
-  title: string;
-  description: string | null;
-  permission_ids: string[];
-};
-
-/* ------------------------------ Permissions ------------------------------ */
-
-export type TPermissionItem = {
-  id: string;
-  title: string;
-  label: string;
-  group_name: string;
-  roles_count: number;
-  created_at: string;
-};
-
-export type TPermissionGroup = {
-  group_name: string;
-  permissions: TPermissionItem[];
-};
-
-export type TPermissionListParams = {
-  page?: number;
-  per_page?: number;
-  search?: string;
-  /** Header filters: `columns[key][]=value` (docs/data-table.md). */
-  columns?: import("./table").TTableColumnFilters;
-};
-
-export type TPermissionPayload = {
-  title: string;
-  label: string;
-  group_name: string;
 };
 
 /* --------------------------- Annual leave balance -------------------------- */

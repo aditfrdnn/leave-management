@@ -4,7 +4,7 @@
     "greeting": "Selamat datang kembali",
     "noPosition": "Jabatan belum dicatat"
   },
-  "noEmployee": "Akun Anda belum terhubung ke data karyawan. Minta HR menautkannya di Pengaturan → Pengguna.",
+  "noEmployee": "Akun Anda belum terhubung ke data karyawan. Minta HR menambahkan Anda di Pengaturan → Karyawan dengan email yang sama dengan akun Anda.",
   "employment": {
     "title": "Kepegawaian",
     "employeeNumber": "No. karyawan (NIK)",

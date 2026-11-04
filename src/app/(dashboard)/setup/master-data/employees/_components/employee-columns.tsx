@@ -10,6 +10,8 @@ import {
   CheckmarkCircle02Icon,
   Delete02Icon,
   Link01Icon,
+  Loading03Icon,
+  MailSend01Icon,
   MinusSignCircleIcon,
   PencilEdit02Icon,
   WorkHistoryIcon,
@@ -37,6 +39,8 @@ export const employeeColumns = ({
   onClickEdit,
   onClickCareers,
   onClickDelete,
+  onClickInvite,
+  invitingId,
 }: {
   t: TSetupTranslator;
   locale: string;
@@ -45,6 +49,10 @@ export const employeeColumns = ({
   onClickEdit: (item: TEmployeeItem) => void;
   onClickCareers: (item: TEmployeeItem) => void;
   onClickDelete: (item: TEmployeeItem) => void;
+  /** New IAM activation link; offered for active employees with an email, the API decides the rest. */
+  onClickInvite: (item: TEmployeeItem) => void;
+  /** The employee whose invitation is being sent. */
+  invitingId: string | null;
 }): ColumnDef<TEmployeeItem>[] => [
   {
     id: "no",
@@ -139,6 +147,22 @@ export const employeeColumns = ({
     header: () => <span className="sr-only">{t("shared.columns.actions")}</span>,
     cell: ({ row }) => (
       <div className="flex items-center justify-end gap-1">
+        {row.original.email && row.original.status === "active" && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            title={t("employees.account.resend")}
+            aria-label={t("employees.account.resendItem", { name: row.original.name })}
+            disabled={invitingId !== null}
+            onClick={() => onClickInvite(row.original)}
+          >
+            <HugeiconsIcon
+              icon={invitingId === row.original.id ? Loading03Icon : MailSend01Icon}
+              className={invitingId === row.original.id ? "size-4 animate-spin text-muted-foreground" : "size-4 text-muted-foreground"}
+            />
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"

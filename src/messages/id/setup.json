@@ -89,6 +89,27 @@
       "update": "Gagal memperbarui data karyawan.",
       "delete": "Gagal menghapus karyawan."
     },
+    "account": {
+      "resend": "Kirim ulang undangan",
+      "resendItem": "Kirim ulang undangan ke {name}",
+      "sentOnWhatsapp": "Tautan aktivasi sudah dikirim ke WhatsApp {name}.",
+      "noEmail": "Akun tidak dibuat karena email karyawan kosong.",
+      "failed": "IAM belum dapat dihubungi. Akun akan dibuat otomatis setelah IAM tersedia.",
+      "alreadyActive": "{name} sudah punya akun yang aktif.",
+      "noNewLink": "Tautan baru belum dibuat. Coba lagi sebentar lagi.",
+      "invitation": {
+        "title": "Kirim undangan",
+        "description": "Tautan tidak dikirim lewat WhatsApp. Salin pesan ini lalu kirimkan sendiri kepada {name}. Tautannya hanya bisa dipakai sekali dan tidak ditampilkan lagi.",
+        "messageLabel": "Pesan undangan",
+        "copy": "Salin pesan",
+        "copied": "Pesan disalin.",
+        "copyFailed": "Gagal menyalin pesan. Pilih teksnya lalu salin secara manual.",
+        "done": "Selesai"
+      },
+      "errors": {
+        "invite": "Gagal membuat undangan baru."
+      }
+    },
     "validation": {
       "employeeNumberRequired": "Masukkan NIK",
       "employeeNumberMax": "NIK maksimal 50 karakter",
@@ -187,175 +208,6 @@
       "nameMax": "Nama maksimal 255 karakter",
       "aliasRequired": "Masukkan alias",
       "aliasMax": "Alias maksimal 50 karakter"
-    }
-  },
-  "users": {
-    "page": {
-      "title": "User",
-      "description": "Akun untuk masuk aplikasi: siapa yang bisa login, dengan role apa, dan sebagai karyawan yang mana."
-    },
-    "searchPlaceholder": "Cari nama atau email",
-    "createLabel": "Tambah User",
-    "empty": "Belum ada user.",
-    "emptySearch": "Tidak ada user yang cocok dengan filter ini.",
-    "deleteHint": "User yang sudah punya pengajuan cuti atau persetujuan tidak bisa dihapus. Nonaktifkan saja akunnya.",
-    "fields": {
-      "name": "Nama",
-      "email": "Email",
-      "password": "Kata Sandi",
-      "passwordConfirmation": "Konfirmasi Kata Sandi",
-      "role": "Role",
-      "employee": "Karyawan",
-      "active": "Akun aktif"
-    },
-    "columns": {
-      "you": "Anda",
-      "noRole": "Tanpa role",
-      "noEmployee": "Belum tertaut"
-    },
-    "form": {
-      "createTitle": "Tambah User",
-      "updateTitle": "Ubah User",
-      "description": "Tautkan akun ke data karyawan agar pengajuan cuti membawa departemen dan tanggal bergabungnya.",
-      "namePlaceholder": "mis. Budi Santoso",
-      "emailPlaceholder": "mis. budi@perusahaan.com",
-      "passwordPlaceholder": "Minimal 8 karakter",
-      "passwordKeepPlaceholder": "Kosongkan jika tidak ingin mengganti",
-      "passwordConfirmationPlaceholder": "Ketik ulang kata sandi",
-      "rolePlaceholder": "Pilih role",
-      "employeeHint": "Pilih karyawan yang belum punya akun",
-      "employeeSearch": "Cari karyawan",
-      "selfHint": "Ini akun Anda sendiri, jadi role dan statusnya tidak bisa diubah di sini."
-    },
-    "toast": {
-      "created": "User berhasil ditambahkan.",
-      "updated": "User diperbarui.",
-      "saveFailed": "Gagal menyimpan user"
-    },
-    "errors": {
-      "loadList": "Gagal memuat daftar user.",
-      "create": "Gagal menambahkan user.",
-      "update": "Gagal memperbarui user.",
-      "delete": "Gagal menghapus user."
-    },
-    "validation": {
-      "nameRequired": "Masukkan nama user",
-      "nameMax": "Nama maksimal 255 karakter",
-      "emailRequired": "Masukkan alamat email",
-      "emailInvalid": "Masukkan alamat email yang valid",
-      "passwordRequired": "Masukkan kata sandi",
-      "passwordMin": "Kata sandi minimal 8 karakter",
-      "passwordMismatch": "Konfirmasi kata sandi tidak sama",
-      "roleRequired": "Pilih role"
-    }
-  },
-  "roles": {
-    "page": {
-      "title": "Role",
-      "description": "Setiap user punya satu role; satu role berisi sekumpulan izin."
-    },
-    "searchPlaceholder": "Cari role",
-    "createLabel": "Tambah Role",
-    "empty": "Belum ada role.",
-    "emptySearch": "Tidak ada role yang cocok dengan pencarian.",
-    "fields": {
-      "title": "Nama Role",
-      "description": "Deskripsi"
-    },
-    "columns": {
-      "permissions": "Izin",
-      "permissionCount": "{count} izin",
-      "more": "+{count} lainnya",
-      "users": "User",
-      "userCount": "{count, plural, =0 {Belum ada} other {# user}}"
-    },
-    "form": {
-      "createTitle": "Tambah Role",
-      "updateTitle": "Ubah Role",
-      "description": "Centang izin yang diberikan role ini. User dengan role tersebut mendapatkannya saat halaman dimuat ulang.",
-      "titlePlaceholder": "mis. Team Lead",
-      "descriptionPlaceholder": "Untuk apa role ini dipakai",
-      "searchPermission": "Cari izin",
-      "selected": "{count, plural, =0 {Belum ada yang dipilih} other {# dipilih}}",
-      "selectAllGroup": "{selected} dari {total}",
-      "noPermissionMatch": "Tidak ada izin yang cocok dengan pencarian.",
-      "noPermissionAvailable": "Belum ada izin yang tersedia.",
-      "titleChangeHint": "Nama role dipakai sistem (mis. Lead/Project Manager untuk daftar approver dan item khusus leader). Mengubahnya bisa mengubah perilaku tersebut."
-    },
-    "detail": {
-      "fallbackTitle": "Role",
-      "description": "Izin yang diberikan role ini dan siapa saja pemegangnya.",
-      "permissions": "{count, plural, =0 {Izin} other {# izin}}",
-      "users": "{count, plural, =0 {User} other {# user}}",
-      "noPermissions": "Role ini belum memberikan izin apa pun.",
-      "noUsers": "Belum ada user dengan role ini."
-    },
-    "toast": {
-      "created": "Role berhasil ditambahkan.",
-      "updated": "Role diperbarui.",
-      "saveFailed": "Gagal menyimpan role"
-    },
-    "errors": {
-      "loadList": "Gagal memuat daftar role.",
-      "load": "Gagal memuat role.",
-      "create": "Gagal menambahkan role.",
-      "update": "Gagal memperbarui role.",
-      "delete": "Gagal menghapus role."
-    },
-    "validation": {
-      "titleRequired": "Masukkan nama role",
-      "titleMax": "Nama role maksimal 100 karakter",
-      "descriptionMax": "Deskripsi maksimal 255 karakter",
-      "permissionsRequired": "Pilih minimal satu izin"
-    }
-  },
-  "permissions": {
-    "page": {
-      "title": "Izin",
-      "description": "Katalog izin yang menjadi bahan role. Izin bawaan menjaga halaman-halaman aplikasi."
-    },
-    "searchPlaceholder": "Cari kode atau label",
-    "createLabel": "Tambah Izin",
-    "empty": "Belum ada izin.",
-    "emptySearch": "Tidak ada izin yang cocok dengan filter ini.",
-    "fields": {
-      "title": "Kode",
-      "label": "Label",
-      "group": "Grup"
-    },
-    "columns": {
-      "roles": "Role",
-      "roleCount": "{count, plural, =0 {Belum dipakai} other {# role}}"
-    },
-    "form": {
-      "createTitle": "Tambah Izin",
-      "updateTitle": "Ubah Izin",
-      "description": "Izin baru berpengaruh setelah aplikasi memeriksa kodenya.",
-      "titlePlaceholder": "mis. leave.export",
-      "titleHint": "Grup dan aksi dalam huruf kecil, dipisah titik, mis. leave.export.",
-      "labelPlaceholder": "mis. Ekspor data cuti",
-      "groupPlaceholder": "mis. leave",
-      "titleChangeHint": "Key dipakai aplikasi untuk membuka halaman dan menu. Mengubah atau menghapus key bawaan bisa menutup akses ke fiturnya."
-    },
-    "toast": {
-      "created": "Izin berhasil ditambahkan.",
-      "updated": "Izin diperbarui.",
-      "saveFailed": "Gagal menyimpan izin"
-    },
-    "errors": {
-      "loadList": "Gagal memuat daftar izin.",
-      "loadGroups": "Gagal memuat grup izin.",
-      "create": "Gagal menambahkan izin.",
-      "update": "Gagal memperbarui izin.",
-      "delete": "Gagal menghapus izin."
-    },
-    "validation": {
-      "titleRequired": "Masukkan kode izin",
-      "titleFormat": "Gunakan huruf kecil dan garis bawah dengan satu titik di tengah, mis. leave.export",
-      "labelRequired": "Masukkan label",
-      "labelMax": "Label maksimal 255 karakter",
-      "groupRequired": "Masukkan grup",
-      "groupMax": "Grup maksimal 50 karakter"
     }
   },
   "leaveBalances": {

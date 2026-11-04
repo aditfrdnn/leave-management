@@ -5,6 +5,7 @@ import {
   employee,
   employeeCareer,
   employeeCareers,
+  employeeInvitation,
   employeeOptions,
   employees,
   holiday,
@@ -12,14 +13,6 @@ import {
   leaveBalance,
   leaveBalanceEntries,
   leaveBalances,
-  permission,
-  permissionGroups,
-  permissions,
-  role,
-  roleOptions,
-  roles,
-  user,
-  users,
 } from "@/constants/endpoint-constant";
 import instance from "@/lib/axios/instance";
 import type { TApiPaginated, TApiResponse } from "@/types/api";
@@ -30,24 +23,15 @@ import type {
   TDepartmentPayload,
   TEmployeeCareer,
   TEmployeeCareerPayload,
+  TEmployeeAccount,
   TEmployeeCareerResult,
   TEmployeeItem,
   TEmployeeListParams,
   TEmployeeOption,
   TEmployeeOptionParams,
   TEmployeePayload,
+  TEmployeeSaveResult,
   TOption,
-  TPermissionGroup,
-  TPermissionItem,
-  TPermissionListParams,
-  TPermissionPayload,
-  TRoleDetail,
-  TRoleItem,
-  TRoleListParams,
-  TRolePayload,
-  TUserItem,
-  TUserListParams,
-  TUserPayload,
   THolidayItem,
   THolidayListParams,
   THolidayPayload,
@@ -60,38 +44,6 @@ import { toQueryParams } from "./to-query-params";
 
 /** Setup module endpoints (docs/setup-module.md §3–§7). */
 export const setupService = {
-  /* --------------------------------- Users --------------------------------- */
-
-  async getUsers(params: TUserListParams) {
-    const { data } = await instance.get<TApiPaginated<TUserItem>>(users, { params: toQueryParams(params) });
-
-    return data;
-  },
-
-  async getUser(id: string) {
-    const { data } = await instance.get<TApiResponse<TUserItem>>(user(id));
-
-    return data;
-  },
-
-  async createUser(payload: TUserPayload) {
-    const { data } = await instance.post<TApiResponse<TUserItem>>(users, payload);
-
-    return data;
-  },
-
-  async updateUser(id: string, payload: TUserPayload) {
-    const { data } = await instance.put<TApiResponse<TUserItem>>(user(id), payload);
-
-    return data;
-  },
-
-  async deleteUser(id: string) {
-    const { data } = await instance.delete<TApiResponse<null>>(user(id));
-
-    return data;
-  },
-
   /* ------------------------------- Employees ------------------------------- */
 
   async getEmployees(params: TEmployeeListParams) {
@@ -107,13 +59,20 @@ export const setupService = {
   },
 
   async createEmployee(payload: TEmployeePayload) {
-    const { data } = await instance.post<TApiResponse<TEmployeeItem>>(employees, payload);
+    const { data } = await instance.post<TApiResponse<TEmployeeSaveResult>>(employees, payload);
 
     return data;
   },
 
   async updateEmployee(id: string, payload: TEmployeePayload) {
-    const { data } = await instance.put<TApiResponse<TEmployeeItem>>(employee(id), payload);
+    const { data } = await instance.put<TApiResponse<TEmployeeSaveResult>>(employee(id), payload);
+
+    return data;
+  },
+
+  /** New IAM activation link (the old one stops working), sent on WhatsApp when the employee has a phone. */
+  async sendEmployeeInvitation(id: string) {
+    const { data } = await instance.post<TApiResponse<TEmployeeAccount>>(employeeInvitation(id));
 
     return data;
   },
@@ -231,80 +190,10 @@ export const setupService = {
     return data;
   },
 
-  /* --------------------------------- Roles --------------------------------- */
-
-  async getRoles(params: TRoleListParams) {
-    const { data } = await instance.get<TApiPaginated<TRoleItem>>(roles, { params: toQueryParams(params) });
-
-    return data;
-  },
-
-  async getRole(id: string) {
-    const { data } = await instance.get<TApiResponse<TRoleDetail>>(role(id));
-
-    return data;
-  },
-
-  async createRole(payload: TRolePayload) {
-    const { data } = await instance.post<TApiResponse<TRoleItem>>(roles, payload);
-
-    return data;
-  },
-
-  async updateRole(id: string, payload: TRolePayload) {
-    const { data } = await instance.put<TApiResponse<TRoleItem>>(role(id), payload);
-
-    return data;
-  },
-
-  async deleteRole(id: string) {
-    const { data } = await instance.delete<TApiResponse<null>>(role(id));
-
-    return data;
-  },
-
-  /* ------------------------------ Permissions ------------------------------ */
-
-  async getPermissions(params: TPermissionListParams) {
-    const { data } = await instance.get<TApiPaginated<TPermissionItem>>(permissions, { params: toQueryParams(params) });
-
-    return data;
-  },
-
-  async getPermissionGroups() {
-    const { data } = await instance.get<TApiResponse<TPermissionGroup[]>>(permissionGroups);
-
-    return data;
-  },
-
-  async createPermission(payload: TPermissionPayload) {
-    const { data } = await instance.post<TApiResponse<TPermissionItem>>(permissions, payload);
-
-    return data;
-  },
-
-  async updatePermission(id: string, payload: TPermissionPayload) {
-    const { data } = await instance.put<TApiResponse<TPermissionItem>>(permission(id), payload);
-
-    return data;
-  },
-
-  async deletePermission(id: string) {
-    const { data } = await instance.delete<TApiResponse<null>>(permission(id));
-
-    return data;
-  },
-
   /* ------------------------------- Dropdowns ------------------------------- */
 
   async getDepartmentOptions(search?: string) {
     const { data } = await instance.get<TApiResponse<TDepartmentOption[]>>(departmentOptions, { params: toQueryParams({ search }) });
-
-    return data;
-  },
-
-  async getRoleOptions(search?: string) {
-    const { data } = await instance.get<TApiResponse<TOption[]>>(roleOptions, { params: toQueryParams({ search }) });
 
     return data;
   },

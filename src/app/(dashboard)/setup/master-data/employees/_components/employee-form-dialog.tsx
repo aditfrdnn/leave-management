@@ -23,6 +23,7 @@ import type { TDepartmentOption, TDepartmentRef, TEmployeeItem } from "@/types/s
 import { ACTIVE_STATUSES, EMPLOYMENT_TYPES, employeeSchema, type EmployeeSchemaType } from "@/validations/setup-validations";
 import { ArrowDataTransferHorizontalIcon, WorkHistoryIcon } from "@hugeicons/core-free-icons";
 import { CreateEmployee, GetDepartmentOptions, GetEmployeeOptions, UpdateEmployee } from "../action";
+import InvitationDialog, { useAccountFeedback } from "./invitation-dialog";
 
 export const DEPARTMENT_OPTIONS_QUERY_KEY = ["setup", "options", "departments"] as const;
 
@@ -156,6 +157,7 @@ export default function EmployeeFormDialog({
   const t = useTranslations("setup");
   const tCommon = useTranslations("common.actions");
   const translateMessage = useTranslateMessage();
+  const accountFeedback = useAccountFeedback();
   const isUpdate = !!item;
 
   const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
@@ -208,8 +210,10 @@ export default function EmployeeFormDialog({
 
       return state;
     },
-    onSuccess: (state) => {
-      toast.success(translateMessage(state.message) || t(isUpdate ? "employees.toast.updated" : "employees.toast.created"));
+    onSuccess: (state, values) => {
+      const saved = translateMessage(state.message) || t(isUpdate ? "employees.toast.updated" : "employees.toast.created");
+      // The API creates or updates the employee's IAM account too; say what happened to it.
+      accountFeedback.notify(state.data?.account, state.data?.name ?? values.name, saved);
       onOpenChange(false);
       onSuccess?.();
     },
@@ -239,117 +243,121 @@ export default function EmployeeFormDialog({
     form.setValue(name, value, { shouldDirty: true, shouldValidate: true });
 
   return (
-    <Dialog open={open} onOpenChange={isPending ? () => {} : onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-full overflow-y-auto sm:max-w-175">
-        <DialogHeader>
-          <DialogTitle>{isUpdate ? t("employees.form.updateTitle") : t("employees.form.createTitle")}</DialogTitle>
-          <DialogDescription>{t("employees.form.description")}</DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={isPending ? () => {} : onOpenChange}>
+        <DialogContent className="max-h-[90vh] max-w-full overflow-y-auto sm:max-w-175">
+          <DialogHeader>
+            <DialogTitle>{isUpdate ? t("employees.form.updateTitle") : t("employees.form.createTitle")}</DialogTitle>
+            <DialogDescription>{t("employees.form.description")}</DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={onSubmit} className="flex min-w-0 flex-col gap-4">
-            <fieldset disabled={isPending} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormInput
-                form={form}
-                name="employee_number"
-                label={t("employees.fields.employeeNumber")}
-                placeholder={t("employees.form.employeeNumberPlaceholder")}
-                isRequired
-              />
-              <FormInput form={form} name="name" label={t("employees.fields.name")} placeholder={t("employees.form.namePlaceholder")} isRequired />
-              <FormInput form={form} name="email" type="email" label={t("employees.fields.email")} placeholder={t("employees.form.emailPlaceholder")} />
-              <FormInput form={form} name="phone_number" type="tel" label={t("employees.fields.phone")} placeholder={t("employees.form.phonePlaceholder")} />
-              {isUpdate && item && (
-                <CurrentCareerSummary
-                  item={item}
-                  onChangeCareer={onChangeCareer ? () => onChangeCareer(item) : undefined}
-                  onShowCareers={onShowCareers ? () => onShowCareers(item) : undefined}
-                />
-              )}
-              {!isUpdate && (
-                <FormInput form={form} name="position" label={t("employees.fields.position")} placeholder={t("employees.form.positionPlaceholder")} />
-              )}
-              <FormCalendar
-                form={form}
-                name="join_date"
-                label={t("employees.fields.joinDate")}
-                open={isJoinDateOpen}
-                onOpenChange={setIsJoinDateOpen}
-                onSelect={(date) => {
-                  setField("join_date", toApiDate(date));
-                  setIsJoinDateOpen(false);
-                }}
-              />
-              {!isUpdate && (
-                <FormComboBox
+          <Form {...form}>
+            <form onSubmit={onSubmit} className="flex min-w-0 flex-col gap-4">
+              <fieldset disabled={isPending} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormInput
                   form={form}
-                  name="department_id"
-                  label={t("employees.fields.department")}
-                  disabled={isPending || isDepartmentsLoading}
-                  items={departmentItems}
-                  value={departmentId}
-                  hint={t("employees.form.departmentHint")}
-                  searchLabel={t("employees.form.departmentSearch")}
-                  emptyLabel={t("shared.form.noOptions")}
-                  isError={!!form.formState.errors.department_id}
-                  open={isDepartmentOpen}
-                  onOpenChange={setIsDepartmentOpen}
-                  onSelect={(value) => {
-                    setField("department_id", value);
-                    setIsDepartmentOpen(false);
+                  name="employee_number"
+                  label={t("employees.fields.employeeNumber")}
+                  placeholder={t("employees.form.employeeNumberPlaceholder")}
+                  isRequired
+                />
+                <FormInput form={form} name="name" label={t("employees.fields.name")} placeholder={t("employees.form.namePlaceholder")} isRequired />
+                <FormInput form={form} name="email" type="email" label={t("employees.fields.email")} placeholder={t("employees.form.emailPlaceholder")} />
+                <FormInput form={form} name="phone_number" type="tel" label={t("employees.fields.phone")} placeholder={t("employees.form.phonePlaceholder")} />
+                {isUpdate && item && (
+                  <CurrentCareerSummary
+                    item={item}
+                    onChangeCareer={onChangeCareer ? () => onChangeCareer(item) : undefined}
+                    onShowCareers={onShowCareers ? () => onShowCareers(item) : undefined}
+                  />
+                )}
+                {!isUpdate && (
+                  <FormInput form={form} name="position" label={t("employees.fields.position")} placeholder={t("employees.form.positionPlaceholder")} />
+                )}
+                <FormCalendar
+                  form={form}
+                  name="join_date"
+                  label={t("employees.fields.joinDate")}
+                  open={isJoinDateOpen}
+                  onOpenChange={setIsJoinDateOpen}
+                  onSelect={(date) => {
+                    setField("join_date", toApiDate(date));
+                    setIsJoinDateOpen(false);
                   }}
                 />
-              )}
-              <FormComboBox
-                form={form}
-                name="supervisor_id"
-                label={t("employees.fields.supervisor")}
-                disabled={isPending || isSupervisorsLoading}
-                items={supervisorItems}
-                value={supervisorId}
-                hint={t("employees.form.supervisorHint")}
-                searchLabel={t("employees.form.supervisorSearch")}
-                emptyLabel={t("shared.form.noOptions")}
-                isError={!!form.formState.errors.supervisor_id}
-                open={isSupervisorOpen}
-                onOpenChange={setIsSupervisorOpen}
-                onSelect={(value) => {
-                  setField("supervisor_id", value);
-                  setIsSupervisorOpen(false);
-                }}
-              />
-              {!isUpdate && (
-                <>
-                  <FormSelect
+                {!isUpdate && (
+                  <FormComboBox
                     form={form}
-                    name="employment_type"
-                    label={t("employees.fields.employmentType")}
-                    items={EMPLOYMENT_TYPES.map((type) => ({ value: type, label: t(`employees.employmentTypes.${type}`) }))}
-                    isRequired
+                    name="department_id"
+                    label={t("employees.fields.department")}
+                    disabled={isPending || isDepartmentsLoading}
+                    items={departmentItems}
+                    value={departmentId}
+                    hint={t("employees.form.departmentHint")}
+                    searchLabel={t("employees.form.departmentSearch")}
+                    emptyLabel={t("shared.form.noOptions")}
+                    isError={!!form.formState.errors.department_id}
+                    open={isDepartmentOpen}
+                    onOpenChange={setIsDepartmentOpen}
+                    onSelect={(value) => {
+                      setField("department_id", value);
+                      setIsDepartmentOpen(false);
+                    }}
                   />
-                  <FormInput form={form} name="grade" type="number" label={t("employees.fields.grade")} placeholder={t("employees.form.gradePlaceholder")} />
-                </>
-              )}
-              <FormSelect
-                form={form}
-                name="status"
-                label={t("shared.columns.status")}
-                items={ACTIVE_STATUSES.map((status) => ({ value: status, label: t(`shared.status.${status}`) }))}
-                isRequired
-              />
-            </fieldset>
+                )}
+                <FormComboBox
+                  form={form}
+                  name="supervisor_id"
+                  label={t("employees.fields.supervisor")}
+                  disabled={isPending || isSupervisorsLoading}
+                  items={supervisorItems}
+                  value={supervisorId}
+                  hint={t("employees.form.supervisorHint")}
+                  searchLabel={t("employees.form.supervisorSearch")}
+                  emptyLabel={t("shared.form.noOptions")}
+                  isError={!!form.formState.errors.supervisor_id}
+                  open={isSupervisorOpen}
+                  onOpenChange={setIsSupervisorOpen}
+                  onSelect={(value) => {
+                    setField("supervisor_id", value);
+                    setIsSupervisorOpen(false);
+                  }}
+                />
+                {!isUpdate && (
+                  <>
+                    <FormSelect
+                      form={form}
+                      name="employment_type"
+                      label={t("employees.fields.employmentType")}
+                      items={EMPLOYMENT_TYPES.map((type) => ({ value: type, label: t(`employees.employmentTypes.${type}`) }))}
+                      isRequired
+                    />
+                    <FormInput form={form} name="grade" type="number" label={t("employees.fields.grade")} placeholder={t("employees.form.gradePlaceholder")} />
+                  </>
+                )}
+                <FormSelect
+                  form={form}
+                  name="status"
+                  label={t("shared.columns.status")}
+                  items={ACTIVE_STATUSES.map((status) => ({ value: status, label: t(`shared.status.${status}`) }))}
+                  isRequired
+                />
+              </fieldset>
 
-            <DialogFooter className="flex-row items-center gap-2">
-              <Button type="submit" size="sm" disabled={isPending}>
-                {isPending ? <LoadingButton /> : tCommon("save")}
-              </Button>
-              <Button type="button" size="sm" variant="outline" disabled={isPending} onClick={() => onOpenChange(false)}>
-                {tCommon("cancel")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              <DialogFooter className="flex-row items-center gap-2">
+                <Button type="submit" size="sm" disabled={isPending}>
+                  {isPending ? <LoadingButton /> : tCommon("save")}
+                </Button>
+                <Button type="button" size="sm" variant="outline" disabled={isPending} onClick={() => onOpenChange(false)}>
+                  {tCommon("cancel")}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      {/* Outside the form dialog, which closes on save. */}
+      <InvitationDialog target={accountFeedback.target} onClose={accountFeedback.close} />
+    </>
   );
 }

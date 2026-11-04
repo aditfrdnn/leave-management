@@ -1,9 +1,12 @@
 "use client"
 
-import { SignOut } from "@/app/(auth)/actions";
 import { authService } from "@/services";
 import { useAuthStore } from "@/stores"
 import { useCallback, useEffect } from "react";
+
+/** When this tab last went to IAM because the API refused it. */
+const LOGIN_REDIRECT_KEY = "hrlite:login-redirect";
+const LOOP_WINDOW_MS = 60 * 1000;
 
 
 export function AuthProvider({
@@ -22,14 +25,25 @@ export function AuthProvider({
 
             if (user) {
                 setAuth(user)
+                sessionStorage.removeItem(LOGIN_REDIRECT_KEY)
             }
         } catch {
-            // No session, or an expired/revoked token: drop it and, unless already there, go to sign-in
-            // with the current page as the callback. (This provider also wraps the sign-in page.)
-            const onSignIn = window.location.pathname.startsWith("/sign-in");
-            const { url } = await SignOut(onSignIn ? undefined : `${window.location.pathname}${window.location.search}`);
+            // No session, or IAM ended it (signed out elsewhere, access removed): sign in again at
+            // IAM and come back to this page. (This provider also wraps the signed-out page.)
             clear();
-            if (url && !onSignIn) window.location.replace(url);
+            if (window.location.pathname.startsWith("/signed-out")) return;
+
+            // Just back from IAM and still refused: IAM let the person in, HR Lite does not
+            // (account deactivated here, access removed). Say so instead of looping through IAM.
+            const lastRedirect = Number(sessionStorage.getItem(LOGIN_REDIRECT_KEY) ?? 0);
+            if (Date.now() - lastRedirect < LOOP_WINDOW_MS) {
+                sessionStorage.removeItem(LOGIN_REDIRECT_KEY);
+                window.location.replace("/signed-out?error=access_denied");
+                return;
+            }
+
+            sessionStorage.setItem(LOGIN_REDIRECT_KEY, String(Date.now()));
+            window.location.replace(`/auth/login?returnTo=${encodeURIComponent(`${window.location.pathname}${window.location.search}`)}`);
         } finally {
             setInitialized(true);
         }

@@ -15,20 +15,8 @@ export type TUser = {
     name: string;
     alias: string;
   } | null;
-  /** Permission titles from `GET /api/me`; the login response has none until the next bootstrap. */
+  /** HR Lite roles, set in the IAM Portal. */
+  roles?: { id: string; key: string | null; title: string }[];
+  /** Permission titles from `GET /api/me`, what the roles above allow. */
   permissions?: string[];
-};
-
-/** `POST /api/auth/login` → `data`: the user with its bearer token on the same object. */
-export type TLoginData = TUser & { token: string };
-
-export type AuthFormState = {
-  status?: string;
-  redirect?: string;
-  user?: TUser;
-  errors?: {
-    email?: string[];
-    password?: string[];
-    _form?: string[];
-  };
 };

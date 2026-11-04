@@ -3,42 +3,57 @@
 import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
 
-import { environment } from "@/configs/environment";
-
-const TOKEN_KEY = environment.TOKEN_KEY;
-
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-  path: "/",
-  maxAge: 60 * 60 * 6,
-};
-
-export async function getTokenCookie() {
-  return (await cookies()).get(TOKEN_KEY)?.value;
-}
-
-export async function setTokenCookie(token: string) {
-  (await cookies()).set(TOKEN_KEY, token, COOKIE_OPTIONS);
-}
-
-export async function removeTokenCookie() {
-  (await cookies()).delete(TOKEN_KEY);
-}
+import { refreshSession } from "@/lib/iam/oidc";
+import {
+  cookieOptions,
+  ID_TOKEN_COOKIE,
+  isRefreshDue,
+  LOGIN_COOKIE,
+  openSession,
+  SESSION_COOKIE,
+  SESSION_MAX_AGE,
+  sealSession,
+} from "@/lib/iam/session";
 
 /**
- * Who signed in last on this browser. It outlives the token (logout, expiry), so the next sign-in
- * can tell whether the page in `callback` belonged to someone else.
+ * The IAM access token of the signed-in user, for the Bearer header of API calls. `proxy.ts`
+ * refreshes it before pages render; a call made later (a long-open tab) refreshes it here.
+ * Undefined when there is no session or IAM ended it.
  */
-const LAST_USER_KEY = "hrlite_last_user";
+export async function getTokenCookie() {
+  const store = await cookies();
+  const session = await openSession(store.get(SESSION_COOKIE)?.value);
 
-export async function getLastUserCookie() {
-  return (await cookies()).get(LAST_USER_KEY)?.value;
+  if (session === null) {
+    return undefined;
+  }
+
+  if (!isRefreshDue(session)) {
+    return session.accessToken;
+  }
+
+  try {
+    const refreshed = await refreshSession(session);
+
+    try {
+      store.set(SESSION_COOKIE, await sealSession(refreshed), cookieOptions(SESSION_MAX_AGE));
+    } catch {
+      // Rendering a Server Component: cookies are read-only there, and the proxy refreshes them.
+    }
+
+    return refreshed.accessToken;
+  } catch {
+    return undefined;
+  }
 }
 
-export async function setLastUserCookie(userId: string) {
-  (await cookies()).set(LAST_USER_KEY, userId, { ...COOKIE_OPTIONS, maxAge: 60 * 60 * 24 * 365 });
+/** Forgets the HR Lite session in this browser (IAM's own session is ended separately). */
+export async function removeTokenCookie() {
+  const store = await cookies();
+
+  for (const name of [SESSION_COOKIE, ID_TOKEN_COOKIE, LOGIN_COOKIE]) {
+    store.delete(name);
+  }
 }
 
 /** The request's UI language: the language cookie, or the browser language on a first visit. */
