@@ -74,7 +74,11 @@ export default function InvitationDialog({ target, onClose }: { target: TInvitat
  */
 export function useAccountFeedback() {
   const t = useTranslations("setup.employees.account");
-  const [target, setTarget] = useState<TInvitationTarget | null>(null);
+  // Links to copy, one dialog after another (inviting several employees can leave a few).
+  const [queue, setQueue] = useState<TInvitationTarget[]>([]);
+  const target = queue[0] ?? null;
+  const setTarget = useCallback((next: TInvitationTarget) => setQueue((current) => [...current, next]), []);
+  const enqueue = useCallback((targets: TInvitationTarget[]) => setQueue((current) => [...current, ...targets]), []);
 
   /**
    * `saved`: the save toast's text. After a save it stays the toast title and the account outcome
@@ -113,10 +117,10 @@ export function useAccountFeedback() {
           show(saved ? "success" : "info", saved ? undefined : t("noNewLink"));
       }
     },
-    [t],
+    [t, setTarget],
   );
 
-  const close = useCallback(() => setTarget(null), []);
+  const close = useCallback(() => setQueue((current) => current.slice(1)), []);
 
-  return { target, notify, close };
+  return { target, notify, enqueue, close };
 }

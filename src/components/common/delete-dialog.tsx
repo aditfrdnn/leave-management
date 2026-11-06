@@ -28,6 +28,10 @@ type DeleteDialogProps = {
   description?: ReactNode
   /** Sent alongside `id`. */
   fields?: Record<string, string>
+  /** Replaces "Delete {name}?" when the action does something else (e.g. archives). */
+  question?: ReactNode
+  /** Replaces the Delete button text. */
+  confirmLabel?: string
 }
 
 export default function DeleteDialog({
@@ -39,6 +43,8 @@ export default function DeleteDialog({
   onSuccess,
   description,
   fields,
+  question,
+  confirmLabel,
 }: DeleteDialogProps) {
   const t = useTranslations("common");
   const translateMessage = useTranslateMessage();
@@ -78,7 +84,7 @@ export default function DeleteDialog({
         <DialogHeader>
           <DialogTitle>{t("actions.confirm")}</DialogTitle>
           <DialogDescription>
-            {t.rich("deleteDialog.question", {
+            {question ?? t.rich("deleteDialog.question", {
               name: name || "",
               b: (chunks) => <span className="font-semibold">{chunks}</span>,
             })}
@@ -92,7 +98,7 @@ export default function DeleteDialog({
             disabled={isPendingDelete}
             onClick={() => handleDelete()}
           >
-            {isPendingDelete ? <LoadingButton /> : t("actions.delete")}
+            {isPendingDelete ? <LoadingButton /> : (confirmLabel ?? t("actions.delete"))}
           </Button>
           <Button
             size="sm"

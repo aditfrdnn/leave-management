@@ -3,13 +3,16 @@ import type { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { dateFormatter } from "@/lib/utils/utils";
 import type { TActiveStatus, TEmployeeItem } from "@/types/setup";
 import {
+  Archive02Icon,
+  ArrowTurnBackwardIcon,
   CheckmarkCircle02Icon,
+  Clock01Icon,
   Delete02Icon,
-  Link01Icon,
   Loading03Icon,
   MailSend01Icon,
   MinusSignCircleIcon,
@@ -19,6 +22,10 @@ import {
 
 /** `useTranslations("setup")`, passed in because column factories cannot call hooks. */
 type TSetupTranslator = ReturnType<typeof useTranslations<"setup">>;
+
+/** Who can be sent an IAM invitation: a current, active employee with an email who has not signed in yet. */
+export const canInvite = (item: TEmployeeItem) =>
+  !item.archived_at && item.status === "active" && !!item.email && item.account_status !== "active";
 
 function StatusBadge({ t, status }: { t: TSetupTranslator; status: TActiveStatus }) {
   const active = status === "active";
@@ -31,29 +38,86 @@ function StatusBadge({ t, status }: { t: TSetupTranslator; status: TActiveStatus
   );
 }
 
+/** Where the employee's sign-in stands, with the HR Lite role they hold (or will get). */
+function AccountCell({ t, item }: { t: TSetupTranslator; item: TEmployeeItem }) {
+  const status = item.account_status;
+  const role = item.user?.role?.title;
+
+  return (
+    <div className="flex min-w-32 flex-col gap-0.5">
+      <Badge
+        variant={status === "active" ? "success" : status === "invited" ? "warning" : "secondary"}
+        className="gap-1"
+        title={item.user?.email}
+      >
+        <HugeiconsIcon icon={status === "active" ? CheckmarkCircle02Icon : status === "invited" ? Clock01Icon : MinusSignCircleIcon} className="size-3" />
+        {t(`employees.columns.accountStatus.${status}`)}
+      </Badge>
+      {role && <span className="text-xs whitespace-nowrap text-muted-foreground">{role}</span>}
+    </div>
+  );
+}
+
 export const employeeColumns = ({
   t,
   locale,
   current_page,
   per_page,
+  archived,
   onClickEdit,
   onClickCareers,
   onClickDelete,
   onClickInvite,
+  onClickRestore,
   invitingId,
+  restoringId,
 }: {
   t: TSetupTranslator;
   locale: string;
   current_page: number;
   per_page: number;
+  /** The Archive list: rows can be restored, not edited, invited or archived again. */
+  archived: boolean;
   onClickEdit: (item: TEmployeeItem) => void;
   onClickCareers: (item: TEmployeeItem) => void;
+  /** Deletes, or archives an employee who has an account. */
   onClickDelete: (item: TEmployeeItem) => void;
-  /** New IAM activation link; offered for active employees with an email, the API decides the rest. */
+  /** New IAM activation link; offered while the employee has not signed in yet. */
   onClickInvite: (item: TEmployeeItem) => void;
+  onClickRestore: (item: TEmployeeItem) => void;
   /** The employee whose invitation is being sent. */
   invitingId: string | null;
+  restoringId: string | null;
 }): ColumnDef<TEmployeeItem>[] => [
+  ...(archived
+    ? []
+    : [
+        {
+          id: "select",
+          enableHiding: false,
+          header: ({ table }) => {
+            const invitable = table.getRowModel().rows.filter((row) => canInvite(row.original));
+            const selected = invitable.filter((row) => row.getIsSelected()).length;
+
+            return (
+              <Checkbox
+                aria-label={t("employees.account.inviteSelected", { count: invitable.length })}
+                disabled={invitable.length === 0}
+                checked={selected === 0 ? false : selected === invitable.length ? true : "indeterminate"}
+                onCheckedChange={(value) => invitable.forEach((row) => row.toggleSelected(value === true))}
+              />
+            );
+          },
+          cell: ({ row }) => (
+            <Checkbox
+              aria-label={t("employees.account.inviteItem", { name: row.original.name })}
+              disabled={!canInvite(row.original)}
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(value === true)}
+            />
+          ),
+        } satisfies ColumnDef<TEmployeeItem>,
+      ]),
   {
     id: "no",
     enableHiding: false,
@@ -73,7 +137,11 @@ export const employeeColumns = ({
     cell: ({ row }) => (
       <div className="flex min-w-40 flex-col">
         <span className="font-medium">{row.original.name}</span>
-        <span className="text-xs text-muted-foreground">{row.original.position || row.original.email || "-"}</span>
+        <span className="text-xs text-muted-foreground">
+          {row.original.archived_at
+            ? t("employees.archive.archivedOn", { date: dateFormatter(row.original.archived_at, locale) })
+            : row.original.position || row.original.email || "-"}
+        </span>
       </div>
     ),
   },
@@ -129,69 +197,102 @@ export const employeeColumns = ({
   },
   {
     id: "account",
-    accessorFn: (row) => row.user?.email ?? "",
+    accessorFn: (row) => row.account_status,
     header: t("employees.columns.account"),
-    cell: ({ row }) =>
-      row.original.user ? (
-        <Badge variant="default" className="gap-1" title={row.original.user.email}>
-          <HugeiconsIcon icon={Link01Icon} className="size-3" />
-          {row.original.user.role?.title ?? t("employees.columns.linked")}
-        </Badge>
-      ) : (
-        <span className="text-xs whitespace-nowrap text-muted-foreground">{t("employees.columns.notLinked")}</span>
-      ),
+    cell: ({ row }) => <AccountCell t={t} item={row.original} />,
   },
   {
     id: "actions",
     enableHiding: false,
     header: () => <span className="sr-only">{t("shared.columns.actions")}</span>,
-    cell: ({ row }) => (
-      <div className="flex items-center justify-end gap-1">
-        {row.original.email && row.original.status === "active" && (
+    cell: ({ row }) => {
+      const item = row.original;
+      const hasAccount = item.user !== null;
+
+      if (archived) {
+        return (
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              title={t("employees.careers.title")}
+              aria-label={t("employees.careers.showItem", { name: item.name })}
+              onClick={() => onClickCareers(item)}
+            >
+              <HugeiconsIcon icon={WorkHistoryIcon} className="size-4 text-muted-foreground" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-label={t("employees.archive.restoreItem", { name: item.name })}
+              disabled={restoringId !== null}
+              onClick={() => onClickRestore(item)}
+            >
+              <HugeiconsIcon
+                icon={restoringId === item.id ? Loading03Icon : ArrowTurnBackwardIcon}
+                className={restoringId === item.id ? "size-4 animate-spin" : "size-4"}
+              />
+              {t("employees.archive.restore")}
+            </Button>
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex items-center justify-end gap-1">
+          {canInvite(item) && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              title={item.account_status === "none" ? t("employees.account.invite") : t("employees.account.resend")}
+              aria-label={
+                item.account_status === "none"
+                  ? t("employees.account.inviteItem", { name: item.name })
+                  : t("employees.account.resendItem", { name: item.name })
+              }
+              disabled={invitingId !== null}
+              onClick={() => onClickInvite(item)}
+            >
+              <HugeiconsIcon
+                icon={invitingId === item.id ? Loading03Icon : MailSend01Icon}
+                className={invitingId === item.id ? "size-4 animate-spin text-muted-foreground" : "size-4 text-muted-foreground"}
+              />
+            </Button>
+          )}
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
-            title={t("employees.account.resend")}
-            aria-label={t("employees.account.resendItem", { name: row.original.name })}
-            disabled={invitingId !== null}
-            onClick={() => onClickInvite(row.original)}
+            title={t("employees.careers.title")}
+            aria-label={t("employees.careers.showItem", { name: item.name })}
+            onClick={() => onClickCareers(item)}
           >
-            <HugeiconsIcon
-              icon={invitingId === row.original.id ? Loading03Icon : MailSend01Icon}
-              className={invitingId === row.original.id ? "size-4 animate-spin text-muted-foreground" : "size-4 text-muted-foreground"}
-            />
+            <HugeiconsIcon icon={WorkHistoryIcon} className="size-4 text-muted-foreground" />
           </Button>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          title={t("employees.careers.title")}
-          aria-label={t("employees.careers.showItem", { name: row.original.name })}
-          onClick={() => onClickCareers(row.original)}
-        >
-          <HugeiconsIcon icon={WorkHistoryIcon} className="size-4 text-muted-foreground" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t("shared.actions.editItem", { name: row.original.name })}
-          onClick={() => onClickEdit(row.original)}
-        >
-          <HugeiconsIcon icon={PencilEdit02Icon} className="size-4 text-muted-foreground" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t("shared.actions.deleteItem", { name: row.original.name })}
-          onClick={() => onClickDelete(row.original)}
-        >
-          <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
-        </Button>
-      </div>
-    ),
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t("shared.actions.editItem", { name: item.name })}
+            onClick={() => onClickEdit(item)}
+          >
+            <HugeiconsIcon icon={PencilEdit02Icon} className="size-4 text-muted-foreground" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            title={hasAccount ? t("employees.archive.confirm") : undefined}
+            aria-label={hasAccount ? t("employees.archive.archiveItem", { name: item.name }) : t("shared.actions.deleteItem", { name: item.name })}
+            onClick={() => onClickDelete(item)}
+          >
+            <HugeiconsIcon icon={hasAccount ? Archive02Icon : Delete02Icon} className="size-4 text-destructive" />
+          </Button>
+        </div>
+      );
+    },
   },
 ];

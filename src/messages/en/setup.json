@@ -55,7 +55,12 @@
     "columns": {
       "account": "Account",
       "linked": "Linked",
-      "notLinked": "No account"
+      "notLinked": "No account",
+      "accountStatus": {
+        "none": "Not invited",
+        "invited": "Invited",
+        "active": "Active"
+      }
     },
     "employmentTypes": {
       "permanent": "Permanent",
@@ -87,7 +92,8 @@
       "loadList": "Couldn't load the employees.",
       "create": "Couldn't add the employee.",
       "update": "Couldn't update the employee.",
-      "delete": "Couldn't delete the employee."
+      "delete": "Couldn't delete the employee.",
+      "restore": "Couldn't restore the employee."
     },
     "account": {
       "resend": "Resend invitation",
@@ -108,6 +114,17 @@
       },
       "errors": {
         "invite": "Couldn't create a new invitation."
+      },
+      "invite": "Invite",
+      "inviteItem": "Invite {name} to IAM",
+      "inviteSelected": "Invite {count, plural, one {# employee} other {# employees}}",
+      "clearSelection": "Clear selection",
+      "bulk": {
+        "sent": "{count, plural, one {# invitation} other {# invitations}} sent on WhatsApp.",
+        "manual": "{count, plural, one {# employee has} other {# employees have}} no WhatsApp number. Copy each invitation message yourself.",
+        "skipped": "{count, plural, one {# employee was} other {# employees were}} skipped: already signed in to HR Lite, or inactive.",
+        "earlier": "{count, plural, one {# employee still has} other {# employees still have}} an unused invitation.",
+        "failed": "{count, plural, one {# invitation} other {# invitations}} couldn't be created. Try again shortly."
       }
     },
     "validation": {
@@ -166,6 +183,19 @@
         "noteMax": "The note can be at most 255 characters"
       },
       "system": "system"
+    },
+    "archive": {
+      "current": "Employees",
+      "archived": "Archive",
+      "question": "Archive <b>{name}</b>?",
+      "description": "This employee has an account, so they are not deleted. They become inactive, their IAM account is deactivated, and their leave and appraisal history is kept. You can restore them from the Archive.",
+      "confirm": "Archive",
+      "archiveItem": "Archive {name}",
+      "restore": "Restore",
+      "restoreItem": "Restore {name}",
+      "restored": "{name} is restored and active again.",
+      "empty": "No archived employees.",
+      "archivedOn": "Archived {date}"
     }
   },
   "departments": {

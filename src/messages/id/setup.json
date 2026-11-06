@@ -55,7 +55,12 @@
     "columns": {
       "account": "Akun",
       "linked": "Tertaut",
-      "notLinked": "Belum punya akun"
+      "notLinked": "Belum punya akun",
+      "accountStatus": {
+        "none": "Belum diundang",
+        "invited": "Diundang",
+        "active": "Aktif"
+      }
     },
     "employmentTypes": {
       "permanent": "Tetap",
@@ -87,7 +92,8 @@
       "loadList": "Gagal memuat daftar karyawan.",
       "create": "Gagal menambahkan karyawan.",
       "update": "Gagal memperbarui data karyawan.",
-      "delete": "Gagal menghapus karyawan."
+      "delete": "Gagal menghapus karyawan.",
+      "restore": "Gagal memulihkan karyawan."
     },
     "account": {
       "resend": "Kirim ulang undangan",
@@ -108,6 +114,17 @@
       },
       "errors": {
         "invite": "Gagal membuat undangan baru."
+      },
+      "invite": "Undang",
+      "inviteItem": "Undang {name} ke IAM",
+      "inviteSelected": "Undang {count} karyawan",
+      "clearSelection": "Batalkan pilihan",
+      "bulk": {
+        "sent": "{count, plural, other {# undangan}} terkirim lewat WhatsApp.",
+        "manual": "{count, plural, other {# karyawan}} tanpa nomor WhatsApp. Salin pesan undangannya satu per satu.",
+        "skipped": "{count, plural, other {# karyawan}} dilewati karena sudah masuk HR Lite atau tidak aktif.",
+        "earlier": "{count, plural, other {# karyawan}} masih punya undangan yang belum dipakai.",
+        "failed": "{count, plural, other {# undangan}} gagal dibuat. Coba lagi sebentar lagi."
       }
     },
     "validation": {
@@ -166,6 +183,19 @@
         "noteMax": "Catatan maksimal 255 karakter"
       },
       "system": "sistem"
+    },
+    "archive": {
+      "current": "Karyawan",
+      "archived": "Arsip",
+      "question": "Arsipkan <b>{name}</b>?",
+      "description": "Karyawan ini sudah punya akun, jadi tidak dihapus. Statusnya menjadi tidak aktif, akun IAM-nya dinonaktifkan, dan riwayat cuti serta appraisal-nya tetap tersimpan. Bisa dipulihkan dari Arsip.",
+      "confirm": "Arsipkan",
+      "archiveItem": "Arsipkan {name}",
+      "restore": "Pulihkan",
+      "restoreItem": "Pulihkan {name}",
+      "restored": "{name} dipulihkan dan aktif lagi.",
+      "empty": "Belum ada karyawan yang diarsipkan.",
+      "archivedOn": "Diarsipkan {date}"
     }
   },
   "departments": {

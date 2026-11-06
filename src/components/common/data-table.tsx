@@ -77,6 +77,10 @@ interface DataTableProps<TData, TValue> {
   | React.ReactElement
   | ((selectedData: TData[]) => React.ReactElement);
   isResetSelectedRow?: boolean;
+  /** Keys the row selection (default: the row's position), so it survives paging and refetches. */
+  getRowId?: (row: TData) => string;
+  /** The selection is cleared whenever this value changes. */
+  selectionResetKey?: unknown;
   onRowClick?: (row: TData) => void;
   getRowClassName?: (row: TData) => string;
   getCellClassName?: (row: TData, columnId: string) => string;
@@ -133,6 +137,8 @@ function DataTableContent<TData, TValue>({
   lastPage,
   rowSelectedComponent,
   isResetSelectedRow,
+  getRowId,
+  selectionResetKey,
   onRowClick,
   getRowClassName,
   getCellClassName,
@@ -157,6 +163,7 @@ function DataTableContent<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    getRowId,
 
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -294,6 +301,13 @@ function DataTableContent<TData, TValue>({
       setRowSelection({});
     }
   }, [isResetSelectedRow]);
+
+  // Adjusted while rendering rather than in an effect (react.dev: "storing information from previous renders").
+  const [lastResetKey, setLastResetKey] = React.useState(selectionResetKey);
+  if (selectionResetKey !== lastResetKey) {
+    setLastResetKey(selectionResetKey);
+    setRowSelection({});
+  }
 
   return (
     <div className={cn("flex flex-col max-w-full gap-2", className)}>

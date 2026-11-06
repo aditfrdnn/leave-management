@@ -37,11 +37,29 @@ export type TEmployeeItem = {
   /** Company grade (1–99); a cache of the current career row like position, type and department (§14). */
   grade: number | null;
   status: TActiveStatus;
+  /** ISO 8601; set for employees who left (hidden from lists and pickers until restored). */
+  archived_at: string | null;
+  account_status: TEmployeeSignInStatus;
   created_at: string;
   department: TDepartmentRef | null;
   supervisor: { id: string; name: string; employee_number: string } | null;
   /** `linked`: the HR Lite account is linked to its IAM account. `role` is the first of `roles`. */
   user: { id: string; email: string; linked: boolean; role: TRoleRef | null; roles: TRoleRef[] } | null;
+};
+
+/** none: not invited to IAM yet · invited: has an IAM account, has not signed in yet · active: has signed in. */
+export type TEmployeeSignInStatus = "none" | "invited" | "active";
+
+/**
+ * One row of `POST /api/employees/invitations`. `status` as for a single invitation, or archived /
+ * inactive / active (already signed in, skipped) / failed. `invitation` only when WhatsApp could not take it.
+ */
+export type TEmployeeBulkInvitation = {
+  id: string;
+  name: string;
+  status: TEmployeeAccountStatus | "archived" | "inactive" | "active";
+  invitation: TEmployeeInvitation | null;
+  sent_on_whatsapp?: boolean;
 };
 
 /** A fresh IAM activation link; `message` is the ready-to-send WhatsApp text (Indonesian). */
@@ -82,6 +100,8 @@ export type TEmployeeListParams = {
   sort_dir?: TSortDirection;
   /** Header filters: `columns[key][]=value` (docs/data-table.md). */
   columns?: import("./table").TTableColumnFilters;
+  /** 1 lists archived employees instead of current ones. */
+  archived?: 0 | 1;
 };
 
 /**

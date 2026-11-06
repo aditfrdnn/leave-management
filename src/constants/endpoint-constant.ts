@@ -63,6 +63,10 @@ const employeeCareers = (id: string) => `${employees}/${id}/careers`;
 const employeeCareer = (id: string, careerId: string) => `${employees}/${id}/careers/${careerId}`;
 /** A fresh IAM activation link; the previous one stops working. */
 const employeeInvitation = (id: string) => `${employees}/${id}/invitation`;
+/** Invitations for several employees at once. */
+const employeeInvitations = `${employees}/invitations`;
+/** Brings an archived employee back. */
+const employeeRestore = (id: string) => `${employees}/${id}/restore`;
 const departments = "/api/departments";
 const department = (id: string) => `${departments}/${id}`;
 
@@ -105,6 +109,8 @@ export {
   employeeCareers,
   employeeCareer,
   employeeInvitation,
+  employeeInvitations,
+  employeeRestore,
   departments,
   department,
 };

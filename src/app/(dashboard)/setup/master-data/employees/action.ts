@@ -9,6 +9,7 @@ import type { TApiPaginated } from "@/types/api";
 import type {
   TDepartmentOption,
   TEmployeeAccount,
+  TEmployeeBulkInvitation,
   TEmployeeCareer,
   TEmployeeCareerPayload,
   TEmployeeCareerResult,
@@ -136,7 +137,7 @@ export async function UpdateEmployee(prevState: EmployeeActionState, formData: F
   return saveEmployee(formData, true);
 }
 
-/** 409 while a user account is still linked to the employee. */
+/** Deletes the employee; one with an account is archived instead (the API says which in its message). */
 export async function DeleteEmployee(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const t = await getTranslations("setup");
   const parsed = setupDeleteSchema.safeParse({ id: getText(formData, "id") });
@@ -171,6 +172,40 @@ export async function SendEmployeeInvitation(employeeId: string): Promise<Action
     return { status: "success", message: result.message, data: result.data };
   } catch (error) {
     return toApiErrorState(error, t("employees.account.errors.invite"));
+  }
+}
+
+/** Invites the chosen employees; skips the ones who left or already signed in, one result each. */
+export async function SendEmployeeInvitations(ids: string[]): Promise<ActionState<TEmployeeBulkInvitation[]>> {
+  const t = await getTranslations("setup");
+
+  if (ids.length === 0) {
+    return toFormErrorState(t("shared.errors.missingId"));
+  }
+
+  try {
+    const result = await setupService.sendEmployeeInvitations(ids);
+
+    return { status: "success", message: result.message, data: result.data };
+  } catch (error) {
+    return toApiErrorState(error, t("employees.account.errors.invite"));
+  }
+}
+
+/** Brings an archived employee back to the list, active again (their IAM account too). */
+export async function RestoreEmployee(employeeId: string): Promise<ActionState<TEmployeeSaveResult>> {
+  const t = await getTranslations("setup");
+
+  if (!employeeId) {
+    return toFormErrorState(t("shared.errors.missingId"));
+  }
+
+  try {
+    const result = await setupService.restoreEmployee(employeeId);
+
+    return { status: "success", message: result.message, data: result.data };
+  } catch (error) {
+    return toApiErrorState(error, t("employees.errors.restore"));
   }
 }
 

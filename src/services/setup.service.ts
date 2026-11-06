@@ -6,7 +6,9 @@ import {
   employeeCareer,
   employeeCareers,
   employeeInvitation,
+  employeeInvitations,
   employeeOptions,
+  employeeRestore,
   employees,
   holiday,
   holidays,
@@ -24,6 +26,7 @@ import type {
   TEmployeeCareer,
   TEmployeeCareerPayload,
   TEmployeeAccount,
+  TEmployeeBulkInvitation,
   TEmployeeCareerResult,
   TEmployeeItem,
   TEmployeeListParams,
@@ -77,8 +80,22 @@ export const setupService = {
     return data;
   },
 
+  /** Invites several employees; one result per employee. */
+  async sendEmployeeInvitations(ids: string[]) {
+    const { data } = await instance.post<TApiResponse<TEmployeeBulkInvitation[]>>(employeeInvitations, { ids });
+
+    return data;
+  },
+
+  /** Deletes the employee, or archives them when they have an account (`data.archived`). */
   async deleteEmployee(id: string) {
-    const { data } = await instance.delete<TApiResponse<null>>(employee(id));
+    const { data } = await instance.delete<TApiResponse<{ archived: boolean }>>(employee(id));
+
+    return data;
+  },
+
+  async restoreEmployee(id: string) {
+    const { data } = await instance.post<TApiResponse<TEmployeeSaveResult>>(employeeRestore(id));
 
     return data;
   },
