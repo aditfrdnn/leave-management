@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import FormInput from "@/components/common/form-input";
 import FormSelect from "@/components/common/form-select";
 import LoadingButton from "@/components/common/loading-button";
@@ -114,7 +115,7 @@ export default function LeaveRequestFormDialog({ open, onOpenChange }: { open: b
 
   const { data: approvers, isLoading: isApproversLoading } = useQuery({
     queryKey: ["leave", "approvers"],
-    queryFn: GetApprovers,
+    queryFn: async () => unwrapActionState(await GetApprovers()),
   });
 
   const approverItems = useMemo(

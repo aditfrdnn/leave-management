@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import FormCalendar from "@/components/common/form-calendar";
 import FormInput from "@/components/common/form-input";
 import FormSelect from "@/components/common/form-select";
@@ -61,7 +62,7 @@ export default function PeriodFormDialog({
 
   const { data: templates = [], isError: isTemplatesError } = useQuery({
     queryKey: ["appraisal", "templates", "active"],
-    queryFn: () => GetActiveTemplates(),
+    queryFn: async () => unwrapActionState(await GetActiveTemplates()),
     enabled: open,
   });
 

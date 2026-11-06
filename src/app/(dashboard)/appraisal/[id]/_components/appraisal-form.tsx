@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
 import { appraisalPdf } from "@/constants/endpoint-constant";
 import { useTranslateMessage } from "@/hooks/use-translate-message";
+import { unwrapActionState } from "@/lib/action-state";
 import { useRefreshAfterChange } from "@/lib/refresh-after-change";
 import type { ActionState } from "@/types/action-state";
 import type { TAppraisalDetail, TKpiReviewRow, TKpiTargetRow, TRatingAnswer, TTextField } from "@/types/appraisal";
@@ -48,7 +49,7 @@ export default function AppraisalForm({ id }: { id: string }) {
   const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: APPRAISAL_DETAIL_QUERY_KEY(id),
-    queryFn: () => GetAppraisal(id),
+    queryFn: async () => unwrapActionState(await GetAppraisal(id), t("errors.loadDetail")),
   });
   // null = not mine to see (403/404): go home instead of showing a locked page.
   const denied = !isLoading && !isError && data === null;
@@ -152,7 +153,11 @@ function AppraisalEditor({ detail }: { detail: TAppraisalDetail }) {
   };
 
   const reloadDetail = async () => {
-    const fresh = await queryClient.fetchQuery({ queryKey: detailKey, queryFn: () => GetAppraisal(detail.id), staleTime: 0 });
+    const fresh = await queryClient.fetchQuery({
+      queryKey: detailKey,
+      queryFn: async () => unwrapActionState(await GetAppraisal(detail.id), t("errors.loadDetail")),
+      staleTime: 0,
+    });
     if (fresh) applyDetail(fresh);
   };
 

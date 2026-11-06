@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { differenceInMonths, parse } from "date-fns";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { Reveal, SectionLoader } from "@/components/common/loader";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +45,7 @@ export default function ProfileView() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: MY_PROFILE_QUERY_KEY,
-    queryFn: GetMyProfile,
+    queryFn: async () => unwrapActionState(await GetMyProfile()),
   });
 
   if (isLoading) return <SectionLoader className="min-h-80" />;

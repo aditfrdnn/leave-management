@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import DeleteDialog from "@/components/common/delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -46,7 +47,7 @@ export default function HolidayTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...HOLIDAYS_QUERY_KEY, params],
-    queryFn: () => GetHolidays(params),
+    queryFn: async () => unwrapActionState(await GetHolidays(params)),
     placeholderData: keepPreviousData,
   });
 

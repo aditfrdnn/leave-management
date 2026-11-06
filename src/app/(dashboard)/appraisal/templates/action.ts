@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { uuidSchema } from "@/validations/id-validations";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { appraisalTemplateService, type TAppraisalTemplateListParams } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
@@ -20,21 +20,21 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetAppraisalTemplates(params: TAppraisalTemplateListParams): Promise<TApiPaginated<TAppraisalTemplateItem>> {
+export async function GetAppraisalTemplates(params: TAppraisalTemplateListParams): Promise<ActionState<TApiPaginated<TAppraisalTemplateItem>>> {
   try {
-    return await appraisalTemplateService.getAppraisalTemplates(params);
+    return { status: "success", data: await appraisalTemplateService.getAppraisalTemplates(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("appraisalTemplates.errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("setup"))("appraisalTemplates.errors.loadList"));
   }
 }
 
-export async function GetAppraisalTemplate(id: string): Promise<TAppraisalTemplate> {
+export async function GetAppraisalTemplate(id: string): Promise<ActionState<TAppraisalTemplate>> {
   try {
     const response = await appraisalTemplateService.getAppraisalTemplate(id);
 
-    return response.data;
+    return { status: "success", data: response.data };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("appraisalTemplates.errors.load")));
+    return toApiErrorState(error, (await getTranslations("setup"))("appraisalTemplates.errors.load"));
   }
 }
 

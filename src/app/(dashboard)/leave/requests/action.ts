@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { THolidayDay, TApprover, TLeave, TLeaveListParams, TLeaveListResponse } from "@/types/leave";
@@ -17,11 +17,11 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetLeaveRequests(params: TLeaveListParams): Promise<TLeaveListResponse> {
+export async function GetLeaveRequests(params: TLeaveListParams): Promise<ActionState<TLeaveListResponse>> {
   try {
-    return await leaveService.getLeaveRequests(params);
+    return { status: "success", data: await leaveService.getLeaveRequests(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("leave"))("errors.loadList"));
   }
 }
 
@@ -47,13 +47,13 @@ export async function GetMyLeaveBalance(): Promise<TMyLeaveBalance> {
   }
 }
 
-export async function GetApprovers(): Promise<TApprover[]> {
+export async function GetApprovers(): Promise<ActionState<TApprover[]>> {
   try {
     const response = await leaveService.getApprovers();
 
-    return response.data ?? [];
+    return { status: "success", data: response.data ?? [] };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadApprovers")));
+    return toApiErrorState(error, (await getTranslations("leave"))("errors.loadApprovers"));
   }
 }
 

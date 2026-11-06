@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { appraisalService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TAppraisalPeriod, TAppraisalTemplateItem } from "@/types/appraisal";
@@ -17,13 +17,13 @@ function getText(formData: FormData, key: string) {
 }
 
 /** Active templates for the period form's select. */
-export async function GetActiveTemplates(): Promise<TAppraisalTemplateItem[]> {
+export async function GetActiveTemplates(): Promise<ActionState<TAppraisalTemplateItem[]>> {
   try {
     const response = await appraisalService.getActiveTemplates();
 
-    return (response.data ?? []).filter((template) => template.is_active);
+    return { status: "success", data: (response.data ?? []).filter((template) => template.is_active) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("appraisal"))("periods.errors.loadTemplates")));
+    return toApiErrorState(error, (await getTranslations("appraisal"))("periods.errors.loadTemplates"));
   }
 }
 

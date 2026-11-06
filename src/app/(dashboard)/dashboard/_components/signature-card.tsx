@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import LoadingButton from "@/components/common/loading-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,7 +57,7 @@ export default function SignatureCard() {
   const translateMessage = useTranslateMessage();
   const input = useRef<HTMLInputElement | null>(null);
 
-  const { data, isLoading } = useQuery({ queryKey: MY_SIGNATURE_QUERY_KEY, queryFn: () => GetMySignature() });
+  const { data, isLoading } = useQuery({ queryKey: MY_SIGNATURE_QUERY_KEY, queryFn: async () => unwrapActionState(await GetMySignature()) });
   const signature = data?.signature ?? null;
 
   const failure = (title: string) => (error: unknown) => {

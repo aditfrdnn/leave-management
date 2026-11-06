@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { setupService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
@@ -17,11 +17,11 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetHolidays(params: THolidayListParams): Promise<TApiPaginated<THolidayItem>> {
+export async function GetHolidays(params: THolidayListParams): Promise<ActionState<TApiPaginated<THolidayItem>>> {
   try {
-    return await setupService.getHolidays(params);
+    return { status: "success", data: await setupService.getHolidays(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("holidays.errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("setup"))("holidays.errors.loadList"));
   }
 }
 

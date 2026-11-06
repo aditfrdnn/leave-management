@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
@@ -37,7 +38,7 @@ export default function AppraisalReportTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_LIST_QUERY_KEY, params],
-    queryFn: () => GetAppraisals(params),
+    queryFn: async () => unwrapActionState(await GetAppraisals(params)),
     placeholderData: keepPreviousData,
   });
 

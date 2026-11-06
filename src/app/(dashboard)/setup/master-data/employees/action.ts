@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { setupService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
@@ -39,32 +39,32 @@ function getText(formData: FormData, key: string) {
 const toNullableId = (value: string) => value || null;
 const toNullableGrade = (value: string) => (value ? Number(value) : null);
 
-export async function GetEmployees(params: TEmployeeListParams): Promise<TApiPaginated<TEmployeeItem>> {
+export async function GetEmployees(params: TEmployeeListParams): Promise<ActionState<TApiPaginated<TEmployeeItem>>> {
   try {
-    return await setupService.getEmployees(params);
+    return { status: "success", data: await setupService.getEmployees(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("employees.errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("setup"))("employees.errors.loadList"));
   }
 }
 
-export async function GetDepartmentOptions(): Promise<TDepartmentOption[]> {
+export async function GetDepartmentOptions(): Promise<ActionState<TDepartmentOption[]>> {
   try {
     const response = await setupService.getDepartmentOptions();
 
-    return response.data ?? [];
+    return { status: "success", data: response.data ?? [] };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("shared.errors.loadDepartments")));
+    return toApiErrorState(error, (await getTranslations("setup"))("shared.errors.loadDepartments"));
   }
 }
 
 /** Supervisor candidates; `exclude_id` keeps the edited employee out of its own list. */
-export async function GetEmployeeOptions(params: TEmployeeOptionParams): Promise<TEmployeeOption[]> {
+export async function GetEmployeeOptions(params: TEmployeeOptionParams): Promise<ActionState<TEmployeeOption[]>> {
   try {
     const response = await setupService.getEmployeeOptions(params);
 
-    return response.data ?? [];
+    return { status: "success", data: response.data ?? [] };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("shared.errors.loadEmployees")));
+    return toApiErrorState(error, (await getTranslations("setup"))("shared.errors.loadEmployees"));
   }
 }
 
@@ -214,13 +214,13 @@ export async function RestoreEmployee(employeeId: string): Promise<ActionState<T
 type EmployeeCareerActionState = ActionState<TEmployeeCareerResult>;
 
 /** Newest `effective_date` first. */
-export async function GetEmployeeCareers(employeeId: string): Promise<TEmployeeCareer[]> {
+export async function GetEmployeeCareers(employeeId: string): Promise<ActionState<TEmployeeCareer[]>> {
   try {
     const response = await setupService.getEmployeeCareers(employeeId);
 
-    return response.data ?? [];
+    return { status: "success", data: response.data ?? [] };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("employees.careers.errors.load")));
+    return toApiErrorState(error, (await getTranslations("setup"))("employees.careers.errors.load"));
   }
 }
 

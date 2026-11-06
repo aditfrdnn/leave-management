@@ -4,6 +4,7 @@ import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { SectionLoader } from "@/components/common/loader";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -29,7 +30,7 @@ export default function BalanceHistorySheet({
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: [...LEAVE_BALANCE_HISTORY_KEY(employeeId), page],
-    queryFn: () => GetLeaveBalanceEntries(employeeId, page),
+    queryFn: async () => unwrapActionState(await GetLeaveBalanceEntries(employeeId, page)),
     enabled: item !== null,
     placeholderData: keepPreviousData,
   });

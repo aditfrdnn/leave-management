@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import DeleteDialog from "@/components/common/delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export default function PeriodTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_PERIODS_QUERY_KEY, params],
-    queryFn: () => GetAppraisalPeriods(params),
+    queryFn: async () => unwrapActionState(await GetAppraisalPeriods(params)),
     placeholderData: keepPreviousData,
   });
 

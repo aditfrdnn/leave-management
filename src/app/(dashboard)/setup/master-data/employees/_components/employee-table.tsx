@@ -5,6 +5,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import DeleteDialog from "@/components/common/delete-dialog";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,7 @@ export default function EmployeeTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...EMPLOYEES_QUERY_KEY, params],
-    queryFn: () => GetEmployees(params),
+    queryFn: async () => unwrapActionState(await GetEmployees(params)),
     placeholderData: keepPreviousData,
   });
 

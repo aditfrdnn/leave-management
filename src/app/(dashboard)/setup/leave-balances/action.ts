@@ -2,36 +2,36 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { setupService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
 import type { TDepartmentOption, TLeaveBalanceEntry, TLeaveBalanceItem, TLeaveBalanceListParams } from "@/types/setup";
 import { leaveBalanceSchema } from "@/validations/setup-validations";
 
-export async function GetLeaveBalances(params: TLeaveBalanceListParams): Promise<TApiPaginated<TLeaveBalanceItem>> {
+export async function GetLeaveBalances(params: TLeaveBalanceListParams): Promise<ActionState<TApiPaginated<TLeaveBalanceItem>>> {
   try {
-    return await setupService.getLeaveBalances(params);
+    return { status: "success", data: await setupService.getLeaveBalances(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("leaveBalances.errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("setup"))("leaveBalances.errors.loadList"));
   }
 }
 
-export async function GetLeaveBalanceEntries(employeeId: string, page: number): Promise<TApiPaginated<TLeaveBalanceEntry>> {
+export async function GetLeaveBalanceEntries(employeeId: string, page: number): Promise<ActionState<TApiPaginated<TLeaveBalanceEntry>>> {
   try {
-    return await setupService.getLeaveBalanceEntries(employeeId, { page, per_page: 20 });
+    return { status: "success", data: await setupService.getLeaveBalanceEntries(employeeId, { page, per_page: 20 }) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("leaveBalances.errors.loadHistory")));
+    return toApiErrorState(error, (await getTranslations("setup"))("leaveBalances.errors.loadHistory"));
   }
 }
 
-export async function GetDepartmentOptions(): Promise<TDepartmentOption[]> {
+export async function GetDepartmentOptions(): Promise<ActionState<TDepartmentOption[]>> {
   try {
     const response = await setupService.getDepartmentOptions();
 
-    return response.data ?? [];
+    return { status: "success", data: response.data ?? [] };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("shared.errors.loadDepartments")));
+    return toApiErrorState(error, (await getTranslations("setup"))("shared.errors.loadDepartments"));
   }
 }
 

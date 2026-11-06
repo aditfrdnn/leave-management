@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { setupService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
@@ -17,11 +17,11 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function GetDepartments(params: TDepartmentListParams): Promise<TApiPaginated<TDepartmentItem>> {
+export async function GetDepartments(params: TDepartmentListParams): Promise<ActionState<TApiPaginated<TDepartmentItem>>> {
   try {
-    return await setupService.getDepartments(params);
+    return { status: "success", data: await setupService.getDepartments(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("setup"))("departments.errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("setup"))("departments.errors.loadList"));
   }
 }
 

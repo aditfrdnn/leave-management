@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { Reveal, SectionLoader } from "@/components/common/loader";
 import { Badge } from "@/components/ui/badge";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
@@ -40,7 +41,7 @@ export default function LeaveDetailSheet({
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: LEAVE_DETAIL_QUERY_KEY(leaveId ?? ""),
-    queryFn: () => GetLeaveRequest(leaveId as string),
+    queryFn: async () => unwrapActionState(await GetLeaveRequest(leaveId as string)),
     enabled: leaveId !== null,
   });
 

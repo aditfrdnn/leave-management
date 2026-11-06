@@ -6,6 +6,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import LoadingButton from "@/components/common/loading-button";
 import { Button } from "@/components/ui/button";
@@ -47,12 +48,12 @@ export default function MyAppraisals() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_LIST_QUERY_KEY, params],
-    queryFn: () => GetAppraisals(params),
+    queryFn: async () => unwrapActionState(await GetAppraisals(params)),
     placeholderData: keepPreviousData,
   });
   const { data: allMine } = useQuery({
     queryKey: [...APPRAISAL_LIST_QUERY_KEY, ALL_MINE],
-    queryFn: () => GetAppraisals(ALL_MINE),
+    queryFn: async () => unwrapActionState(await GetAppraisals(ALL_MINE)),
   });
   const { data: periods } = usePeriodOptions();
 

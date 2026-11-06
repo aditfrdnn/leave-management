@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import DeleteDialog from "@/components/common/delete-dialog";
 import { SectionLoader } from "@/components/common/loader";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +41,7 @@ export default function CareerHistorySheet({
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: EMPLOYEE_CAREERS_QUERY_KEY(employeeId),
-    queryFn: () => GetEmployeeCareers(employeeId),
+    queryFn: async () => unwrapActionState(await GetEmployeeCareers(employeeId)),
     enabled: employee !== null,
   });
 

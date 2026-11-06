@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import DeleteDialog from "@/components/common/delete-dialog";
 import LoadingButton from "@/components/common/loading-button";
@@ -56,7 +57,7 @@ export default function AppraisalTemplateTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...APPRAISAL_TEMPLATES_QUERY_KEY, params],
-    queryFn: () => GetAppraisalTemplates(params),
+    queryFn: async () => unwrapActionState(await GetAppraisalTemplates(params)),
     placeholderData: keepPreviousData,
   });
 

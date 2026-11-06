@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { unwrapActionState } from "@/lib/action-state";
 import { uuidSchema } from "@/validations/id-validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -111,7 +112,7 @@ export default function TemplateEditor({ id }: { id: string }) {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: APPRAISAL_TEMPLATE_QUERY_KEY(id),
-    queryFn: () => GetAppraisalTemplate(id),
+    queryFn: async () => unwrapActionState(await GetAppraisalTemplate(id)),
     enabled: validId,
   });
 

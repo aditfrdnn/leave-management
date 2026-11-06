@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import { Card, CardContent } from "@/components/ui/card";
 import { HugeiconsIcon } from "@/components/ui/hugeicons-icon";
@@ -42,7 +43,7 @@ export default function LeaveBalanceTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...LEAVE_BALANCES_QUERY_KEY, params],
-    queryFn: () => GetLeaveBalances(params),
+    queryFn: async () => unwrapActionState(await GetLeaveBalances(params)),
     placeholderData: keepPreviousData,
   });
 

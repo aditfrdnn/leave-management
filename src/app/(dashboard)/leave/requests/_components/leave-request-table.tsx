@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { DataTable } from "@/components/common/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,7 +78,7 @@ export default function LeaveRequestTable() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...LEAVE_REQUESTS_QUERY_KEY, params],
-    queryFn: () => GetLeaveRequests(params),
+    queryFn: async () => unwrapActionState(await GetLeaveRequests(params)),
     enabled: !isPermissionLoading,
     placeholderData: keepPreviousData,
   });

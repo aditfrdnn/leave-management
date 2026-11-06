@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { appraisalService, type TAppraisalPeriodListParams } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TApiPaginated } from "@/types/api";
@@ -20,33 +20,37 @@ type AppraisalActionState = ActionState<TAppraisalDetail>;
 
 /** Actions shared by the appraisal routes (my, team, reports, periods and the form). */
 
-export async function GetAppraisals(params: TAppraisalListParams): Promise<TAppraisalListResponse> {
+export async function GetAppraisals(params: TAppraisalListParams): Promise<ActionState<TAppraisalListResponse>> {
   try {
-    return await appraisalService.getAppraisals(params);
+    return { status: "success", data: await appraisalService.getAppraisals(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("appraisal"))("errors.loadList")));
+    return toApiErrorState(error, (await getTranslations("appraisal"))("errors.loadList"));
   }
 }
 
-export async function GetAppraisalPeriods(params: TAppraisalPeriodListParams): Promise<TApiPaginated<TAppraisalPeriod>> {
+export async function GetAppraisalPeriods(params: TAppraisalPeriodListParams): Promise<ActionState<TApiPaginated<TAppraisalPeriod>>> {
   try {
-    return await appraisalService.getPeriods(params);
+    return { status: "success", data: await appraisalService.getPeriods(params) };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("appraisal"))("errors.loadPeriods")));
+    return toApiErrorState(error, (await getTranslations("appraisal"))("errors.loadPeriods"));
   }
 }
 
-/** `null` when the appraisal does not exist or is not mine to see (403/404): the page then goes home. */
-export async function GetAppraisal(id: string): Promise<TAppraisalDetail | null> {
+/**
+ * `data: null` when the appraisal does not exist or is not mine to see (403/404): the page then goes home.
+ * Any other failure comes back as an error state rather than a throw, so its message survives
+ * production (read it with `unwrapActionState`).
+ */
+export async function GetAppraisal(id: string): Promise<ActionState<TAppraisalDetail | null>> {
   try {
     const response = await appraisalService.getAppraisal(id);
 
-    return response.data;
+    return { status: "success", data: response.data };
   } catch (error) {
     const status = (error as { response?: { status?: number } })?.response?.status;
-    if (status === 403 || status === 404) return null;
+    if (status === 403 || status === 404) return { status: "success", data: null };
 
-    throw new Error(toApiErrorMessage(error, (await getTranslations("appraisal"))("errors.loadDetail")));
+    return toApiErrorState(error, (await getTranslations("appraisal"))("errors.loadDetail"));
   }
 }
 

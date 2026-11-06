@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useForm, useWatch, type FieldPath } from "react-hook-form";
 import { toast } from "sonner";
 
+import { unwrapActionState } from "@/lib/action-state";
 import FormCalendar from "@/components/common/form-calendar";
 import FormComboBox from "@/components/common/form-combobox";
 import FormInput from "@/components/common/form-input";
@@ -176,14 +177,14 @@ export default function EmployeeFormDialog({
 
   const { data: departments, isLoading: isDepartmentsLoading } = useQuery({
     queryKey: DEPARTMENT_OPTIONS_QUERY_KEY,
-    queryFn: () => GetDepartmentOptions(),
+    queryFn: async () => unwrapActionState(await GetDepartmentOptions()),
     enabled: open && !isUpdate,
   });
 
   const supervisorParams = { exclude_id: item?.id };
   const { data: supervisors, isLoading: isSupervisorsLoading } = useQuery({
     queryKey: ["setup", "options", "employees", supervisorParams],
-    queryFn: () => GetEmployeeOptions(supervisorParams),
+    queryFn: async () => unwrapActionState(await GetEmployeeOptions(supervisorParams)),
     enabled: open,
   });
 

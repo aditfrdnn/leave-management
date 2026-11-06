@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { profileService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TMyProfile, TMySignature } from "@/types/profile";
@@ -11,23 +11,23 @@ import type { TMyProfile, TMySignature } from "@/types/profile";
 const SIGNATURE_TYPES = ["image/png", "image/jpeg"];
 const SIGNATURE_MAX_BYTES = 2 * 1024 * 1024;
 
-export async function GetMyProfile(): Promise<TMyProfile> {
+export async function GetMyProfile(): Promise<ActionState<TMyProfile>> {
   try {
     const response = await profileService.getMyProfile();
 
-    return response.data;
+    return { status: "success", data: response.data };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("home"))("errors.load")));
+    return toApiErrorState(error, (await getTranslations("home"))("errors.load"));
   }
 }
 
-export async function GetMySignature(): Promise<TMySignature> {
+export async function GetMySignature(): Promise<ActionState<TMySignature>> {
   try {
     const response = await profileService.getMySignature();
 
-    return response.data;
+    return { status: "success", data: response.data };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("home"))("signature.errors.load")));
+    return toApiErrorState(error, (await getTranslations("home"))("signature.errors.load"));
   }
 }
 

@@ -2,7 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 
-import { toApiErrorMessage, toApiErrorState, toFormErrorState } from "@/lib/api-error";
+import { toApiErrorState, toFormErrorState } from "@/lib/api-error";
 import { leaveService } from "@/services";
 import type { ActionState } from "@/types/action-state";
 import type { TLeave, TLeaveDetail } from "@/types/leave";
@@ -15,13 +15,13 @@ function getText(formData: FormData, key: string) {
 }
 
 /** One request with every approval step; read by the detail sheet on both leave pages. */
-export async function GetLeaveRequest(id: string): Promise<TLeaveDetail> {
+export async function GetLeaveRequest(id: string): Promise<ActionState<TLeaveDetail>> {
   try {
     const response = await leaveService.getLeaveRequest(id);
 
-    return response.data;
+    return { status: "success", data: response.data };
   } catch (error) {
-    throw new Error(toApiErrorMessage(error, (await getTranslations("leave"))("errors.loadDetail")));
+    return toApiErrorState(error, (await getTranslations("leave"))("errors.loadDetail"));
   }
 }
 

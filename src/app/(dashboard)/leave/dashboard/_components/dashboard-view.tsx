@@ -5,6 +5,7 @@ import Link from "next/link";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
+import { unwrapActionState } from "@/lib/action-state";
 import { SectionLoader } from "@/components/common/loader";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ export default function DashboardView() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [...DASHBOARD_QUERY_KEY, year],
-    queryFn: () => GetDashboard(year),
+    queryFn: async () => unwrapActionState(await GetDashboard(year)),
     placeholderData: keepPreviousData,
   });
 
